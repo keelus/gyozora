@@ -65,7 +65,11 @@
 		// Ask for each image preview
 
 		// BUG: If changed folder while they are loading, on load folder's elements will self-force
-		contents =  await RenderPreviews(directoryElements)
+		let previousPath = CURRENT_PATH
+		let contentsWithPreviews =  await RenderPreviews(directoryElements)
+		if (previousPath == CURRENT_PATH)
+			contents = contentsWithPreviews
+		else console.log("It seems that the folder changed! 🥰✌️")
     }
 
   function elementClicked(fpath, isfolder) {

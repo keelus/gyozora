@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
@@ -14,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/nfnt/resize"
+	"golang.org/x/image/webp"
 )
 
 func GetFileType(filename string, extension string, isFolder bool) string {
@@ -78,10 +80,20 @@ func GetImagePreview(fpath string, extension string) string {
 	}
 	defer content.Close()
 
-	imageDecoded, _, err := image.Decode(content)
-	if err != nil {
-		fmt.Printf("Error decoding the image '%s'", fpath)
-		return ""
+	var imageDecoded image.Image
+
+	if extension == ".webp" {
+		imageDecoded, err = webp.Decode(content)
+		if err != nil {
+			fmt.Printf("Error decoding the WEBPP '%s'", fpath)
+			return ""
+		}
+	} else {
+		imageDecoded, _, err = image.Decode(content)
+		if err != nil {
+			fmt.Printf("Error decoding the image '%s'", fpath)
+			return ""
+		}
 	}
 
 	maxSize := 90.0
@@ -110,10 +122,16 @@ func GetImagePreview(fpath string, extension string) string {
 			fmt.Println("Error encoding preview image as PNG:", err)
 			return ""
 		}
-	} else if extension == ".jpg" || extension == ".jpeg" {
+	} else if extension == ".jpg" || extension == ".jpeg" || extension == ".webp" {
 		err = jpeg.Encode(&buffer, previewImage, nil)
 		if err != nil {
 			fmt.Println("Error encoding preview image as JPG:", err)
+			return ""
+		}
+	} else if extension == ".gif" {
+		err = gif.Encode(&buffer, previewImage, nil)
+		if err != nil {
+			fmt.Println("Error encoding preview image as GIF:", err)
 			return ""
 		}
 	}
@@ -121,4 +139,5 @@ func GetImagePreview(fpath string, extension string) string {
 	previewBytes := buffer.Bytes()
 	previewStringB64 := base64.StdEncoding.EncodeToString(previewBytes)
 	return previewStringB64
+
 }
