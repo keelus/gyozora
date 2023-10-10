@@ -15,7 +15,13 @@ import (
 	"strings"
 
 	"github.com/nfnt/resize"
+	"github.com/srwiley/oksvg"
+	"github.com/srwiley/rasterx"
 	"golang.org/x/image/webp"
+)
+
+const (
+	PREVIEW_MAX_SIZE = 90
 )
 
 func GetFileType(filename string, extension string, isFolder bool) string {
@@ -75,7 +81,7 @@ func LoadJSON() {
 func GetImagePreview(fpath string, extension string) string {
 	content, err := os.Open(fpath)
 	if err != nil {
-		fmt.Printf("Error opening the image '%s'", fpath)
+		fmt.Printf("⚠️ Error opening the image '%s'\n", fpath)
 		return ""
 	}
 	defer content.Close()
@@ -85,18 +91,25 @@ func GetImagePreview(fpath string, extension string) string {
 	if extension == ".webp" {
 		imageDecoded, err = webp.Decode(content)
 		if err != nil {
-			fmt.Printf("Error decoding the WEBPP '%s'", fpath)
+			fmt.Printf("⚠️ Error decoding the WEBPP '%s'", fpath)
 			return ""
 		}
+	} else if extension == ".svg" {
+		icon, _ := oksvg.ReadIconStream(content)
+		icon.SetTarget(0, 0, float64(PREVIEW_MAX_SIZE), float64(PREVIEW_MAX_SIZE))
+		rgba := image.NewRGBA(image.Rect(0, 0, PREVIEW_MAX_SIZE, PREVIEW_MAX_SIZE))
+		icon.Draw(rasterx.NewDasher(PREVIEW_MAX_SIZE, PREVIEW_MAX_SIZE, rasterx.NewScannerGV(PREVIEW_MAX_SIZE, PREVIEW_MAX_SIZE, rgba, rgba.Bounds())), 1)
+
+		imageDecoded = rgba
 	} else {
 		imageDecoded, _, err = image.Decode(content)
 		if err != nil {
-			fmt.Printf("Error decoding the image '%s'", fpath)
+			fmt.Printf("⚠️ Error decoding the image '%s'", fpath)
 			return ""
 		}
 	}
 
-	maxSize := 90.0
+	maxSize := float64(PREVIEW_MAX_SIZE)
 
 	width := float64(imageDecoded.Bounds().Dx())
 	height := float64(imageDecoded.Bounds().Dy())
@@ -116,22 +129,22 @@ func GetImagePreview(fpath string, extension string) string {
 
 	var buffer bytes.Buffer
 
-	if extension == ".png" {
+	if extension == ".png" || extension == ".svg" {
 		err = png.Encode(&buffer, previewImage)
 		if err != nil {
-			fmt.Println("Error encoding preview image as PNG:", err)
+			fmt.Println("⚠️ Error encoding preview image:", err)
 			return ""
 		}
 	} else if extension == ".jpg" || extension == ".jpeg" || extension == ".webp" {
 		err = jpeg.Encode(&buffer, previewImage, nil)
 		if err != nil {
-			fmt.Println("Error encoding preview image as JPG:", err)
+			fmt.Println("⚠️ Error encoding preview image as JPG:", err)
 			return ""
 		}
 	} else if extension == ".gif" {
 		err = gif.Encode(&buffer, previewImage, nil)
 		if err != nil {
-			fmt.Println("Error encoding preview image as GIF:", err)
+			fmt.Println("⚠️ Error encoding preview image as GIF:", err)
 			return ""
 		}
 	}
