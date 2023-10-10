@@ -29,6 +29,7 @@ export namespace models {
 	    isHidden: boolean;
 	    createdAt: number;
 	    modifiedAt: number;
+	    preview: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new SysFile(source);
@@ -48,6 +49,7 @@ export namespace models {
 	        this.isHidden = source["isHidden"];
 	        this.createdAt = source["createdAt"];
 	        this.modifiedAt = source["modifiedAt"];
+	        this.preview = source["preview"];
 	    }
 	}
 

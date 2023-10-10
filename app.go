@@ -49,6 +49,12 @@ func (a *App) ReadPath(path string) []models.SysFile {
 		name := file.Name()[:len(file.Name())-len(filepath.Ext(file.Name()))]
 		extension := strings.ToLower(filepath.Ext(file.Name()))
 		fullPath := filepath.Join(path, file.Name())
+		fileType := fileUtils.GetFileType(file.Name(), extension, file.IsDir())
+
+		preview := ""
+		// if fileType == "fileImage" {
+		// 	preview = fileUtils.GetImagePreview(fullPath, extension)
+		// }
 
 		newFile := models.SysFile{
 			Name:        name,
@@ -58,11 +64,12 @@ func (a *App) ReadPath(path string) []models.SysFile {
 			Path:        path,
 			PathFull:    fullPath,
 			Size:        int(file.Size()),
-			IconClass:   fileUtils.GetFileType(file.Name(), extension, file.IsDir()),
+			IconClass:   fileType,
 			IsFolder:    file.IsDir(),
 			IsHidden:    fileUtils.IsHidden(fullPath),
 			CreatedAt:   fileUtils.CreatedAt(fullPath),
 			ModifiedAt:  fileUtils.ModifiedAt(fullPath),
+			Preview:     preview,
 		}
 
 		returningFiles = append(returningFiles, newFile)
@@ -117,4 +124,15 @@ func (a *App) LoadYourComputer() []models.LeftBarElement {
 }
 func (a *App) GetStartingPath() string {
 	return filepath.Join(sysUtils.UserHomedir(), "Desktop")
+}
+
+func (a *App) RenderPreviews(files []models.SysFile) []models.SysFile {
+	for i := 0; i < len(files); i++ {
+		if files[i].IconClass != "fileImage" {
+			continue
+		}
+		files[i].Preview = fileUtils.GetImagePreview(files[i].PathFull, files[i].Extension)
+	}
+
+	return files
 }

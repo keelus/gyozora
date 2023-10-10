@@ -19,6 +19,7 @@ type SysFile struct {
 	IsHidden    bool   `json:"isHidden"`
 	CreatedAt   int    `json:"createdAt"`
 	ModifiedAt  int    `json:"modifiedAt"`
+	Preview     string `json:"preview"`
 }
 type Kirina struct {
 	Name string `json:"name"`

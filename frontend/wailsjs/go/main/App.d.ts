@@ -13,3 +13,5 @@ export function LoadYourComputer():Promise<Array<models.LeftBarElement>>;
 export function OpenFile(arg1:string):Promise<void>;
 
 export function ReadPath(arg1:string):Promise<Array<models.SysFile>>;
+
+export function RenderPreviews(arg1:Array<models.SysFile>):Promise<Array<models.SysFile>>;

@@ -1,7 +1,7 @@
 <script>
 	import logo from './assets/images/logo-universal.png'
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
-	import { ReadPath } from '../wailsjs/go/main/App.js';
+	import { ReadPath, RenderPreviews } from '../wailsjs/go/main/App.js';
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 
@@ -62,6 +62,10 @@
 
 		console.log("END")
     	
+		// Ask for each image preview
+
+		// BUG: If changed folder while they are loading, on load folder's elements will self-force
+		contents =  await RenderPreviews(directoryElements)
     }
 
   function elementClicked(fpath, isfolder) {
@@ -190,7 +194,11 @@
 				{/if}
 			  {#each contents as content}
 				  <button class="file" title="{content.filename}" on:click={() => elementClicked(content.pathfull, content.isFolder)}>
-					  <svelte:component this={GetIconByType(content.iconClass)} class="icon {content.iconClass}"/>
+					{#if content.iconClass == "fileImage" && content.preview != ""}
+						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
+					{:else}
+						<svelte:component this={GetIconByType(content.iconClass)} class="icon {content.iconClass}"/>
+					{/if}
 					  <div class="text">{content.filename}</div>
 				  </button>
 			  {/each}
