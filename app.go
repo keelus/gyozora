@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"file-explorer/fileUtils"
-	"file-explorer/models"
-	"file-explorer/sysUtils"
 	"fmt"
 	"io/ioutil"
+	"kyozora/fileUtils"
+	"kyozora/models"
+	"kyozora/sysUtils"
 	"log"
 	"os"
 	"os/exec"

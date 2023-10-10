@@ -2,8 +2,8 @@ package main
 
 import (
 	"embed"
-	"file-explorer/fileUtils"
-	"file-explorer/models"
+	"kyozora/fileUtils"
+	"kyozora/models"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -22,7 +22,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "file-explorer",
+		Title:     "kyozora",
 		Width:     1024,
 		Height:    768,
 		MinWidth:  1024,

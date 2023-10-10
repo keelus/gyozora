@@ -1,4 +1,4 @@
-module file-explorer
+module kyozora
 
 go 1.18
 
