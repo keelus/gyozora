@@ -1,6 +1,8 @@
 # README
 ### Todo:
 #### File icon previews:
+- Ability to load a folder's files previews one by one (instead of batch method), with ability to stop each independent render anytime, if user changes the folder.
+- Image preview caching.
 ##### Images
 - [x] .png
 - [x] .jpg/jpeg
