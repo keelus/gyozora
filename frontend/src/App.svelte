@@ -5,6 +5,7 @@
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 
+
 	let CURRENT_PATH = ""
 
 	let contents = []
@@ -218,7 +219,7 @@
 			</div>
 		</div>
 		<div class="right">
-			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· v1.3.0</span></button>
+			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· {APP_VERSION}</span></button>
 		</div>
 	  </div>
 	<!-- <img alt="Wails logo" id="logo" src="{logo}">
