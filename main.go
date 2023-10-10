@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"file-explorer/fileUtils"
 	"file-explorer/models"
 
 	"github.com/wailsapp/wails/v2"
@@ -13,6 +14,9 @@ import (
 var assets embed.FS
 
 func main() {
+	// Read JSON extension type data
+	fileUtils.LoadJSON()
+
 	// Create an instance of the app structure
 	app := NewApp()
 

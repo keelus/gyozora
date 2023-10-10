@@ -1,6 +1,12 @@
 package fileUtils
 
-import "strings"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+)
 
 func GetFileType(filename string, extension string, isFolder bool) string {
 	// Edge cases:
@@ -20,32 +26,9 @@ func GetFileType(filename string, extension string, isFolder bool) string {
 		return "folder"
 	}
 
-	switch extension {
-	case ".png", ".jpg", ".jpeg", ".webp", ".gif":
-		return "fileImage"
-	case ".mp3", ".wav", ".flac", ".aac", ".ogg":
-		return "fileAudio"
-	case ".mp4", ".avi", ".mkv", ".mov", ".wmv":
-		return "fileVideo"
-	case ".zip", ".rar", ".7z", ".tar", ".gz", ".tar.gz":
-		return "fileCompressed"
-	case ".exe", ".bin", ".app", ".msi", ".jar":
-		return "fileExecutable"
-	case ".sh", ".bat", ".vbs", ".ps1":
-		return "fileExecutableScript"
-	case ".ttf", ".otf", ".ps", ".woff", ".woff2":
-		return "fileFont"
-	case ".pdf":
-		return "filePdf"
-	case ".js", ".ts", ".jsx", ".tsx", ".html", ".css":
-	case ".sass", ".scss", ".svelte":
-	case ".java", ".class", ".py", ".c", ".cpp", ".h":
-	case ".php", ".rb", ".go", ".rs", ".swift", ".kt":
-	case ".cs", ".xml":
-	case ".md":
-		return "fileCode"
-	case ".json":
-		return "fileJson"
+	ftype := fileTypeMap[extension]
+	if ftype != "" {
+		return ftype
 	}
 	return "file"
 }
@@ -58,4 +41,23 @@ func CreatedAt(fpath string) int {
 }
 func ModifiedAt(fpath string) int {
 	return 0
+}
+
+var fileTypeMap map[string]string
+
+func LoadJSON() {
+	jsonUbi := "./fileUtils/extensionData.json"
+
+	jsonContent, err := ioutil.ReadFile(jsonUbi)
+	if err != nil {
+		fmt.Printf("Error reading file type json:%s\n", err)
+		os.Exit(1)
+	}
+
+	err = json.Unmarshal([]byte(jsonContent), &fileTypeMap)
+	if err != nil {
+		fmt.Printf("Error reading file type json:%s\n", err)
+		os.Exit(1)
+	}
+	fmt.Println("👍 File type JSON loaded")
 }

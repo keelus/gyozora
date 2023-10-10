@@ -16,29 +16,56 @@
 	})
   
 	async function FirstStart() {
-	CURRENT_PATH = await GetStartingPath()
-	  pinnedFolders = await LoadPinnedFolders()
-	  yourComputer = await LoadYourComputer()
-	  ReadDirectory(CURRENT_PATH)
+		CURRENT_PATH = await GetStartingPath()
+		pinnedFolders = await LoadPinnedFolders()
+		yourComputer = await LoadYourComputer()
+		LoadFolder(CURRENT_PATH, false, false, true)
 	}
+
+	let backHistory = []
+	let forwardHistory = []
+
+	let goBackEnabled = true;
+	let goForwardEnabled = true;
   
-	async function ReadDirectory(path) {
-	  CURRENT_PATH = path
-	  contents = []
-	  const directoryElements = await ReadPath(path)
-	  
-	  const newElements = directoryElements.map((element) => ({
-		  ...element,
-	  }))
-	  
-	  contents = newElements
-	}
-  
-  
+	async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
+		console.log("Loading folder 📂 ...")
+		// Check if we are able to open directory
+		contents = []
+		const directoryElements = await ReadPath(newPath)
+		// if(error != null) ...
+    	
+    	if(!ignorePathHistory) {
+        	if(goingBack && !goingForward) {
+        		console.log("Detected: going back");
+    			forwardHistory.push(CURRENT_PATH);
+        	} else if (!goingBack && goingForward) {
+        		console.log("Detected: going forward");
+        		backHistory.push(CURRENT_PATH);
+        	} else if (!goingBack && !goingForward) {
+        		console.log("Detected: going new");
+        		backHistory.push(CURRENT_PATH);
+    			forwardHistory = [];
+        	}
+    	}
+
+    	goBackEnabled = backHistory.length > 0
+    	goForwardEnabled = forwardHistory.length > 0
+    	
+    	CURRENT_PATH = newPath;
+
+		const newElements = directoryElements.map((element) => ({
+			...element,
+		}))
+		contents = newElements
+
+		console.log("END")
+    	
+    }
+
   function elementClicked(fpath, isfolder) {
 	  if(isfolder){
-		  console.log("Opening a folder 📂")
-		  return ReadDirectory(fpath)
+		  return LoadFolder(fpath, false, false, false)
 	  }
   
 	  OpenFile(fpath)
@@ -78,9 +105,34 @@
   }
   
   document.addEventListener("keydown", (e) => {
-	  if(e.key == "Enter")
+	  if(e.key == "Enter") {
 		  FirstStart()
+			backHistory = []
+			forwardHistory = []
+			goBackEnabled = false
+			goForwardEnabled = false
+	  }
   })
+  document.addEventListener("mousedown", (e) => {
+	 if(e.button == 3) buttonGoBack()
+	 else if(e.button == 4) buttonGoForward()
+  })
+
+  function buttonGoBack() {
+	if(backHistory.length == 0) return console.log("✋ Can't go back")
+	console.log("👈 going back")
+	let newPath = backHistory.pop()
+
+	LoadFolder(newPath, true, false, false)
+  }
+  
+  function buttonGoForward() {
+	if(forwardHistory.length == 0) return console.log("✋ Can't go forward")
+	console.log("going forward 👉")
+	let newPath = forwardHistory.pop()
+
+	LoadFolder(newPath, false, true, false)
+}
   
   
   </script>
@@ -88,8 +140,8 @@
   <main>
 	  <div class="toolbar"></div>
 	  <div class="pathbar">
-		  <button class="backButton" disabled><ArrowLeft class="icon"/></button>
-		  <button class="forwardButton" on:click={() => ReadDirectory(CURRENT_PATH)}><ArrowRight class="icon" /></button>
+		  <button class="backButton" disabled={!goBackEnabled} on:click={buttonGoBack}><ArrowLeft class="icon"/></button>
+		  <button class="forwardButton" disabled={!goForwardEnabled} on:click={buttonGoForward}><ArrowRight class="icon" /></button>
 		  <input class="path" placeholder="Current path..." value={CURRENT_PATH} disabled/>
 		  <input class="search" placeholder="Search here" type="text"/>
 	  </div>
