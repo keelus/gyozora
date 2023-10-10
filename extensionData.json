@@ -5,6 +5,7 @@
 	".webp": "fileImage",
 	".gif": "fileImage",
 	".heic": "fileImage",
+	".svg": "fileImage",
 	".mp3": "fileAudio",
 	".wav": "fileAudio",
 	".flac": "fileAudio",
