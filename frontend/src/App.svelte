@@ -3,7 +3,7 @@
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
 	import { ReadPath } from '../wailsjs/go/main/App.js';
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
-  
+	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 
 	let CURRENT_PATH = ""
 
@@ -195,26 +195,31 @@
 			  {/each}
 		  </div>
 	  </div>
-	  <div class="breadcrumb">
-		  <div class="element">
-			  <HardDrive class="icon disk"/>
-			  <div class="text">Disk one (C:)</div>
-		  </div>
-		  <ChevronRight class="icon"/>
-		  <div class="element">
-			  <Folder class="icon folder"/>
-			  <div class="text">Users</div>
-		  </div>
-		  <ChevronRight class="icon"/>
-		  <div class="element">
-			  <Folder class="icon folder"/>
-			  <div class="text">username</div>
-		  </div>
-		  <ChevronRight class="icon"/>
-		  <div class="element">
-			  <Laptop2 class="icon desktop"/>
-			  <div class="text">Desktop</div>
-		  </div>
+	  <div class="bottom">
+		<div class="breadcrumb">
+			<div class="element">
+				<HardDrive class="icon folderDisk"/>
+				<div class="text">Disk one (C:)</div>
+			</div>
+			<ChevronRight class="icon"/>
+			<div class="element">
+				<Folder class="icon folder"/>
+				<div class="text">Users</div>
+			</div>
+			<ChevronRight class="icon"/>
+			<div class="element">
+				<Folder class="icon folder"/>
+				<div class="text">username</div>
+			</div>
+			<ChevronRight class="icon"/>
+			<div class="element">
+				<Laptop2 class="icon folderDesktop"/>
+				<div class="text">Desktop</div>
+			</div>
+		</div>
+		<div class="right">
+			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· v1.3.0</span></button>
+		</div>
 	  </div>
 	<!-- <img alt="Wails logo" id="logo" src="{logo}">
 	<div class="result" id="result">{resultText}</div>
