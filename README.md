@@ -7,6 +7,7 @@
 - [x] .gif
 - [x] .webp
 - [ ] .heic
+- [ ] .svg
 ##### Videos
 - [ ] .mp4
 - [ ] .avi
