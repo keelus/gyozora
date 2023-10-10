@@ -1,0 +1,362 @@
+$font-1:white;
+$font-2:rgba(255, 255, 255, 0.788);
+$font-3:rgb(168,168,168);
+$background-1:#000000;
+$background-2:#121212;
+$background-3:#1a1a1a;
+$background-4:#262626;
+$background-5:#363636;
+$background-6:#585858;
+
+$blue-1:#0095f6;
+$blue-2:#3797f0;
+$blue-3:#1877f2;
+$green-1:#CED74D;
+$green-2:#a0b913;
+$green-3:#859916;
+$red-1:#F61C2C;
+$red-2:rgb(185, 28, 28);
+$red-3:rgb(73, 10, 10);
+
+html, body {
+	height:100%;
+	width:100%;
+	padding:0;
+	margin:0;
+    font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+
+	background:$background-1;
+}
+
+@font-face {
+    font-family: "Nunito";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""),
+    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+}
+
+#app {
+    height: 100vh;
+}
+
+* {
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+input[type=text]::selection {
+	background:#f81ce5 !important;
+	color:black;
+}
+
+main {
+	background:red;
+	height:100%;
+	width:100%;
+
+	display:flex;
+	flex-direction: column;
+}
+
+
+.toolbar {
+	background:$background-2;
+	width:100%;
+	height:50px;
+	display:none;
+}
+.pathbar {
+	background:$background-3;
+	width:100%;
+	height:50px;
+
+	display:flex;
+	align-items: center;
+	padding:0 10px;
+	gap:10px;	box-sizing: border-box;
+
+	& > .backButton, & > .forwardButton {
+		width:25px;
+		height:25px;
+		color:$font-1;
+		font-size:14px;
+		display:block;
+		display:flex;
+		justify-content: center;
+		align-items: center;
+		background:none;
+		border:none;
+		outline:none;
+		padding:0;
+		
+		& > .icon {
+			width:16px;
+			height:16px;
+			stroke-width: 3px;
+			color:$font-1;
+		}
+
+		&:not(:disabled):hover {
+			cursor:pointer;
+			background:$background-5;
+		}
+
+		&:disabled {
+			& > .icon {
+				color:$font-3;
+			}
+		}
+	}
+
+	& > .path , & > .search {
+		height:35px;
+		padding:0;
+		margin:0;
+		border:0;
+		color:$font-1;
+		background:$background-3;
+		border:1px solid $background-5;
+		padding:0 5px;
+		box-sizing: border-box;
+		outline:none;
+
+		&:focus {
+			border-color:$background-6;
+		}
+		&.path {
+			color:$font-2;
+			flex:1;
+		}
+	}
+}
+.mainContent {
+	flex:1;
+	display:flex;
+	& > .navPane {
+		flex:1;
+		background:$background-3;
+		max-width:225px;
+		border-right:1px solid $background-5;
+		padding:5px;
+		box-sizing: border-box;
+
+		& > .section {
+			margin-bottom:10px;
+			display:flex;
+			flex-direction: column;
+
+			& > .title {
+				position: relative;
+				z-index:100;
+
+				& > .text {
+					color:white;
+					font-size:13px;
+					font-weight: bold;
+					margin-left:10px;
+					background:$background-3;
+					padding:0 5px;
+					box-sizing: border-box;
+				}
+
+				&::before {
+					content:'';
+					left:0;
+					width:100%;
+					height:1px;
+					background:$background-5;
+					position: absolute;
+					top:50%;
+					transform:translateY(-50%);
+					z-index:-1;
+				}
+			}
+			& > .elements {
+				display:flex;
+				flex-direction: column;
+
+				& > .element {
+					padding:5px 15px;
+					box-sizing: border-box;
+
+					display:flex;
+					align-items: center;
+					gap:6px;
+					background:none;
+					border:none;
+					text-align: left;
+
+					& > .icon {
+						width:16px;
+						height:16px;
+					}
+					& > .text {
+						color:$font-1;
+						font-size:14px;
+						flex:1;
+						overflow:hidden;
+					}
+
+					&:hover {
+						cursor:pointer;
+						background:$background-4;
+					}
+				}
+				
+				& > .emptyMessage {
+					width:100%;
+					height:100%;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+
+					color:$font-1;
+					opacity:.4;
+					font-size:12px;
+					font-weight: 100;
+				}
+			}
+		}
+	}
+
+	& > .fileBrowser {
+		flex:2;
+		background:$background-3;
+		padding:0 10px 5px 10px;
+		box-sizing: border-box;
+		overflow:hidden;
+		overflow-y:auto;
+		max-height:calc(100vh - 35px - 20px - 15px);
+
+		& > .file {
+			display:inline-flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			padding:10px;
+			padding-bottom:5px;
+			justify-content: space-between;
+			float:left;
+			margin:5px;
+			border-radius:3px;
+			width:115px;
+			height:130px;
+			box-sizing: border-box;
+			background:none;
+			border:none;
+			transition: all .15s;
+
+			& > .icon {
+				width:90px;
+				height:90px;
+				stroke-width: .5px;
+			}
+
+			& > .text {
+				color:$font-1;
+				margin-top:5px;
+				font-weight: lighter;
+				font-size:13px;
+				text-align: center;
+				width:100%;
+				white-space: nowrap;
+				overflow: hidden !important;
+				text-overflow: ellipsis;
+			}
+
+			&:hover {
+				cursor: pointer;
+				background:$background-4;
+			}
+		}
+
+		& > .emptyMessage {
+			width:100%;
+			height:100%;
+			display:flex;
+			justify-content: center;
+			align-items: center;
+
+			color:$font-1;
+			opacity:.4;
+			font-weight: 100;
+		}
+	}
+
+}
+.breadcrumb {
+	background:$background-3;
+	width:100%;
+	height:20px;
+	display:flex;
+	align-items: center;
+
+	& > .icon {
+		width:16px;
+		height:16px;
+		color:$font-1;
+	}
+
+	& > .element {
+		display:flex;
+		overflow:hidden;
+		align-items: center;
+		padding:0 4px;
+		gap:4px;
+		height:20px;
+
+		& > .icon {
+			width:14px;
+			height:14px;
+		}
+
+		& > .text {
+			color:$font-1;
+			font-size:14px;
+			line-height: 0;
+		}
+
+		&:hover {
+			cursor:pointer;
+			background:$background-6;
+		}
+	}
+
+}
+
+// File custom icons:
+.icon {
+	color:$font-1;
+	stroke-width: 2.5px;
+	color:$background-3;
+	
+	&.home {color:$font-1;}
+
+	&.folderDesktop {color:$blue-2;}
+	&.folderDownloads {color:$green-1;}
+	&.folderDocuments {color:orange;}
+	&.folderPictures {color:lightgreen;}
+	&.folderMusic {color:deeppink;}
+	&.folderVideo {fill:rgb(183, 0, 255);}
+	&.folderDisk {color:$font-1;}
+	&.folder {color:#ffd768;fill:#ffd768;}
+
+
+	&.fileImage {fill:lightgreen;}
+	&.fileAudio {fill:deeppink;}
+	&.fileVideo {fill:rgb(183, 0, 255);}
+	&.fileCompressed {fill:$font-1;}
+	&.fileExecutable {fill:$font-1;}
+	&.fileExecutableScript {fill:$font-1;}
+	&.fileFont {fill:$font-1;}
+	&.filePdf {fill:$font-1;}
+	&.fileCode {fill:$font-1;}
+	&.fileJson {fill:$font-1;}
+	&.file {fill:$font-1;}
+}
+
+
