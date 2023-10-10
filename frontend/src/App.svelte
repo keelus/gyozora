@@ -28,7 +28,7 @@
 
 	let goBackEnabled = true;
 	let goForwardEnabled = true;
-  
+
 	async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
 		console.log("Loading folder 📂 ...")
 		// Check if we are able to open directory
@@ -38,13 +38,10 @@
     	
     	if(!ignorePathHistory) {
         	if(goingBack && !goingForward) {
-        		console.log("Detected: going back");
     			forwardHistory.push(CURRENT_PATH);
         	} else if (!goingBack && goingForward) {
-        		console.log("Detected: going forward");
         		backHistory.push(CURRENT_PATH);
         	} else if (!goingBack && !goingForward) {
-        		console.log("Detected: going new");
         		backHistory.push(CURRENT_PATH);
     			forwardHistory = [];
         	}
@@ -60,16 +57,12 @@
 		}))
 		contents = newElements
 
-		console.log("END")
-    	
-		// Ask for each image preview
-
-		// BUG: If changed folder while they are loading, on load folder's elements will self-force
-		let previousPath = CURRENT_PATH
-		let contentsWithPreviews =  await RenderPreviews(directoryElements)
+		let previousPath = CURRENT_PATH // Path when job started
+		let contentsWithPreviews =  await RenderPreviews(directoryElements,  Math.floor(Date.now() / 1000))
 		if (previousPath == CURRENT_PATH)
 			contents = contentsWithPreviews
-		else console.log("It seems that the folder changed! 🥰✌️")
+		else console.log("👍 folder changed, ignoring render.")
+
     }
 
   function elementClicked(fpath, isfolder) {
@@ -78,8 +71,6 @@
 	  }
   
 	  OpenFile(fpath)
-	  console.log("Opening a file 🍎")
-	  console.log(fpath, isfolder)
   }
   
 
@@ -113,7 +104,7 @@
 		"filePdf":FileText,
   }
   
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keyup", (e) => {
 	  if(e.key == "Enter") {
 		  FirstStart()
 			backHistory = []
@@ -230,6 +221,7 @@
 				<div class="text">Desktop</div>
 			</div>
 		</div>
+		<div class="percent">Loading render: 0%</div>
 		<div class="right">
 			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· {APP_VERSION}</span></button>
 		</div>

@@ -341,6 +341,13 @@ main {
 			}
 		}
 	}
+
+	& > .percent {
+		color:$font-3;
+		font-size:13px;
+		line-height: 20px;
+	}
+
 	& > .right {
 		padding-right:10px;
 		& > .logo {

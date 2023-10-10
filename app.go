@@ -13,7 +13,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 )
+
+var CURRENT_PATH = ""
 
 // App struct
 type App struct {
@@ -37,6 +40,7 @@ func (a *App) Greet() {
 }
 
 func (a *App) ReadPath(path string) []models.SysFile {
+	CURRENT_PATH = path
 	returningFiles := make([]models.SysFile, 0)
 
 	files, err := ioutil.ReadDir(path)
@@ -123,16 +127,47 @@ func (a *App) LoadYourComputer() []models.LeftBarElement {
 	return pinnedFolders
 }
 func (a *App) GetStartingPath() string {
-	return filepath.Join(sysUtils.UserHomedir(), "Desktop")
+	CURRENT_PATH = sysUtils.UserHomedir()
+	return filepath.Join(CURRENT_PATH, "Desktop")
 }
 
-func (a *App) RenderPreviews(files []models.SysFile) []models.SysFile {
+// TODO: Save running batch jobs by unix in a map, so each job is independent, but can force other previous jobs
+// to be cancelled.
+var ACTIVE_JOB = -1
+var STOP_RENDERS = false
+
+func (a *App) RenderPreviews(files []models.SysFile, unixBeginning int) []models.SysFile {
+	if ACTIVE_JOB != -1 {
+		STOP_RENDERS = true
+		for ACTIVE_JOB != -1 {
+			fmt.Println("⌛ waiting for previous batch job to stop...")
+			time.Sleep(1 * time.Second)
+		}
+	}
+
+	ACTIVE_JOB = unixBeginning
+
+	fmt.Println("📸 starting batch render. ")
 	for i := 0; i < len(files); i++ {
+		if STOP_RENDERS {
+			// Remove ourselves from the list
+			fmt.Println("✅🛑 render was canceled.")
+
+			STOP_RENDERS = false
+			ACTIVE_JOB = -1
+
+			return files
+		}
+
 		if files[i].IconClass != "fileImage" {
 			continue
 		}
 		files[i].Preview = fileUtils.GetImagePreview(files[i].PathFull, files[i].Extension)
+		fmt.Printf("🏗️  rendered preview \"%s\"\n", files[i].Filename)
 	}
 
+	ACTIVE_JOB = -1
+
+	fmt.Println("✅ render batch ended.")
 	return files
 }
