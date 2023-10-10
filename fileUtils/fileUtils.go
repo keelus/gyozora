@@ -46,7 +46,7 @@ func ModifiedAt(fpath string) int {
 var fileTypeMap map[string]string
 
 func LoadJSON() {
-	jsonUbi := "./fileUtils/extensionData.json"
+	jsonUbi := "./extensionData.json"
 
 	jsonContent, err := ioutil.ReadFile(jsonUbi)
 	if err != nil {
