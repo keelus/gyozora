@@ -1,2 +1,1 @@
-build/* linguist-vendored
-*.nsi linguist-detectable=false
+build/** linguist-vendored
