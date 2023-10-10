@@ -48,7 +48,7 @@ func (a *App) ReadPath(path string) []models.SysFile {
 
 		name := file.Name()[:len(file.Name())-len(filepath.Ext(file.Name()))]
 		extension := strings.ToLower(filepath.Ext(file.Name()))
-		fullPath := path + "\\" + file.Name()
+		fullPath := filepath.Join(path, file.Name())
 
 		newFile := models.SysFile{
 			Name:        name,

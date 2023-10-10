@@ -8,6 +8,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
@@ -30,12 +31,23 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 1},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
 			&models.Kirina{},
 			&models.LeftBarElement{},
+		},
+		Windows: &windows.Options{
+			Theme: windows.SystemDefault,
+			CustomTheme: &windows.ThemeSettings{
+				DarkModeTitleBar:   windows.RGB(20, 20, 20),
+				DarkModeTitleText:  windows.RGB(255, 255, 255),
+				DarkModeBorder:     windows.RGB(20, 20, 20),
+				LightModeTitleBar:  windows.RGB(255, 255, 255),
+				LightModeTitleText: windows.RGB(0, 0, 0),
+				LightModeBorder:    windows.RGB(255, 255, 255),
+			},
 		},
 	})
 

@@ -238,7 +238,7 @@ main {
 		box-sizing: border-box;
 		overflow:hidden;
 		overflow-y:auto;
-		max-height:calc(100vh - 35px - 20px - 15px);
+		max-height:calc(100vh - 35px - 20px - 16px);
 
 		& > .file {
 			display:inline-flex;
@@ -398,3 +398,23 @@ main {
 }
 
 
+
+::-webkit-scrollbar {
+	width: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	background: $background-1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	background: $background-4; 
+	border-radius:4px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+	background: $background-5; 
+  }
