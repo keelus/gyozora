@@ -341,11 +341,24 @@ main {
 			}
 		}
 	}
+	& > .previewProgress {
+		display:flex;
+		gap:10px;
 
-	& > .percent {
-		color:$font-3;
-		font-size:13px;
-		line-height: 20px;
+		& > input {
+			width:200px;
+			color:red;
+
+			&::-webkit-slider-thumb {
+				opacity:0;
+			}
+		}
+
+		& > .percent {
+			color:$font-3;
+			font-size:13px;
+			line-height: 20px;
+		}
 	}
 
 	& > .right {

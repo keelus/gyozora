@@ -26,6 +26,6 @@ export function ReadPath(arg1) {
   return window['go']['main']['App']['ReadPath'](arg1);
 }
 
-export function RenderPreviews(arg1, arg2) {
-  return window['go']['main']['App']['RenderPreviews'](arg1, arg2);
+export function RenderPreview(arg1, arg2, arg3) {
+  return window['go']['main']['App']['RenderPreview'](arg1, arg2, arg3);
 }

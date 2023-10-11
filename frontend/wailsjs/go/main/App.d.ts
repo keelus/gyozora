@@ -14,4 +14,4 @@ export function OpenFile(arg1:string):Promise<void>;
 
 export function ReadPath(arg1:string):Promise<Array<models.SysFile>>;
 
-export function RenderPreviews(arg1:Array<models.SysFile>,arg2:number):Promise<Array<models.SysFile>>;
+export function RenderPreview(arg1:models.SysFile,arg2:number,arg3:number):Promise<models.SysFile>;

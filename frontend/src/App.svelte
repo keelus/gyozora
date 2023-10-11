@@ -1,9 +1,10 @@
 <script>
 	import logo from './assets/images/logo-universal.png'
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
-	import { ReadPath, RenderPreviews } from '../wailsjs/go/main/App.js';
+	import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
+  import { element } from 'svelte/internal';
 
 
 	let CURRENT_PATH = ""
@@ -28,6 +29,9 @@
 
 	let goBackEnabled = true;
 	let goForwardEnabled = true;
+
+	let previewProgress = "100"
+	let currentJob = -1
 
 	async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
 		console.log("Loading folder 📂 ...")
@@ -57,12 +61,44 @@
 		}))
 		contents = newElements
 
-		let previousPath = CURRENT_PATH // Path when job started
-		let contentsWithPreviews =  await RenderPreviews(directoryElements,  Math.floor(Date.now() / 1000))
-		if (previousPath == CURRENT_PATH)
-			contents = contentsWithPreviews
-		else console.log("👍 folder changed, ignoring render.")
 
+		let previewTotalCount = directoryElements.filter(element => element.iconClass == "fileImage").length
+
+		// let batchUnix = Math.floor(Date.now() / 1000)
+		let batchUnix = Math.floor(Math.random() * 999_999_999)
+		currentJob = batchUnix
+		previewProgress = "0"
+
+		if (previewTotalCount == 0) {
+			console.log("NO PREVIEW NEEDED")
+		} else {
+			let remaining = previewTotalCount
+			for(let i = 0; i < directoryElements.length; i++ ){
+				if(currentJob != batchUnix) {
+					console.log("COMPLETLY CANCELLED 0")
+					break
+				}
+				if(directoryElements[i].iconClass != "fileImage") continue;
+				console.log("Calling to render: '" + directoryElements[i].name + "'")
+				remaining -= 1 
+
+				let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
+				previewProgress = ((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2)
+
+				if(currentJob != batchUnix) {
+					console.log("COMPLETLY CANCELLED 1")
+					break
+				} 
+
+				contents[i] = newPreview
+			}
+		}
+
+
+		if(currentJob == batchUnix) {
+			console.log("FINISHED")
+			currentJob = -1
+		}
     }
 
   function elementClicked(fpath, isfolder) {
@@ -73,6 +109,17 @@
 	  OpenFile(fpath)
   }
   
+  function generateRandomHash(length) {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let hash = '';
+
+	for (let i = 0; i < length; i++) {
+		const randomIndex = Math.floor(Math.random() * characters.length);
+		hash += characters.charAt(randomIndex);
+	}
+
+	return hash;
+	}
 
   function GetIconByType(ftype) {
 	let icon = IconDictionary[ftype]
@@ -213,15 +260,18 @@
 			<ChevronRight class="icon"/>
 			<div class="element">
 				<Folder class="icon folder"/>
-				<div class="text">username</div>
+				<div class="text">hugom</div>
 			</div>
 			<ChevronRight class="icon"/>
 			<div class="element">
-				<Laptop2 class="icon folderDesktop"/>
-				<div class="text">Desktop</div>
+				<File class="icon folderDocuments"/>
+				<div class="text">Documents</div>
 			</div>
 		</div>
-		<div class="percent">Loading render: 0%</div>
+		<div class="previewProgress">
+			<input type="range" name="" id="" max="100" min="0" value={previewProgress} />
+			<div class="percent">Loading render: {previewProgress}%</div>
+		</div>
 		<div class="right">
 			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· {APP_VERSION}</span></button>
 		</div>

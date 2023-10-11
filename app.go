@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 )
 
 var CURRENT_PATH = ""
@@ -40,6 +39,7 @@ func (a *App) Greet() {
 }
 
 func (a *App) ReadPath(path string) []models.SysFile {
+	fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
 	returningFiles := make([]models.SysFile, 0)
 
@@ -133,41 +133,50 @@ func (a *App) GetStartingPath() string {
 
 // TODO: Save running batch jobs by unix in a map, so each job is independent, but can force other previous jobs
 // to be cancelled.
-var ACTIVE_JOB = -1
-var STOP_RENDERS = false
+var ACTIVE_JOBS = -1
 
-func (a *App) RenderPreviews(files []models.SysFile, unixBeginning int) []models.SysFile {
-	if ACTIVE_JOB != -1 {
-		STOP_RENDERS = true
-		for ACTIVE_JOB != -1 {
-			fmt.Println("⌛ waiting for previous batch job to stop...")
-			time.Sleep(1 * time.Second)
+func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining int) models.SysFile {
+	fmt.Printf("Received remainings: %d\n", remaining)
+
+	if ACTIVE_JOBS != -1 { // There is a currently active JOB
+		fmt.Println("There is one job in progress")
+		if ACTIVE_JOBS != unixBeginning { // If it's not our job, cancel the other job
+			fmt.Println("it's not ours")
+			ACTIVE_JOBS = unixBeginning
 		}
 	}
 
-	ACTIVE_JOB = unixBeginning
+	ACTIVE_JOBS = unixBeginning
 
-	fmt.Println("📸 starting batch render. ")
-	for i := 0; i < len(files); i++ {
-		if STOP_RENDERS {
-			// Remove ourselves from the list
-			fmt.Println("✅🛑 render was canceled.")
-
-			STOP_RENDERS = false
-			ACTIVE_JOB = -1
-
-			return files
-		}
-
-		if files[i].IconClass != "fileImage" {
-			continue
-		}
-		files[i].Preview = fileUtils.GetImagePreview(files[i].PathFull, files[i].Extension)
-		fmt.Printf("🏗️  rendered preview \"%s\"\n", files[i].Filename)
+	if ACTIVE_JOBS != unixBeginning { // We were cancelled
+		fmt.Println("We were cancelled!")
+		fmt.Println("✅🛑 render was canceled. 1")
+		return file
 	}
 
-	ACTIVE_JOB = -1
+	if file.IconClass != "fileImage" {
+		if remaining == 0 {
+			ACTIVE_JOBS = -1
+		}
+		return file
+	}
+
+	fmt.Println("📸 starting file preview render. ")
+
+	file.Preview = fileUtils.GetImagePreview(file.PathFull, file.Extension)
+
+	if ACTIVE_JOBS != unixBeginning {
+		fmt.Println("✅🛑 render was canceled. 2")
+		return file
+	}
+
+	// If we were not cancelled
+
+	if remaining == 0 {
+		fmt.Println("0 remaining!")
+		ACTIVE_JOBS = -1
+	}
 
 	fmt.Println("✅ render batch ended.")
-	return files
+	return file
 }
