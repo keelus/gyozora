@@ -10,19 +10,21 @@ To try kyozora, just download the repo, and rename appcache/appcache_empty.db to
 - [x] ~~.gif~~
 - [x] ~~.webp~~
 - [x] ~~.svg~~
-- [ ] ~~.heic~~
+- [ ] .heic
 ##### Videos
 - [ ] .mp4
 - [ ] .avi
 - [ ] .mkv
 - [ ] .mov
 - [ ] .wmv
+##### Audio
+- [ ] Album icons
 ##### Executables
-- [ ] .exe
-- [ ] .app
-
-
-#### Specific extension icons:
-- [ ] .pdf
+- [ ] .exe (win)
+- [ ] .app (macOS)
+##### Shortcuts
+- [ ] .lnk (win)
+- [ ] .alias (macOS)
+##### Others
 - [ ] .docx
-- [ ] ...
+- [ ] .pptx
