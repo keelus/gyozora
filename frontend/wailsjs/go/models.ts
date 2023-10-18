@@ -27,9 +27,9 @@ export namespace models {
 	    iconClass: string;
 	    isFolder: boolean;
 	    isHidden: boolean;
-	    createdAt: number;
 	    modifiedAt: number;
 	    preview: string;
+	    selected: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new SysFile(source);
@@ -47,9 +47,9 @@ export namespace models {
 	        this.iconClass = source["iconClass"];
 	        this.isFolder = source["isFolder"];
 	        this.isHidden = source["isHidden"];
-	        this.createdAt = source["createdAt"];
 	        this.modifiedAt = source["modifiedAt"];
 	        this.preview = source["preview"];
+	        this.selected = source["selected"];
 	    }
 	}
 

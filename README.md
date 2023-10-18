@@ -1,4 +1,5 @@
 # README
+To try kyozora, just download the repo, and rename appcache/appcache_empty.db to appcache/appcache.db
 ### Todo:
 #### File icon previews:
 - [x] ~~Ability to load a folder's files previews one by one (instead of batch method), with ability to stop each independent render anytime, if user changes the folder.~~

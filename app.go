@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"kyozora/appcache"
 	"kyozora/fileUtils"
 	"kyozora/models"
 	"kyozora/sysUtils"
@@ -71,7 +72,6 @@ func (a *App) ReadPath(path string) []models.SysFile {
 			IconClass:   fileType,
 			IsFolder:    file.IsDir(),
 			IsHidden:    fileUtils.IsHidden(fullPath),
-			CreatedAt:   fileUtils.CreatedAt(fullPath),
 			ModifiedAt:  fileUtils.ModifiedAt(fullPath),
 			Preview:     preview,
 		}
@@ -149,7 +149,6 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	ACTIVE_JOBS = unixBeginning
 
 	if ACTIVE_JOBS != unixBeginning { // We were cancelled
-		fmt.Println("We were cancelled!")
 		fmt.Println("✅🛑 render was canceled. 1")
 		return file
 	}
@@ -161,22 +160,56 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 		return file
 	}
 
-	fmt.Println("📸 starting file preview render. ")
+	imageIsCached := true
+	imageIsLatest := false
 
-	file.Preview = fileUtils.GetImagePreview(file.PathFull, file.Extension)
+	//Check on DB if exists:
+	b64img, imageIsLatest, err := appcache.GetCachedPreview(file)
+	if err != nil {
+		imageIsCached = false
+	}
+
+	if imageIsCached && imageIsLatest {
+		fmt.Printf("👁️ '%s' is cached & updated, ignoring.\n", file.Filename)
+		file.Preview = b64img
+		return file
+	}
+	// Image is not cached, or is not the latest version
+
+	fmt.Printf("📸 creating preview of '%s'\n", file.Filename)
+
+	generatedPreview := fileUtils.GetImagePreview(file.PathFull, file.Extension)
+	file.Preview = generatedPreview
 
 	if ACTIVE_JOBS != unixBeginning {
 		fmt.Println("✅🛑 render was canceled. 2")
 		return file
 	}
 
-	// If we were not cancelled
+	// Create or update preview in cache
+	if imageIsCached {
+		_, err = appcache.DBCache.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
+		if err != nil {
+			fmt.Printf("👁️❌ DB error updating cache preview of '%s', error: %s\n", file.Filename, err)
+		}
+	} else {
+		_, err = appcache.DBCache.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
+		if err != nil {
+			fmt.Printf("👁️❌ DB error creating cache preview of '%s', error: %s\n", file.Filename, err)
+		}
+	}
 
+	if ACTIVE_JOBS != unixBeginning {
+		fmt.Println("✅🛑 render was canceled. 3")
+		return file
+	}
+
+	// If we were not cancelled
 	if remaining == 0 {
-		fmt.Println("0 remaining!")
 		ACTIVE_JOBS = -1
 	}
 
 	fmt.Println("✅ render batch ended.")
+
 	return file
 }

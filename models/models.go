@@ -17,9 +17,9 @@ type SysFile struct {
 	IconClass   string `json:"iconClass"`
 	IsFolder    bool   `json:"isFolder"`
 	IsHidden    bool   `json:"isHidden"`
-	CreatedAt   int    `json:"createdAt"`
 	ModifiedAt  int    `json:"modifiedAt"`
 	Preview     string `json:"preview"`
+	Selected    bool   `json:"selected"`
 }
 type Kirina struct {
 	Name string `json:"name"`

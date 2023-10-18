@@ -5,7 +5,8 @@
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
   import { element } from 'svelte/internal';
-
+  import Icon from 'svelte-icons-pack/Icon.svelte';
+  import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
 
 	let CURRENT_PATH = ""
 
@@ -71,6 +72,7 @@
 
 		if (previewTotalCount == 0) {
 			console.log("NO PREVIEW NEEDED")
+			previewProgress = "100"
 		} else {
 			let remaining = previewTotalCount
 			for(let i = 0; i < directoryElements.length; i++ ){
@@ -85,12 +87,14 @@
 				let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
 				previewProgress = ((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2)
 
+				console.log(newPreview)
+
 				if(currentJob != batchUnix) {
 					console.log("COMPLETLY CANCELLED 1")
 					break
 				} 
 
-				contents[i] = newPreview
+				contents[i].preview = newPreview.preview
 			}
 		}
 
@@ -129,26 +133,53 @@
 	return icon
 
   }
-  const IconDictionary = {
-		"folder": Folder,
-		"folderDesktop": Laptop2,
-		"folderDownloads": FolderDown,
-		"folderDocuments": File,
-		"folderPictures": Image,
-		"folderMusic": Music,
-		"folderDisk": HardDrive,
+
+  // https://leshak.github.io/svelte-icons-pack/#/search/pdf
+
   
-		"file": File,
-		"fileImage": FileImage,
-		"fileAudio": FileAudio2,
-		"fileVideo": FileVideo2,
-		"fileCompressed": FileArchive,
-		"fileExecutable":AppWindow,
-		"fileExecutableScript":FileTerminal,
-		"fileFont":FileType,
-		"fileCode":FileCode,
-		"fileJson":FileJson,
-		"filePdf":FileText,
+  import AiFillFolder from "svelte-icons-pack/ai/AiFillFolder";
+  import AiOutlineDesktop from "svelte-icons-pack/ai/AiOutlineDesktop"; 
+  import AiFillFileImage from "svelte-icons-pack/ai/AiFillFileImage";
+  import AiFillFileZip from "svelte-icons-pack/ai/AiFillFileZip";
+
+  import HiOutlineDocument from "svelte-icons-pack/hi/HiOutlineDocument";
+  import HiSolidFolderDownload from "svelte-icons-pack/hi/HiSolidFolderDownload";
+
+  import RiMediaMusic2Fill from "svelte-icons-pack/ri/RiMediaMusic2Fill";
+  import RiMediaFilmFill from "svelte-icons-pack/ri/RiMediaFilmFill";
+  import RiBusinessWindowFill from "svelte-icons-pack/ri/RiBusinessWindowFill";
+
+  import BsFileEarmarkMusicFill from "svelte-icons-pack/bs/BsFileEarmarkMusicFill";
+  import BsTerminalFill from "svelte-icons-pack/bs/BsTerminalFill";
+  import BsFileEarmarkFontFill from "svelte-icons-pack/bs/BsFileEarmarkFontFill";
+  import BsFileEarmarkCodeFill from "svelte-icons-pack/bs/BsFileEarmarkCodeFill";
+
+  import FiHardDrive from "svelte-icons-pack/fi/FiHardDrive";
+
+  import IoDocument from "svelte-icons-pack/io/IoDocument";
+  
+  import SiJson from "svelte-icons-pack/si/SiJson";
+  
+  const IconDictionary = {
+		"folder":  AiFillFolder ,
+		"folderDesktop": AiOutlineDesktop,
+		"folderDownloads": HiSolidFolderDownload,
+		"folderDocuments": HiOutlineDocument,
+		"folderPictures": AiFillFileImage,
+		"folderMusic": RiMediaMusic2Fill,
+		"folderDisk": FiHardDrive,
+  
+		"file": IoDocument,
+		"fileImage": AiFillFileImage,
+		"fileAudio": BsFileEarmarkMusicFill,
+		"fileVideo": RiMediaFilmFill,
+		"fileCompressed": AiFillFileZip,
+		"fileExecutable":RiBusinessWindowFill,
+		"fileExecutableScript":BsTerminalFill,
+		"fileFont":BsFileEarmarkFontFill,
+		"fileCode":BsFileEarmarkCodeFill,
+		"fileJson":SiJson,
+		"filePdf":AiFillFilePdf,
   }
   
   document.addEventListener("keyup", (e) => {
@@ -209,8 +240,8 @@
 					{/if}
 					  {#each pinnedFolders as content}
 						  <button class="element" on:click={() => elementClicked(content.path, true)}>
-							  <svelte:component this={IconDictionary[content.type]} class="icon {content.type}"/>
-							  <div class="text">{content.name}</div>
+								<Icon src={IconDictionary[content.type]} className="icon {content.type}"/>
+								<div class="text">{content.name}</div>
 						  </button>
 					  {/each}
 				  </div>
@@ -223,7 +254,7 @@
 					{/if}
 					{#each yourComputer as content}
 						<button class="element" on:click={() => elementClicked(content.path, true)}>
-							<svelte:component this={IconDictionary[content.type]} class="icon {content.type}"/>
+							<Icon src={IconDictionary[content.type]} className="icon {content.type}"/>
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
@@ -235,14 +266,16 @@
 					<div class="emptyMessage">No files found here 👎</div>
 				{/if}
 			  {#each contents as content}
-				  <button class="file" title="{content.filename}" on:click={() => elementClicked(content.pathfull, content.isFolder)}>
-					{#if content.iconClass == "fileImage" && content.preview != ""}
-						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
-					{:else}
-						<svelte:component this={GetIconByType(content.iconClass)} class="icon {content.iconClass}"/>
+					{#if content != undefined}
+						<button class="file" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)}>
+							{#if content.iconClass == "fileImage" && content.preview != ""}
+								<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
+							{:else}
+								<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass}"/>
+							{/if}
+							<div class="text">{content ? content.filename : "Error"}</div>
+						</button>
 					{/if}
-					  <div class="text">{content.filename}</div>
-				  </button>
 			  {/each}
 		  </div>
 	  </div>
@@ -268,10 +301,14 @@
 				<div class="text">Documents</div>
 			</div>
 		</div>
-		<div class="previewProgress">
-			<input type="range" name="" id="" max="100" min="0" value={previewProgress} />
-			<div class="percent">Loading render: {previewProgress}%</div>
-		</div>
+
+		{#if previewProgress != "100" && previewProgress != "100.00"}
+			<div class="previewProgress">
+				<input type="range" name="" id="" max="100" min="0" value={previewProgress} />
+				<div class="percent">Loading render: {previewProgress}%</div>
+			</div>
+		{/if}
+
 		<div class="right">
 			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· {APP_VERSION}</span></button>
 		</div>

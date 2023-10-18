@@ -108,7 +108,6 @@ main {
 		}
 
 		&:not(:disabled):hover {
-			cursor:pointer;
 			background:$background-5;
 		}
 
@@ -277,7 +276,6 @@ main {
 			}
 
 			&:hover {
-				cursor: pointer;
 				background:$background-4;
 			}
 		}
@@ -388,20 +386,19 @@ main {
 
 // File custom icons:
 .icon {
-	color:$font-1;
 	stroke-width: 2.5px;
-	color:$background-3;
+	fill:$background-3;
 	
-	&.home {color:$font-1;}
+	&.home {fill:$font-1;}
 
-	&.folderDesktop {color:$blue-2;}
-	&.folderDownloads {color:$green-1;}
-	&.folderDocuments {color:orange;}
-	&.folderPictures {color:lightgreen;}
-	&.folderMusic {color:deeppink;}
+	&.folderDesktop {fill:$blue-2;}
+	&.folderDownloads, &.folderDownloads * {fill:$green-1;stroke-width: 3px;}
+	&.folderDocuments {color:orange;fill:orange;}
+	&.folderPictures {fill:lightgreen;}
+	&.folderMusic {fill:deeppink;}
 	&.folderVideo {fill:rgb(183, 0, 255);}
-	&.folderDisk {color:$font-1;}
-	&.folder {color:#ffd768;fill:#ffd768;}
+	&.folderDisk {fill:$font-1;}
+	&.folder {fill:#ffd768;}
 
 
 	&.fileImage {fill:lightgreen;}
@@ -411,9 +408,9 @@ main {
 	&.fileExecutable {fill:$font-1;}
 	&.fileExecutableScript {fill:$font-1;}
 	&.fileFont {fill:$font-1;}
-	&.filePdf {fill:$font-1;}
+	&.filePdf {fill:rgb(196, 20, 20);}
 	&.fileCode {fill:$font-1;}
-	&.fileJson {fill:$font-1;}
+	&.fileJson {fill:$font-1;width:70px !important;}
 	&.file {fill:$font-1;}
 }
 

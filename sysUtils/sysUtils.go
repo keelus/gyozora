@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"path"
 	"runtime"
 )
 
@@ -33,4 +34,14 @@ func UserRoots() []string {
 	}
 
 	return disks
+}
+
+func CacheDir() string {
+	if runtime.GOOS != "windows" {
+		fmt.Println("Only windows supported for now.")
+		os.Exit(1)
+	}
+
+	cacheDir, _ := os.UserCacheDir()
+	return path.Join(cacheDir, "kyozora")
 }
