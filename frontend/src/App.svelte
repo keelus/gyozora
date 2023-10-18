@@ -34,10 +34,13 @@
 	let previewProgress = "100"
 	let currentJob = -1
 
+	let selectedFiles = []
+
 	async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
 		console.log("Loading folder 📂 ...")
 		// Check if we are able to open directory
 		contents = []
+		selectedFiles = []
 		const directoryElements = await ReadPath(newPath)
 		// if(error != null) ...
     	
@@ -211,6 +214,20 @@
 
 	LoadFolder(newPath, false, true, false)
 }
+
+function addToSelected(ev, file) {
+	if(ev.ctrlKey) {
+		let currentSelectedFiles = selectedFiles
+		currentSelectedFiles.push(file)
+		selectedFiles = currentSelectedFiles
+	} else {
+		selectedFiles = [file]
+	}
+}
+
+document.addEventListener("keyup", (e) => {
+	if(e.key == "Escape") selectedFiles = []
+})
   
   
   </script>
@@ -265,9 +282,9 @@
 				{#if contents.length == 0}
 					<div class="emptyMessage">No files found here 👎</div>
 				{/if}
-			  {#each contents as content}
+				{#each contents as content}
 					{#if content != undefined}
-						<button class="file" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)}>
+						<button class="file {selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:click={e => addToSelected(e, content)}>
 							{#if content.iconClass == "fileImage" && content.preview != ""}
 								<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
 							{:else}

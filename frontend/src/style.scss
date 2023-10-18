@@ -8,9 +8,8 @@ $background-4:#262626;
 $background-5:#363636;
 $background-6:#585858;
 
-$blue-1:#0095f6;
-$blue-2:#3797f0;
-$blue-3:#1877f2;
+$blue-1:rgb(55, 151, 240);
+$blue-select:rgba(55, 151, 240, .5);
 $green-1:#CED74D;
 $green-2:#a0b913;
 $green-3:#859916;
@@ -256,6 +255,8 @@ main {
 			background:none;
 			border:none;
 			transition: all .15s;
+			outline:none;
+			border:1px solid transparent;
 
 			& > .icon {
 				width:90px;
@@ -275,8 +276,13 @@ main {
 				text-overflow: ellipsis;
 			}
 
-			&:hover {
-				background:$background-4;
+			&:hover, &:focus {
+				background:$background-3;
+			}
+
+			&.selected {
+				background:rgba($font-1, .2);
+				border-color: rgba($font-1, .2);
 			}
 		}
 
@@ -391,7 +397,7 @@ main {
 	
 	&.home {fill:$font-1;}
 
-	&.folderDesktop {fill:$blue-2;}
+	&.folderDesktop {fill:$blue-1;}
 	&.folderDownloads, &.folderDownloads * {fill:$green-1;stroke-width: 3px;}
 	&.folderDocuments {color:orange;fill:orange;}
 	&.folderPictures {fill:lightgreen;}
