@@ -107,6 +107,33 @@ func LoadJSON() {
 	fmt.Println("👍 File type JSON loaded")
 }
 
+// TODO FILE PREVIEWS:
+// VIDEO
+//
+//	.mp4
+//	.avi
+//	.mkv
+//	.mov
+//	.wmv
+//
+// AUDIO
+//
+//	Album icons
+//
+// EXECUTABLES
+//
+//	.exe (win)
+//	.app (macOS)
+//
+// SHORTCUTS
+//
+//	.lnk (win)
+//	.alias (macOS)
+//
+// OTHERS
+//
+//	.docx
+//	.pptx
 func GetImagePreview(fpath string, extension string) string {
 	content, err := os.Open(fpath)
 	if err != nil {
