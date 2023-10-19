@@ -2,7 +2,7 @@ package appcache
 
 import (
 	"fmt"
-	"kyozora/models"
+	"gyozora/models"
 	"os"
 
 	"github.com/jmoiron/sqlx"

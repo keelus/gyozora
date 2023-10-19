@@ -1,4 +1,4 @@
-module kyozora
+module gyozora
 
 go 1.18
 

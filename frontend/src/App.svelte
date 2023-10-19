@@ -216,10 +216,47 @@
 }
 
 function addToSelected(ev, file) {
+	console.log(ev.shiftKey)
 	if(ev.ctrlKey) {
 		let currentSelectedFiles = selectedFiles
 		currentSelectedFiles.push(file)
 		selectedFiles = currentSelectedFiles
+	} else if (ev.shiftKey) {
+		if(selectedFiles.length == 0){ // No item has been selected previously 
+			let newSelectedFiles = []
+			for(let i = 0; i < contents.length; i++) {
+				newSelectedFiles.push(contents[i])
+				if(contents[i] == file) // Select from file 0 to selected with mayus
+					break;
+			}
+			selectedFiles = newSelectedFiles
+		} else { // Else if one or more files has been selected, we will select from the last one to the current selected
+			// HERE DO:
+			// Check if the newly selected is the same as the last selected. If is, then do nothing.
+			// If is not, check if the newly selected is before the first selected element, if is, then select from this one to that.
+			// If is not, check if is one of the currently selected ones. If is, then we select from the first originally selected
+			// to this one, removing the rest.
+			// If is not, then we select from the last of selected to this file.
+			
+			
+			let newSelectedFiles = selectedFiles
+			let isAfter = false
+			for(let i = 0; i < contents.length; i++) {
+				if(contents[i] == selectedFiles[selectedFiles.length-1])
+					isAfter = true
+				if(!isAfter) continue
+
+				newSelectedFiles.push(contents[i])
+				if(contents[i] == file) // Select from file 0 to selected with mayus
+					break;
+			}
+			selectedFiles = newSelectedFiles
+
+		}
+
+		// TODO: Handle if previous one is selected
+
+
 	} else {
 		selectedFiles = [file]
 	}
@@ -327,7 +364,7 @@ document.addEventListener("keyup", (e) => {
 		{/if}
 
 		<div class="right">
-			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/kyozora")}>Kyozora <span>· {APP_VERSION}</span></button>
+			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}>Gyozora <span>· {APP_VERSION}</span></button>
 		</div>
 	  </div>
 	<!-- <img alt="Wails logo" id="logo" src="{logo}">

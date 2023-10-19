@@ -2,9 +2,9 @@ package main
 
 import (
 	"embed"
-	"kyozora/appcache"
-	"kyozora/fileUtils"
-	"kyozora/models"
+	"gyozora/appcache"
+	"gyozora/fileUtils"
+	"gyozora/models"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -25,7 +25,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "kyozora",
+		Title:     "gyozora",
 		Width:     1024,
 		Height:    768,
 		MinWidth:  1024,

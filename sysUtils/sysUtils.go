@@ -43,5 +43,5 @@ func CacheDir() string {
 	}
 
 	cacheDir, _ := os.UserCacheDir()
-	return path.Join(cacheDir, "kyozora")
+	return path.Join(cacheDir, "gyozora")
 }
