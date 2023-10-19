@@ -2,11 +2,10 @@
 	import logo from './assets/images/logo-universal.png'
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
 	import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
-	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow } from 'lucide-svelte';
+	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow, Menu } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
-  import { element } from 'svelte/internal';
-  import Icon from 'svelte-icons-pack/Icon.svelte';
-  import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
+	import Icon from 'svelte-icons-pack/Icon.svelte';
+	import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
 
 	let CURRENT_PATH = ""
 
@@ -84,13 +83,11 @@
 					break
 				}
 				if(directoryElements[i].iconClass != "fileImage") continue;
-				console.log("Calling to render: '" + directoryElements[i].name + "'")
+				// console.log("Calling to render: '" + directoryElements[i].name + "'")
 				remaining -= 1 
 
 				let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
 				previewProgress = ((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2)
-
-				console.log(newPreview)
 
 				if(currentJob != batchUnix) {
 					console.log("COMPLETLY CANCELLED 1")
@@ -103,7 +100,7 @@
 
 
 		if(currentJob == batchUnix) {
-			console.log("FINISHED")
+			console.log("Preview render finished")
 			currentJob = -1
 		}
     }
@@ -216,7 +213,15 @@
 }
 
 function addToSelected(ev, file) {
-	console.log(ev.shiftKey)
+	if(ev.button != 0 && ev.button != 2) return;
+
+	if(ev.button == 2) {
+		if(selectedFiles.includes(file)) return; // If right clicked multiple, do nothing
+		let newSelectedFiles = [file] // if right clicked one that is not selected, then we select this
+		selectedFiles = newSelectedFiles
+		return
+	}
+
 	if(ev.ctrlKey && !ev.shiftKey) {
 		let newSelectedFiles = []
 		if(selectedFiles.includes(file)){
@@ -292,13 +297,127 @@ document.addEventListener("keyup", (e) => {
 
 let fileBrowser;
 $: if (fileBrowser) {
-	fileBrowser.addEventListener("click", (e) => {
-		let clickedFile = e.target.closest("button.file") !== null
-		if(clickedFile) return;
-		selectedFiles = []
+	fileBrowser.addEventListener("mouseup", (e) => {
+		if(e.button == 0){ // Left click
+			closeFileContextMenu()
+			let clickedFile = e.target.closest("button.file") !== null
+			if(clickedFile) return;
+			selectedFiles = []
+		} else if (e.button == 2) { // Right click
+			let clickedFile = e.target.closest("button.file")
+			openFileContextMenu({x:e.clientX, y:e.clientY}, clickedFile)
+		}
 	})
 }
-  
+
+
+let fileContextMenuOptions = {
+	add:{show:true,disabled:false},
+	open:{show:true,disabled:false},
+	cut:{show:true,disabled:false},
+	copy:{show:true,disabled:false},
+	paste:{show:true,disabled:false},
+	rename:{show:true,disabled:false},
+	delete:{show:true,disabled:false},
+	properties:{show:true,disabled:false}
+}
+let fileContextMenu;
+$: if (fileContextMenu) {
+	// fileBrowser.addEventListener("click", (e) => {
+	// 	let clickedFile = e.target.closest("button.file") !== null
+	// 	if(clickedFile) return;
+	// 	selectedFiles = []
+	// })
+}
+async function openFileContextMenu(coordinates, file) {
+	fileContextMenu.classList.add("opened")
+
+	if(file == null) { // Right clicked in the body
+		await setContextMenuOptions("none")
+		selectedFiles = []
+	} else {
+		if(selectedFiles.length <= 1){
+			await setContextMenuOptions("single")
+		} else {
+			await setContextMenuOptions("multiple")
+		}
+	}
+	
+	const minMarginX = 20;
+	const minMarginY = 40;
+
+	let windowW = window.innerWidth;
+	let windowH = window.innerHeight;
+
+	let dX = coordinates.x || 0;
+	let dY = coordinates.y || 0;
+
+	let offX = dX + fileContextMenu.clientWidth + minMarginX - windowW;
+	let offY = dY + fileContextMenu.clientHeight + minMarginY - windowH;
+
+	let finalX = offX > 0 ? windowW - fileContextMenu.clientWidth - minMarginX : dX;
+	let finalY = offY > 0 ? windowH - fileContextMenu.clientHeight - minMarginY : dY;
+
+	fileContextMenu.style.left = `${finalX}px`
+	fileContextMenu.style.top = `${finalY}px`
+
+}
+function closeFileContextMenu() {
+	fileContextMenu.classList.remove("opened")
+}
+
+async function setContextMenuOptions(mode) {
+	fileContextMenuOptions = {	
+		add:{show:true,disabled:false},
+		open:{show:true,disabled:false},
+		cut:{show:true,disabled:false},
+		copy:{show:true,disabled:false},
+		paste:{show:true,disabled:false},
+		rename:{show:true,disabled:false},
+		delete:{show:true,disabled:false},
+		properties:{show:true,disabled:false}
+	}
+
+	if(mode == "") return;
+
+	if(mode == "none") {
+		fileContextMenuOptions.open.show = false;
+		fileContextMenuOptions.cut.show = false;
+		fileContextMenuOptions.copy.show = false;
+		fileContextMenuOptions.paste.disabled = true; // Check clipboard
+		fileContextMenuOptions.rename.show = false;
+		fileContextMenuOptions.delete.show = false;
+		return
+	}
+
+	if(mode == "single") {
+		fileContextMenuOptions.add.show = false;
+		fileContextMenuOptions.paste.disabled = true; // Check clipboard
+		return
+	}
+
+	if(mode == "multiple") {
+		fileContextMenuOptions.add.show = false;
+		fileContextMenuOptions.open.show = false;
+		fileContextMenuOptions.paste.disabled = true; // Check clipboard
+		fileContextMenuOptions.rename.show = false;
+		fileContextMenuOptions.properties.show = false;
+	}
+	
+}
+
+
+import IoAddCircleSharp from "svelte-icons-pack/io/IoAddCircleSharp";
+import FiExternalLink from "svelte-icons-pack/fi/FiExternalLink";
+import BsScissors from "svelte-icons-pack/bs/BsScissors";
+import FaCopy from "svelte-icons-pack/fa/FaCopy";
+import FaSolidPaste from "svelte-icons-pack/fa/FaSolidPaste";
+import BsInputCursorText from "svelte-icons-pack/bs/BsInputCursorText";
+import FiTrash from "svelte-icons-pack/fi/FiTrash";
+import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
+
+document.addEventListener('contextmenu', event => event.preventDefault());
+
   </script>
   
   <main>
@@ -347,22 +466,60 @@ $: if (fileBrowser) {
 				  </div>
 			  </div>
 		  </div>
-		  <div class="fileBrowser" bind:this={fileBrowser}>
-				{#if contents.length == 0}
-					<div class="emptyMessage">No files found here 👎</div>
+
+		<div class="fileBrowser" bind:this={fileBrowser}>
+			<div class="fileContextMenu" bind:this={fileContextMenu}>
+				<button class:disabled={fileContextMenuOptions.add.disabled} class:hide={!fileContextMenuOptions.add.show} class="element">
+					<Icon src={IoAddCircleSharp} className="icon add" />
+					<span class="text">Add</span>
+				</button>
+				<button class:disabled={fileContextMenuOptions.open.disabled} class:hide={!fileContextMenuOptions.open.show} class="element">
+					<Icon src={FiExternalLink} className="icon open" />
+					<span class="text">Open</span>
+				</button>
+				<div class:hide={!fileContextMenuOptions.add.show && !fileContextMenuOptions.open.show} class="divider"></div>
+				<button class:disabled={fileContextMenuOptions.cut.disabled} class:hide={!fileContextMenuOptions.cut.show} class="element">
+					<Icon src={BsScissors} className="icon cut" />
+					<span class="text">Cut</span>
+				</button>
+				<button class:disabled={fileContextMenuOptions.copy.disabled} class:hide={!fileContextMenuOptions.copy.show} class="element">
+					<Icon src={FaCopy} className="icon copy" />
+					<span class="text">Copy</span>
+				</button>
+				<button class:disabled={fileContextMenuOptions.paste.disabled} class:hide={!fileContextMenuOptions.paste.show} class="element"> <!-- Allow only if clicked on body, not on file -->
+					<Icon src={FaSolidPaste} className="icon paste" />
+					<span class="text">Paste</span> 
+				</button>
+				<div class:hide={!fileContextMenuOptions.rename.show && !fileContextMenuOptions.delete.show} class="divider"></div>
+				<button class:disabled={fileContextMenuOptions.rename.disabled} class:hide={!fileContextMenuOptions.rename.show} class="element">
+					<Icon src={BsInputCursorText} className="icon rename" />
+					<span class="text">Rename</span>
+				</button>
+				<button class:disabled={fileContextMenuOptions.delete.disabled} class:hide={!fileContextMenuOptions.delete.show} class="element">
+					<Icon src={FiTrash} className="icon delete" />
+					<span class="text">Delete</span>
+				</button>
+				<div class:hide={!fileContextMenuOptions.properties.show} class="divider"></div>
+				<button class:disabled={fileContextMenuOptions.properties.disabled} class:hide={!fileContextMenuOptions.properties.show} class="element">
+					<Icon src={RiDocumentFileSearchLine} className="icon properties" />
+					<span class="text">Properties</span>
+				</button>
+			</div>
+			{#if contents.length == 0}
+				<div class="emptyMessage">No files found here 👎</div>
+			{/if}
+			{#each contents as content}
+				{#if content != undefined}
+					<button class="file {selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
+						{#if content.iconClass == "fileImage" && content.preview != ""}
+							<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
+						{:else}
+							<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass}"/>
+						{/if}
+						<div class="text">{content ? content.filename : "Error"}</div>
+					</button>
 				{/if}
-				{#each contents as content}
-					{#if content != undefined}
-						<button class="file {selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:click={e => addToSelected(e, content)}>
-							{#if content.iconClass == "fileImage" && content.preview != ""}
-								<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
-							{:else}
-								<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass}"/>
-							{/if}
-							<div class="text">{content ? content.filename : "Error"}</div>
-						</button>
-					{/if}
-			  {/each}
+			{/each}
 		  </div>
 	  </div>
 	  <div class="bottom">
