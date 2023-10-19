@@ -217,11 +217,23 @@
 
 function addToSelected(ev, file) {
 	console.log(ev.shiftKey)
-	if(ev.ctrlKey) {
-		let currentSelectedFiles = selectedFiles
-		currentSelectedFiles.push(file)
-		selectedFiles = currentSelectedFiles
-	} else if (ev.shiftKey) {
+	if(ev.ctrlKey && !ev.shiftKey) {
+		let newSelectedFiles = []
+		if(selectedFiles.includes(file)){
+			for(let i = 0; i < selectedFiles.length; i++) {
+				if(selectedFiles[i] != file)
+				newSelectedFiles.push(selectedFiles[i])
+			}
+		}
+		else {
+			newSelectedFiles = selectedFiles
+			newSelectedFiles.push(file)
+		}
+		selectedFiles = newSelectedFiles
+		return
+	}
+
+	if (ev.shiftKey) {
 		if(selectedFiles.length == 0){ // No item has been selected previously 
 			let newSelectedFiles = []
 			for(let i = 0; i < contents.length; i++) {
@@ -230,42 +242,62 @@ function addToSelected(ev, file) {
 					break;
 			}
 			selectedFiles = newSelectedFiles
-		} else { // Else if one or more files has been selected, we will select from the last one to the current selected
-			// HERE DO:
+			return
+		} else { 
+			// Else if one or more files has been selected, we will select from the last one to the current selected
+			let firstSelectedIndex = contents.indexOf(selectedFiles[0])
+			let lastSelectedIndex = contents.indexOf(selectedFiles[selectedFiles.length-1])
+			let selectedIndex = contents.indexOf(file)
+
 			// Check if the newly selected is the same as the last selected. If is, then do nothing.
+			if(selectedIndex == lastSelectedIndex) return;
+
 			// If is not, check if the newly selected is before the first selected element, if is, then select from this one to that.
+			if(selectedIndex < firstSelectedIndex) {
+				let newSelectedFiles = []
+				for(let i = selectedIndex; i <= firstSelectedIndex; i++) {
+					newSelectedFiles.push(contents[i])
+				}
+				selectedFiles = newSelectedFiles
+				return
+			}
+
 			// If is not, check if is one of the currently selected ones. If is, then we select from the first originally selected
 			// to this one, removing the rest.
+			if(selectedFiles.includes(file)) {
+				let newSelectedFiles = []
+				for(let i = firstSelectedIndex; i <= selectedIndex; i++) {
+					newSelectedFiles.push(contents[i])
+				}
+				selectedFiles = newSelectedFiles
+				return
+			}
+			
 			// If is not, then we select from the last of selected to this file.
-			
-			
 			let newSelectedFiles = selectedFiles
-			let isAfter = false
-			for(let i = 0; i < contents.length; i++) {
-				if(contents[i] == selectedFiles[selectedFiles.length-1])
-					isAfter = true
-				if(!isAfter) continue
-
+			for(let i = lastSelectedIndex + 1; i <= selectedIndex; i++) {
 				newSelectedFiles.push(contents[i])
-				if(contents[i] == file) // Select from file 0 to selected with mayus
-					break;
 			}
 			selectedFiles = newSelectedFiles
-
+			return
 		}
-
-		// TODO: Handle if previous one is selected
-
-
-	} else {
-		selectedFiles = [file]
 	}
+
+	selectedFiles = [file]
 }
 
 document.addEventListener("keyup", (e) => {
 	if(e.key == "Escape") selectedFiles = []
 })
-  
+
+let fileBrowser;
+$: if (fileBrowser) {
+	fileBrowser.addEventListener("click", (e) => {
+		let clickedFile = e.target.closest("button.file") !== null
+		if(clickedFile) return;
+		selectedFiles = []
+	})
+}
   
   </script>
   
@@ -315,7 +347,7 @@ document.addEventListener("keyup", (e) => {
 				  </div>
 			  </div>
 		  </div>
-		  <div class="fileBrowser">
+		  <div class="fileBrowser" bind:this={fileBrowser}>
 				{#if contents.length == 0}
 					<div class="emptyMessage">No files found here 👎</div>
 				{/if}
