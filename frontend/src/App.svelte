@@ -522,6 +522,9 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 			{/each}
 		  </div>
 	  </div>
+	  <div class="loader">
+		<div class="progress" style="--loadProgress:{previewProgress == "100" || previewProgress == "100.00" ? "0" : previewProgress}%;"></div>
+	</div>
 	  <div class="bottom">
 		<div class="breadcrumb">
 			<div class="element">
@@ -546,10 +549,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 		</div>
 
 		{#if previewProgress != "100" && previewProgress != "100.00"}
-			<div class="previewProgress">
-				<input type="range" name="" id="" max="100" min="0" value={previewProgress} />
-				<div class="percent">Loading render: {previewProgress}%</div>
-			</div>
+			<div class="percent">Loading preview: {previewProgress}%</div>
 		{/if}
 
 		<div class="right">

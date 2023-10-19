@@ -61,7 +61,6 @@ input[type=text]::selection {
 }
 
 main {
-	background:red;
 	height:100%;
 	width:100%;
 
@@ -302,6 +301,18 @@ main {
 
 }
 
+.loader {
+	width:100%;
+
+	& > .progress {
+		width:var(--loadProgress, 0) !important;
+		height:2px;
+		background:$blue-1;
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
+	}
+}
+
 .bottom {
 	background:$background-1; /*t*/
 	width:100%;
@@ -346,24 +357,10 @@ main {
 			}
 		}
 	}
-	& > .previewProgress {
-		display:flex;
-		gap:10px;
-
-		& > input {
-			width:200px;
-			color:red;
-
-			&::-webkit-slider-thumb {
-				opacity:0;
-			}
-		}
-
-		& > .percent {
-			color:$font-3;
-			font-size:13px;
-			line-height: 20px;
-		}
+	& > .percent {
+		color:$font-3;
+		font-size:13px;
+		line-height: 20px;
 	}
 
 	& > .right {
