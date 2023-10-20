@@ -1,216 +1,214 @@
 <script>
-	import favicon from "./assets/icons/favicon.ico"
-	import appicon from './assets/icons/gyozora.svg'
+import favicon from "./assets/icons/favicon.ico"
+import appicon from './assets/icons/gyozora.svg'
 
-	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
-	import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
-	import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
-	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
-	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
+import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
+import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
+import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
+import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
+import Icon from 'svelte-icons-pack/Icon.svelte';
+import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
 
+
+
+console.log(appicon)
+
+let CURRENT_PATH = ""
+
+let contents = []
+let pinnedFolders = []
+let yourComputer = []
+
+document.addEventListener("DOMContentLoaded", () => {
+	FirstStart()
+})
+
+async function FirstStart() {
+	CURRENT_PATH = await GetStartingPath()
+	pinnedFolders = await LoadPinnedFolders()
+	yourComputer = await LoadYourComputer()
+	LoadFolder(CURRENT_PATH, false, false, true)
+}
+
+let backHistory = []
+let forwardHistory = []
+
+let goBackEnabled = true;
+let goForwardEnabled = true;
+
+let previewProgress = "100"
+let currentJob = -1
+
+let selectedFiles = []
+
+async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
+	console.log("Loading folder 📂 ...")
+	// Check if we are able to open directory
+	contents = []
+	selectedFiles = []
+	const directoryElements = await ReadPath(newPath)
+	// if(error != null) ...
 	
-
-	console.log(appicon)
-
-	let CURRENT_PATH = ""
-
-	let contents = []
-	let pinnedFolders = []
-	let yourComputer = []
-  
-	document.addEventListener("DOMContentLoaded", () => {
-	  FirstStart()
-	})
-  
-	async function FirstStart() {
-		CURRENT_PATH = await GetStartingPath()
-		pinnedFolders = await LoadPinnedFolders()
-		yourComputer = await LoadYourComputer()
-		LoadFolder(CURRENT_PATH, false, false, true)
+	if(!ignorePathHistory) {
+		if(goingBack && !goingForward) {
+			forwardHistory.push(CURRENT_PATH);
+		} else if (!goingBack && goingForward) {
+			backHistory.push(CURRENT_PATH);
+		} else if (!goingBack && !goingForward) {
+			backHistory.push(CURRENT_PATH);
+			forwardHistory = [];
+		}
 	}
 
-	let backHistory = []
-	let forwardHistory = []
+	goBackEnabled = backHistory.length > 0
+	goForwardEnabled = forwardHistory.length > 0
+	
+	CURRENT_PATH = newPath;
 
-	let goBackEnabled = true;
-	let goForwardEnabled = true;
-
-	let previewProgress = "100"
-	let currentJob = -1
-
-	let selectedFiles = []
-
-	async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
-		console.log("Loading folder 📂 ...")
-		// Check if we are able to open directory
-		contents = []
-		selectedFiles = []
-		const directoryElements = await ReadPath(newPath)
-		// if(error != null) ...
-    	
-    	if(!ignorePathHistory) {
-        	if(goingBack && !goingForward) {
-    			forwardHistory.push(CURRENT_PATH);
-        	} else if (!goingBack && goingForward) {
-        		backHistory.push(CURRENT_PATH);
-        	} else if (!goingBack && !goingForward) {
-        		backHistory.push(CURRENT_PATH);
-    			forwardHistory = [];
-        	}
-    	}
-
-    	goBackEnabled = backHistory.length > 0
-    	goForwardEnabled = forwardHistory.length > 0
-    	
-    	CURRENT_PATH = newPath;
-
-		const newElements = directoryElements.map((element) => ({
-			...element,
-		}))
-		contents = newElements
+	const newElements = directoryElements.map((element) => ({
+		...element,
+	}))
+	contents = newElements
 
 
-		let previewTotalCount = directoryElements.filter(element => element.iconClass == "fileImage").length
+	let previewTotalCount = directoryElements.filter(element => element.iconClass == "fileImage").length
 
-		// let batchUnix = Math.floor(Date.now() / 1000)
-		let batchUnix = Math.floor(Math.random() * 999_999_999)
-		currentJob = batchUnix
-		previewProgress = "0"
+	// let batchUnix = Math.floor(Date.now() / 1000)
+	let batchUnix = Math.floor(Math.random() * 999_999_999)
+	currentJob = batchUnix
+	previewProgress = "0"
 
-		if (previewTotalCount == 0) {
-			console.log("NO PREVIEW NEEDED")
-			previewProgress = "100"
-		} else {
-			let remaining = previewTotalCount
-			for(let i = 0; i < directoryElements.length; i++ ){
-				if(currentJob != batchUnix) {
-					console.log("COMPLETLY CANCELLED 0")
-					break
-				}
-				if(directoryElements[i].iconClass != "fileImage") continue;
-				// console.log("Calling to render: '" + directoryElements[i].name + "'")
-				remaining -= 1 
-
-				let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
-				previewProgress = ((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2)
-
-				if(currentJob != batchUnix) {
-					console.log("COMPLETLY CANCELLED 1")
-					break
-				} 
-
-				contents[i].preview = newPreview.preview
+	if (previewTotalCount == 0) {
+		console.log("NO PREVIEW NEEDED")
+		previewProgress = "100"
+	} else {
+		let remaining = previewTotalCount
+		for(let i = 0; i < directoryElements.length; i++ ){
+			if(currentJob != batchUnix) {
+				console.log("COMPLETLY CANCELLED 0")
+				break
 			}
+			if(directoryElements[i].iconClass != "fileImage") continue;
+			// console.log("Calling to render: '" + directoryElements[i].name + "'")
+			remaining -= 1 
+
+			let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
+			previewProgress = ((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2)
+
+			if(currentJob != batchUnix) {
+				console.log("COMPLETLY CANCELLED 1")
+				break
+			} 
+
+			contents[i].preview = newPreview.preview
 		}
-
-
-		if(currentJob == batchUnix) {
-			console.log("Preview render finished")
-			currentJob = -1
-		}
-    }
-
-  function elementClicked(fpath, isfolder) {
-	  if(isfolder){
-		  return LoadFolder(fpath, false, false, false)
-	  }
-  
-	  OpenFile(fpath)
-  }
-  
-  function generateRandomHash(length) {
-	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	let hash = '';
-
-	for (let i = 0; i < length; i++) {
-		const randomIndex = Math.floor(Math.random() * characters.length);
-		hash += characters.charAt(randomIndex);
 	}
 
-	return hash;
+
+	if(currentJob == batchUnix) {
+		console.log("Preview render finished")
+		currentJob = -1
+	}
 	}
 
-  function GetIconByType(ftype) {
+function elementClicked(fpath, isfolder) {
+	if(isfolder){
+		return LoadFolder(fpath, false, false, false)
+	}
+
+	OpenFile(fpath)
+}
+
+function GetIconByType(ftype) {
 	let icon = IconDictionary[ftype]
 	if (ftype === undefined)
 		return "file";
 
 	return icon
 
-  }
+}
+// https://leshak.github.io/svelte-icons-pack/#/search/pdf
 
-  // https://leshak.github.io/svelte-icons-pack/#/search/pdf
+// File & folder specific icons:
+import AiFillFolder from "svelte-icons-pack/ai/AiFillFolder";
+import AiOutlineDesktop from "svelte-icons-pack/ai/AiOutlineDesktop"; 
+import AiFillFileImage from "svelte-icons-pack/ai/AiFillFileImage";
+import AiFillFileZip from "svelte-icons-pack/ai/AiFillFileZip";
 
-  
-  import AiFillFolder from "svelte-icons-pack/ai/AiFillFolder";
-  import AiOutlineDesktop from "svelte-icons-pack/ai/AiOutlineDesktop"; 
-  import AiFillFileImage from "svelte-icons-pack/ai/AiFillFileImage";
-  import AiFillFileZip from "svelte-icons-pack/ai/AiFillFileZip";
+import HiOutlineDocument from "svelte-icons-pack/hi/HiOutlineDocument";
+import HiSolidFolderDownload from "svelte-icons-pack/hi/HiSolidFolderDownload";
 
-  import HiOutlineDocument from "svelte-icons-pack/hi/HiOutlineDocument";
-  import HiSolidFolderDownload from "svelte-icons-pack/hi/HiSolidFolderDownload";
+import RiMediaMusic2Fill from "svelte-icons-pack/ri/RiMediaMusic2Fill";
+import RiMediaFilmFill from "svelte-icons-pack/ri/RiMediaFilmFill";
+import RiBusinessWindowFill from "svelte-icons-pack/ri/RiBusinessWindowFill";
 
-  import RiMediaMusic2Fill from "svelte-icons-pack/ri/RiMediaMusic2Fill";
-  import RiMediaFilmFill from "svelte-icons-pack/ri/RiMediaFilmFill";
-  import RiBusinessWindowFill from "svelte-icons-pack/ri/RiBusinessWindowFill";
+import BsFileEarmarkMusicFill from "svelte-icons-pack/bs/BsFileEarmarkMusicFill";
+import BsTerminalFill from "svelte-icons-pack/bs/BsTerminalFill";
+import BsFileEarmarkFontFill from "svelte-icons-pack/bs/BsFileEarmarkFontFill";
+import BsFileEarmarkCodeFill from "svelte-icons-pack/bs/BsFileEarmarkCodeFill";
 
-  import BsFileEarmarkMusicFill from "svelte-icons-pack/bs/BsFileEarmarkMusicFill";
-  import BsTerminalFill from "svelte-icons-pack/bs/BsTerminalFill";
-  import BsFileEarmarkFontFill from "svelte-icons-pack/bs/BsFileEarmarkFontFill";
-  import BsFileEarmarkCodeFill from "svelte-icons-pack/bs/BsFileEarmarkCodeFill";
+import FiHardDrive from "svelte-icons-pack/fi/FiHardDrive";
 
-  import FiHardDrive from "svelte-icons-pack/fi/FiHardDrive";
+import IoDocument from "svelte-icons-pack/io/IoDocument";
 
-  import IoDocument from "svelte-icons-pack/io/IoDocument";
-  
-  import SiJson from "svelte-icons-pack/si/SiJson";
-  
-  const IconDictionary = {
-		"folder":  AiFillFolder ,
-		"folderDesktop": AiOutlineDesktop,
-		"folderDownloads": HiSolidFolderDownload,
-		"folderDocuments": HiOutlineDocument,
-		"folderPictures": AiFillFileImage,
-		"folderMusic": RiMediaMusic2Fill,
-		"folderDisk": FiHardDrive,
-  
-		"file": IoDocument,
-		"fileImage": AiFillFileImage,
-		"fileAudio": BsFileEarmarkMusicFill,
-		"fileVideo": RiMediaFilmFill,
-		"fileCompressed": AiFillFileZip,
-		"fileExecutable":RiBusinessWindowFill,
-		"fileExecutableScript":BsTerminalFill,
-		"fileFont":BsFileEarmarkFontFill,
-		"fileCode":BsFileEarmarkCodeFill,
-		"fileJson":SiJson,
-		"filePdf":AiFillFilePdf,
-  }
-  
-  document.addEventListener("keyup", (e) => {
-	  if(e.key == "Enter") {
-		  FirstStart()
-			backHistory = []
-			forwardHistory = []
-			goBackEnabled = false
-			goForwardEnabled = false
-	  }
-  })
-  document.addEventListener("mousedown", (e) => {
-	 if(e.button == 3) buttonGoBack()
-	 else if(e.button == 4) buttonGoForward()
-  })
+import SiJson from "svelte-icons-pack/si/SiJson";
 
-  function buttonGoBack() {
+// Context menu specific icons:
+import IoAddCircleSharp from "svelte-icons-pack/io/IoAddCircleSharp";
+import FiExternalLink from "svelte-icons-pack/fi/FiExternalLink";
+import BsScissors from "svelte-icons-pack/bs/BsScissors";
+import FaCopy from "svelte-icons-pack/fa/FaCopy";
+import FaSolidPaste from "svelte-icons-pack/fa/FaSolidPaste";
+import BsInputCursorText from "svelte-icons-pack/bs/BsInputCursorText";
+import FiTrash from "svelte-icons-pack/fi/FiTrash";
+import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
+
+
+const IconDictionary = {
+	"folder":  AiFillFolder ,
+	"folderDesktop": AiOutlineDesktop,
+	"folderDownloads": HiSolidFolderDownload,
+	"folderDocuments": HiOutlineDocument,
+	"folderPictures": AiFillFileImage,
+	"folderMusic": RiMediaMusic2Fill,
+	"folderDisk": FiHardDrive,
+
+	"file": IoDocument,
+	"fileImage": AiFillFileImage,
+	"fileAudio": BsFileEarmarkMusicFill,
+	"fileVideo": RiMediaFilmFill,
+	"fileCompressed": AiFillFileZip,
+	"fileExecutable":RiBusinessWindowFill,
+	"fileExecutableScript":BsTerminalFill,
+	"fileFont":BsFileEarmarkFontFill,
+	"fileCode":BsFileEarmarkCodeFill,
+	"fileJson":SiJson,
+	"filePdf":AiFillFilePdf,
+}
+
+document.addEventListener("keyup", (e) => {
+	if(e.key == "Enter") {
+		FirstStart()
+		backHistory = []
+		forwardHistory = []
+		goBackEnabled = false
+		goForwardEnabled = false
+	}
+})
+document.addEventListener("mousedown", (e) => {
+	if(e.button == 3) buttonGoBack()
+	else if(e.button == 4) buttonGoForward()
+})
+
+function buttonGoBack() {
 	if(backHistory.length == 0) return console.log("✋ Can't go back")
 	console.log("👈 going back")
 	let newPath = backHistory.pop()
 
 	LoadFolder(newPath, true, false, false)
-  }
-  
-  function buttonGoForward() {
+}
+
+function buttonGoForward() {
 	if(forwardHistory.length == 0) return console.log("✋ Can't go forward")
 	console.log("going forward 👉")
 	let newPath = forwardHistory.pop()
@@ -412,54 +410,44 @@ async function setContextMenuOptions(mode) {
 	
 }
 
-
-import IoAddCircleSharp from "svelte-icons-pack/io/IoAddCircleSharp";
-import FiExternalLink from "svelte-icons-pack/fi/FiExternalLink";
-import BsScissors from "svelte-icons-pack/bs/BsScissors";
-import FaCopy from "svelte-icons-pack/fa/FaCopy";
-import FaSolidPaste from "svelte-icons-pack/fa/FaSolidPaste";
-import BsInputCursorText from "svelte-icons-pack/bs/BsInputCursorText";
-import FiTrash from "svelte-icons-pack/fi/FiTrash";
-import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
-
 document.addEventListener('contextmenu', event => event.preventDefault());
-  </script>
-  
+	</script>
+	
 	<link rel="shortcut icon" href={favicon} type="image/x-icon">
-  <main>
-	  <div class="toolbar"></div>
-	  <div class="pathbar">
-		  <button class="backButton" disabled={!goBackEnabled} on:click={buttonGoBack}><ArrowLeft class="icon"/></button>
-		  <button class="forwardButton" disabled={!goForwardEnabled} on:click={buttonGoForward}><ArrowRight class="icon" /></button>
-		  <input class="path" placeholder="Current path..." value={CURRENT_PATH} disabled/>
-		  <input class="search" placeholder="Search here" type="text"/>
-	  </div>
-	  <div class="mainContent">
-		  <div class="navPane"><div class="section">
-			  <div class="elements">
-				  <div class="element">
-					  <Home class="icon home"/>
-					  <div class="text">Home</div>
-				  </div>
-			  </div>
-		  </div>
-			  <div class="section">
-				  <div class="title"><span class="text">Pinned folder</span></div>
-				  <div class="elements">
+	<main>
+		<div class="toolbar"></div>
+		<div class="pathbar">
+			<button class="backButton" disabled={!goBackEnabled} on:click={buttonGoBack}><ArrowLeft class="icon"/></button>
+			<button class="forwardButton" disabled={!goForwardEnabled} on:click={buttonGoForward}><ArrowRight class="icon" /></button>
+			<input class="path" placeholder="Current path..." value={CURRENT_PATH} disabled/>
+			<input class="search" placeholder="Search here" type="text"/>
+		</div>
+		<div class="mainContent">
+			<div class="navPane"><div class="section">
+				<div class="elements">
+					<div class="element">
+						<Home class="icon home"/>
+						<div class="text">Home</div>
+					</div>
+				</div>
+			</div>
+				<div class="section">
+					<div class="title"><span class="text">Pinned folder</span></div>
+					<div class="elements">
 					{#if pinnedFolders.length == 0}
 						<div class="emptyMessage">No pinned folders found 👎</div>
 					{/if}
-					  {#each pinnedFolders as content}
-						  <button class="element" on:click={() => elementClicked(content.path, true)}>
+						{#each pinnedFolders as content}
+							<button class="element" on:click={() => elementClicked(content.path, true)}>
 								<Icon src={IconDictionary[content.type]} className="icon {content.type}"/>
 								<div class="text">{content.name}</div>
-						  </button>
-					  {/each}
-				  </div>
-			  </div>
-			  <div class="section">
-				  <div class="title"><span class="text">Your computer</span></div>
-				  <div class="elements">
+							</button>
+						{/each}
+					</div>
+				</div>
+				<div class="section">
+					<div class="title"><span class="text">Your computer</span></div>
+					<div class="elements">
 					{#if yourComputer.length == 0}
 						<div class="emptyMessage">No system roots/disks found 👎</div>
 					{/if}
@@ -469,9 +457,9 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
-				  </div>
-			  </div>
-		  </div>
+					</div>
+				</div>
+			</div>
 
 		<div class="fileBrowser" bind:this={fileBrowser}>
 			<div class="fileContextMenu" bind:this={fileContextMenu}>
@@ -526,12 +514,12 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 					</button>
 				{/if}
 			{/each}
-		  </div>
-	  </div>
-	  <div class="loader">
+			</div>
+		</div>
+		<div class="loader">
 		<div class="progress" style="--loadProgress:{previewProgress == "100" || previewProgress == "100.00" ? "0" : previewProgress}%;"></div>
 	</div>
-	  <div class="bottom">
+		<div class="bottom">
 		<div class="breadcrumb">
 			<div class="element">
 				<HardDrive class="icon folderDisk"/>
@@ -561,16 +549,16 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 		<div class="right">
 			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
 		</div>
-	  </div>
+		</div>
 	<!-- <img alt="Wails logo" id="logo" src="{logo}">
 	<div class="result" id="result">{resultText}</div>
 	<div class="input-box" id="input">
-	  <h1>This is a test! Value 👉"{name}"👈</h1>
-	  <input autocomplete="off" bind:value={name} class="input" id="name" type="text"/>
-	  <button class="btn" on:click={greet}>Greet</button>
+		<h1>This is a test! Value 👉"{name}"👈</h1>
+		<input autocomplete="off" bind:value={name} class="input" id="name" type="text"/>
+		<button class="btn" on:click={greet}>Greet</button>
 	</div> -->
-  </main>
-  
-  <style>
-  </style>
-  
+	</main>
+	
+	<style>
+	</style>
+	
