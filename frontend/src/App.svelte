@@ -1,7 +1,8 @@
-<script>
-// Wails/backend functions
+<script lang="ts">
+// Wails/backend functions & models
 import { GetStartingPath, LoadPinnedFolders, LoadYourComputer } from '../wailsjs/go/main/App.js'
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
+import type { models } from 'wailsjs/go/models.js';
 
 // Gyozora icons
 import favicon from "./assets/icons/favicon.ico"
@@ -13,17 +14,17 @@ import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } fr
 
 // Gyozora browser, icons & logic
 import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress } from "./store";
-import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager.js";
+import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu } from "./contextMenu";
 
 
+let pinnedFolders : models.LeftBarElement[] = []
+let yourComputer : models.LeftBarElement[] = []
 
-let pinnedFolders = []
-let yourComputer = []
+let fileBrowser : HTMLDivElement;
+let fileContextMenu : HTMLDivElement;
 
-let fileBrowser;
-let fileContextMenu;
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());
@@ -42,14 +43,15 @@ async function FirstStart() {
 
 
 $: if (fileBrowser) {
-	fileBrowser.addEventListener("mouseup", (e) => {
+	fileBrowser.addEventListener("mouseup", (e : MouseEvent) => {
+		let clickedTarget = e.target as HTMLElement;
+		if(!clickedTarget) return;
+		let clickedFile = clickedTarget.closest("button.file")
+		
 		if(e.button == 0){ // Left click
 			closeFileContextMenu(fileContextMenu)
-			let clickedFile = e.target.closest("button.file") !== null
-			if(clickedFile) return;
-			$selectedFiles = []
+			if(!clickedFile) $selectedFiles = []
 		} else if (e.button == 2) { // Right click
-			let clickedFile = e.target.closest("button.file")
 			openFileContextMenu(fileContextMenu, {x:e.clientX, y:e.clientY}, clickedFile)
 		}
 	})

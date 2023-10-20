@@ -21,6 +21,7 @@ type SysFile struct {
 	Preview     string `json:"preview"`
 	Selected    bool   `json:"selected"`
 }
+
 type Kirina struct {
 	Name string `json:"name"`
 	Age  uint8  `json:"age"`

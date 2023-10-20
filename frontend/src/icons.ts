@@ -36,7 +36,7 @@ import FiTrash from "svelte-icons-pack/fi/FiTrash";
 import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
 
 
-export const IconDictionary = {
+export const IconDictionary : {[key:string]:any} = {
 	"folder":  AiFillFolder ,
 	"folderDesktop": AiOutlineDesktop,
 	"folderDownloads": HiSolidFolderDownload,
@@ -67,7 +67,7 @@ export const IconDictionary = {
 	"ctxMenuProperties": RiDocumentFileSearchLine,
 }
 
-export function GetIconByType(ftype) {
+export function GetIconByType(ftype : string) {
 	let icon = IconDictionary[ftype]
 	if (ftype === undefined)
 		return "file";

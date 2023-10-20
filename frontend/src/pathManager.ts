@@ -1,10 +1,11 @@
-import { contents, selectedFiles } from "./store"
 import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
+import type { models } from "wailsjs/go/models";
 import { OpenFile } from '../wailsjs/go/main/App.js'
+import { contents, selectedFiles } from "./store"
 import { get } from "svelte/store";
 import { CURRENT_PATH, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
 
-export async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
+export async function LoadFolder(newPath : string, goingBack : boolean, goingForward : boolean, ignorePathHistory : boolean) {
 	console.log("Loading folder 📂 ...")
 	console.log(newPath)
 	// Check if we are able to open directory
@@ -91,7 +92,7 @@ export async function LoadFolder(newPath, goingBack, goingForward, ignorePathHis
 	previewProgress.set("100")
 }
 
-export function elementClicked(fpath, isfolder) {
+export function elementClicked(fpath : string, isfolder : boolean) {
 	if(isfolder){
 		return LoadFolder(fpath, false, false, false)
 	}
@@ -103,9 +104,9 @@ export function buttonGoBack() {
 	if(get(backHistory).length == 0) return console.log("✋ Can't go back")
 	console.log("👈 going back")
 
-	let newPath;
+	let newPath : string = "";
 	backHistory.update(bHistory => {
-		if(bHistory.length > 0) newPath = bHistory.pop();
+		if(bHistory.length > 0) newPath = bHistory.pop() || "";
 		return bHistory
 	})
 
@@ -116,9 +117,9 @@ export function buttonGoForward() {
 	if(get(forwardHistory).length == 0) return console.log("✋ Can't go forward")
 	console.log("going forward 👉")
 	
-	let newPath;
+	let newPath : string = "";
 	forwardHistory.update(fHistory => {
-		if(fHistory.length > 0) newPath = fHistory.pop();
+		if(fHistory.length > 0) newPath = fHistory.pop() || "";
 		return fHistory
 	})
 
@@ -126,7 +127,7 @@ export function buttonGoForward() {
 }
 
 
-export function addToSelected(ev, file) {
+export function addToSelected(ev : MouseEvent, file : models.SysFile) {
 	if(ev.button != 0 && ev.button != 2) return;
 
 	if(ev.button == 2) {
