@@ -1,5 +1,7 @@
 <script>
+	import favicon from "./assets/icons/favicon.ico"
 	import appicon from './assets/icons/gyozora.svg'
+	
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
 	import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow, Menu } from 'lucide-svelte';
@@ -421,9 +423,9 @@ import FiTrash from "svelte-icons-pack/fi/FiTrash";
 import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
 
 document.addEventListener('contextmenu', event => event.preventDefault());
-
   </script>
   
+	<link rel="shortcut icon" href={favicon} type="image/x-icon">
   <main>
 	  <div class="toolbar"></div>
 	  <div class="pathbar">
