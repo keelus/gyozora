@@ -9,7 +9,7 @@ require (
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef
 	github.com/wailsapp/wails/v2 v2.6.0
 	golang.org/x/image v0.5.0
-	golang.org/x/sys v0.8.0
+	golang.org/x/sys v0.13.0
 	modernc.org/sqlite v1.26.0
 )
 
