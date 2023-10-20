@@ -1,0 +1,206 @@
+import { contents, selectedFiles } from "./store"
+import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
+import { OpenFile } from '../wailsjs/go/main/App.js'
+import { get } from "svelte/store";
+import { CURRENT_PATH, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
+
+export async function LoadFolder(newPath, goingBack, goingForward, ignorePathHistory) {
+	console.log("Loading folder 📂 ...")
+	console.log(newPath)
+	// Check if we are able to open directory
+	contents.set([])
+	selectedFiles.set([])
+	const directoryElements = await ReadPath(newPath)
+	// if(error != null) ...
+	
+	if(!ignorePathHistory) {
+		if(goingBack && !goingForward) {
+			forwardHistory.update(fHistory => {
+				fHistory.push(get(CURRENT_PATH))
+				return fHistory
+			})
+		} else if (!goingBack && goingForward) {
+			backHistory.update(bHistory => {
+				bHistory.push(get(CURRENT_PATH))
+				return bHistory
+			})
+		} else if (!goingBack && !goingForward) {
+			backHistory.update(bHistory => {
+				bHistory.push(get(CURRENT_PATH))
+				return bHistory
+			})
+			forwardHistory.set([])
+		}
+	}
+
+	goBackEnabled.set(get(backHistory).length > 0);
+	goForwardEnabled.set(get(forwardHistory).length > 0);
+
+	CURRENT_PATH.set(newPath)
+
+	const newElements = directoryElements.map((element) => ({
+		...element,
+	}))
+	contents.set(newElements)
+
+
+	let previewTotalCount = directoryElements.filter(element => element.iconClass == "fileImage").length
+
+	// let batchUnix = Math.floor(Date.now() / 1000)
+	let batchUnix = Math.floor(Math.random() * 999_999_999)
+	currentJob.set(batchUnix)
+
+	previewProgress.set("0")
+
+	if (previewTotalCount == 0) {
+		console.log("NO PREVIEW NEEDED")
+	} else {
+		let remaining = previewTotalCount
+		console.log("Current job: ", get(currentJob))
+
+		for(let i = 0; i < directoryElements.length; i++ ){
+			if(get(currentJob) != batchUnix) {
+				console.log("COMPLETLY CANCELLED 0")
+				break
+			}
+
+			if(directoryElements[i].iconClass != "fileImage") continue;
+			// console.log("Calling to render: '" + directoryElements[i].name + "'")
+			remaining -= 1 
+
+			let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
+			previewProgress.set(((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2))
+
+			if(get(currentJob) != batchUnix) {
+				console.log("COMPLETLY CANCELLED !")
+				break
+			}
+
+			contents.update(cts => {
+				if(cts[i] === undefined) return cts
+				cts[i].preview = newPreview.preview
+				return cts
+			})
+		}
+	}
+	
+	if(get(currentJob) == batchUnix) {
+		console.log("Preview render finished")
+		currentJob.set(-1)
+	}
+	previewProgress.set("100")
+}
+
+export function elementClicked(fpath, isfolder) {
+	if(isfolder){
+		return LoadFolder(fpath, false, false, false)
+	}
+
+	OpenFile(fpath)
+}
+
+export function buttonGoBack() {
+	if(get(backHistory).length == 0) return console.log("✋ Can't go back")
+	console.log("👈 going back")
+
+	let newPath;
+	backHistory.update(bHistory => {
+		if(bHistory.length > 0) newPath = bHistory.pop();
+		return bHistory
+	})
+
+	return LoadFolder(newPath, true, false, false)
+}
+
+export function buttonGoForward() {
+	if(get(forwardHistory).length == 0) return console.log("✋ Can't go forward")
+	console.log("going forward 👉")
+	
+	let newPath;
+	forwardHistory.update(fHistory => {
+		if(fHistory.length > 0) newPath = fHistory.pop();
+		return fHistory
+	})
+
+	return LoadFolder(newPath, false, true, false)
+}
+
+
+export function addToSelected(ev, file) {
+	if(ev.button != 0 && ev.button != 2) return;
+
+	if(ev.button == 2) {
+		if(get(selectedFiles).includes(file)) return; // If right clicked multiple, do nothing
+		let newSelectedFiles = [file] // if right clicked one that is not selected, then we select this
+		selectedFiles.set(newSelectedFiles)
+		return
+	}
+
+	if(ev.ctrlKey && !ev.shiftKey) {
+		let newSelectedFiles = []
+		if(get(selectedFiles).includes(file)){
+			for(let i = 0; i < get(selectedFiles).length; i++) {
+				if(get(selectedFiles)[i] != file)
+				newSelectedFiles.push(get(selectedFiles)[i])
+			}
+		}
+		else {
+			newSelectedFiles = get(selectedFiles)
+			newSelectedFiles.push(file)
+		}
+		selectedFiles.set(newSelectedFiles)
+		return
+	}
+
+	if (ev.shiftKey) {
+		if(get(selectedFiles).length == 0){ // No item has been selected previously 
+			let newSelectedFiles = []
+			for(let i = 0; i < get(contents).length; i++) {
+				newSelectedFiles.push(get(contents)[i])
+				if(get(contents)[i] == file) // Select from file 0 to selected with mayus
+					break;
+			}
+			selectedFiles.set(newSelectedFiles)
+			return
+		} else { 
+			// Else if one or more files has been selected, we will select from the last one to the current selected
+			let firstSelectedIndex = get(contents).indexOf(get(selectedFiles)[0])
+			let lastSelectedIndex = get(contents).indexOf(get(selectedFiles)[get(selectedFiles).length-1])
+			let selectedIndex = get(contents).indexOf(file)
+
+			// Check if the newly selected is the same as the last selected. If is, then do nothing.
+			if(selectedIndex == lastSelectedIndex) return;
+
+			// If is not, check if the newly selected is before the first selected element, if is, then select from this one to that.
+			if(selectedIndex < firstSelectedIndex) {
+				let newSelectedFiles = []
+				for(let i = selectedIndex; i <= firstSelectedIndex; i++) {
+					newSelectedFiles.push(get(contents)[i])
+				}
+				selectedFiles.set(newSelectedFiles)
+				return
+			}
+
+			// If is not, check if is one of the currently selected ones. If is, then we select from the first originally selected
+			// to this one, removing the rest.
+			if(get(selectedFiles).includes(file)) {
+				let newSelectedFiles = []
+				for(let i = firstSelectedIndex; i <= selectedIndex; i++) {
+					newSelectedFiles.push(get(contents)[i])
+				}
+				selectedFiles.set(newSelectedFiles)
+				return
+			}
+			
+			// If is not, then we select from the last of selected to this file.
+			let newSelectedFiles = get(selectedFiles)
+			for(let i = lastSelectedIndex + 1; i <= selectedIndex; i++) {
+				newSelectedFiles.push(get(contents)[i])
+			}
+			selectedFiles.set(newSelectedFiles)
+			return
+		}
+	}
+
+	selectedFiles.set([file])
+}
