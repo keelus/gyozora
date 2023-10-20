@@ -1,6 +1,14 @@
+# Build binaries
 build/bin
+
+# Node modules
 node_modules
+
+# Frontend related
 frontend/dist
 frontend/.vscode
 frontend/*.mjs
+frontend/package.json.md5
+
+# Local cache
 data/appcache.db
