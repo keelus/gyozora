@@ -6,6 +6,7 @@ node_modules
 
 # Frontend related
 frontend/dist
+frontend/wailsjs
 frontend/.vscode
 frontend/*.mjs
 frontend/package.json.md5
