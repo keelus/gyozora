@@ -516,7 +516,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 				{#if content != undefined}
 					<button class="file {selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
 						{#if content.iconClass == "fileImage" && content.preview != ""}
-							<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;" ></div>
+							<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 						{:else}
 							<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass}"/>
 						{/if}

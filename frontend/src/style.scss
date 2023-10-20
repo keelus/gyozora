@@ -236,7 +236,7 @@ main {
 		box-sizing: border-box;
 		overflow:hidden;
 		overflow-y:auto;
-		max-height:calc(100vh - 35px - 20px - 16px);
+		max-height:calc(100vh - 35px - 20px - 16px - 2px);
 
 		& > .file {
 			display:inline-flex;
