@@ -94,6 +94,12 @@ Section
     !insertmacro wails.writeUninstaller
 SectionEnd
 
+Section
+SetOutPath "$INSTDIR\data\"
+File "/oname=appcache.db" "..\..\..\data\appcache_empty.db"
+File "..\..\..\data\extensionData.json"
+SectionEnd
+
 Section "uninstall" 
     !insertmacro wails.setShellContext
 

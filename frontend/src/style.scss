@@ -365,19 +365,31 @@ main {
 
 	& > .right {
 		padding-right:10px;
+		height:100%;
 		& > .logo {
-			color:$font-1;
-			font-weight: 600;
-			font-size:14px;
+			display:flex;
+			align-items: center;
 			background:none;
 			border:none;
+			height:100%;
+			transition: opacity .1s linear;
 
 			&:hover {
 				cursor:pointer;
-				text-decoration: underline;
+				opacity:.8;
 			}
 
-			& > span {
+			& > img.appicon {
+				height:100%;
+			}
+
+			& > span.appname {
+				color:$font-1;
+				font-weight: 600;
+				font-size:14px;
+			}
+
+			& > span.version {
 				margin-left:3px;
 				color:$font-3;
 				font-weight: 300;

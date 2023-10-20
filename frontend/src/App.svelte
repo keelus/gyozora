@@ -1,11 +1,15 @@
 <script>
-	import logo from './assets/images/logo-universal.png'
+	import appicon from './assets/icons/gyozora.svg'
 	import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, OpenFile } from '../wailsjs/go/main/App.js'
 	import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
 	import { Home, Laptop2, FolderDown, File, Image, Music, HardDrive, ArrowLeft, ArrowRight, FileImage, FileVideo2, FileAudio2, Folder, ChevronRight, FileArchive, FileTerminal, FileType, FileText, HelpCircleIcon, FileCode, FileJson, AppWindow, Menu } from 'lucide-svelte';
 	import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillFilePdf from "svelte-icons-pack/ai/AiFillFilePdf"; 
+
+	
+
+	console.log(appicon)
 
 	let CURRENT_PATH = ""
 
@@ -553,7 +557,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 		{/if}
 
 		<div class="right">
-			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}>Gyozora <span>· {APP_VERSION}</span></button>
+			<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
 		</div>
 	  </div>
 	<!-- <img alt="Wails logo" id="logo" src="{logo}">

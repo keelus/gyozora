@@ -3,4 +3,4 @@ node_modules
 frontend/dist
 frontend/.vscode
 frontend/*.mjs
-appcache/appcache.db
+data/appcache.db

@@ -24,7 +24,7 @@ func ConnectDB() {
 		os.Exit(-1)
 	}
 
-	DBPath := AbsPath + "/appcache/appcache.db"
+	DBPath := AbsPath + "/data/appcache.db"
 
 	DBCache, err = sqlx.Open("sqlite", DBPath)
 	if err != nil {
