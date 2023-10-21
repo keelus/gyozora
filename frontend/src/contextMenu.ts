@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions } from "./store";
 
-export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element) {
+export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
 
 	if(file == null) { // Right clicked in the body

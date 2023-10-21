@@ -49,12 +49,12 @@ $: if (fileBrowser) {
 		let clickedTarget = e.target as HTMLElement;
 		if(!clickedTarget) return;
 		let clickedFile = clickedTarget.closest("button.file")
-		if(!clickedFile) return;
 		
 		if(e.button == 0){ // Left click
 			closeFileContextMenu(fileContextMenu)
 			if(!clickedFile) $selectedFiles = []
 		} else if (e.button == 2) { // Right click
+			if(!clickedFile) return;
 			openFileContextMenu(fileContextMenu, {x:e.clientX, y:e.clientY}, clickedFile)
 		}
 	})
