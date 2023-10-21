@@ -37,7 +37,6 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
-			&models.Kirina{},
 			&models.LeftBarElement{},
 		},
 		Windows: &windows.Options{
