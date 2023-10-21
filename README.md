@@ -1,10 +1,23 @@
 <p align="center">
   <img src=".github/gyozora.png" alt="Logo" height=150 />
 </p>
+
 <h1 align="center">Gyozora</h1>
+
+<p align="center">
+  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/⚖️ license-GNU%20GPL%20v3.0-blue" alt="MIT License"></a>
+  <img src="https://img.shields.io/github/stars/keelus/gyozora?color=red&logo=github" alt="stars">
+  <img src="https://img.shields.io/badge/🚧 In%20development-FCBA03" alt="In development" />
+</p>
+
 <h2>About gyozora</h2>
-Gyozora is a fast and lightweight file explorer in early development. It currently supports Windows, but will be available for macOS & Linux systems in the future. <br /><br />
-There are lots of important functionalities that haven't been developed yet. <br /><br />
+Gyozora is a fast and lightweight file explorer in early development. It currently supports Windows & macOS and will be fully compatible with Linux in future versions. <br /><br />
+
+```
+Note: Gyozora it's currently unstable and there are lots of important functionalities that
+haven't been developed yet.
+```
+<br />
 
 ### To try it
 Just clone the repo, and rename `appcache/appcache_empty.db` to `appcache/appcache.db`. <br />
@@ -15,6 +28,11 @@ wails dev
 ```
 
 ### 🥟📂 Important incoming features:
+
+#### 💻 OS compatibility:
+- [ ] ~~🪟 Windows (10 & 11)~~
+- [ ] 🍎 macOS (arm64[m1, m2] & amd64[intel])
+- [ ] 🐧 Linux (amd64, arm64 & arm)
 
 #### 📄 Context menu/file related:
 - [x] ~~➕ Add/create a file~~
@@ -37,10 +55,6 @@ wails dev
   - [x] ~~🇺🇸 English~~
   - [ ] 🇪🇸 Spanish
 - [ ] ℹ️ Error messages/toasts
-- [ ] 💻 Full OS compatibility
-  - [ ] ~~🪟 Windows (10 & 11)~~
-  - [ ] 🍎 macOS (arm64[m1, m2] & amd64[intel])
-  - [ ] 🐧 Linux (amd64, arm64 & arm)
 
 <br />
 Made by <a href="https://github.com/keelus">keelus</a> ✌️
