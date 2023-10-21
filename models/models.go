@@ -21,3 +21,13 @@ type SysFile struct {
 	Preview     string `json:"preview"`
 	Selected    bool   `json:"selected"`
 }
+
+type ActionResponse struct {
+	Error SimpleError `json:"error"`
+	File  SysFile     `json:"file"`
+}
+
+type SimpleError struct {
+	Status bool   `json:"status"`
+	Reason string `json:"reason"`
+}

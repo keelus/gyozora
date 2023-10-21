@@ -1,5 +1,8 @@
 import { get } from "svelte/store";
-import { selectedFiles, fileContextMenuOptions } from "./store";
+import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
+import { OpenFile, AddFile, CutFile_s, CopyFile_s, PasteFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
+import OpenModal from "./modal";
+import type { models } from 'wailsjs/go/models.js';
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -91,4 +94,50 @@ export async function setContextMenuOptions(mode : string) {
 		});
 	}
 	
+}
+
+
+
+export async function doAction(action : string) {
+	const selFiles = get(selectedFiles)
+	console.log(selFiles)
+	console.log("🔥 Doing the action: ", action)
+	switch(action) {
+		case "open":
+			OpenFile(selFiles[0].pathfull)
+		break;
+		case "add":
+			const modalResponse = await OpenModal("newFile")
+			if(!modalResponse?.cancelled)
+				console.log("🔥", modalResponse)
+			else
+				console.warn("Modal canceled :(")
+
+			// Dialog...
+			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content)
+			if(actionResponse.error.status) { // TODO: Show toast?
+				if(actionResponse.error.reason) return console.error("File creation err:", actionResponse.error.reason)
+				return console.error("Unexpected error while creating the file.")
+			}
+			contents.update(cts => {
+				cts.push(actionResponse.file)
+				return cts
+			})
+		break;
+		case "cut":
+		break;
+		case "copy":
+		break;
+		case "paste":
+		break;
+		case "rename":
+		break;
+		case "delete":
+		break;
+		case "properties":
+		break;
+		default:
+			console.log("📛 unknown action")
+		break;
+	}
 }

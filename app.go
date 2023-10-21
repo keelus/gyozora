@@ -53,8 +53,7 @@ func (a *App) ReadPath(path string) []models.SysFile {
 		log.Fatal(err)
 	}
 
-	for _, file := range files {
-
+	for _, file := range files { // TODO: Change to a single function for each file
 		name := file.Name()[:len(file.Name())-len(filepath.Ext(file.Name()))]
 		extension := strings.ToLower(filepath.Ext(file.Name()))
 		fullPath := filepath.Join(path, file.Name())
@@ -84,29 +83,6 @@ func (a *App) ReadPath(path string) []models.SysFile {
 	}
 
 	return returningFiles
-}
-
-func (a *App) OpenFile(fpath string) {
-	fmt.Println(fmt.Sprintf("\"%s\"", fpath))
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "darwin": // macOS
-		cmd = exec.Command("open", fpath)
-	case "linux":
-		cmd = exec.Command("xdg-open", fpath)
-	case "windows":
-		cmd = exec.Command("cmd", "/c", "start", "", fpath)
-	default:
-		fmt.Println("Unsupported operating system")
-		os.Exit(1)
-	}
-
-	fmt.Println("Trying to execute the co")
-	fmt.Println(cmd)
-	err := cmd.Run()
-	if err != nil {
-		fmt.Printf("Error opening the file: %v\n", err)
-	}
 }
 
 func (a *App) LoadPinnedFolders() []models.LeftBarElement {
@@ -225,4 +201,98 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	fmt.Println("✅ render batch ended.")
 
 	return file
+}
+
+// File(s) actions
+func (a *App) OpenFile(fpath string) {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", "", fpath)
+	case "darwin":
+		cmd = exec.Command("open", fpath)
+	case "linux":
+		cmd = exec.Command("xdg-open", fpath) // Test
+	default:
+		fmt.Println("Unsupported operating system")
+		os.Exit(1)
+	}
+
+	fmt.Printf("Trying to execute the file with '%s'\n", cmd)
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("Error opening the file: %v\n", err)
+	}
+}
+
+func GenerateSysFile(fpath string) models.SysFile {
+	readFile, err := os.Stat(fpath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
+	extension := strings.ToLower(filepath.Ext(readFile.Name()))
+	fullPath := filepath.Join(fpath, readFile.Name())
+	fileType := fileUtils.GetFileType(readFile.Name(), extension, readFile.IsDir())
+
+	preview := ""
+
+	file := models.SysFile{
+		Name:        name,
+		Extension:   extension,
+		Filename:    readFile.Name(),
+		Permissions: readFile.Mode().Perm().String(),
+		Path:        fpath,
+		PathFull:    fullPath,
+		Size:        int(readFile.Size()),
+		IconClass:   fileType,
+		IsFolder:    readFile.IsDir(),
+		IsHidden:    fileUtils.IsHidden(fullPath),
+		ModifiedAt:  fileUtils.ModifiedAt(fullPath),
+		Preview:     preview,
+	}
+
+	return file
+}
+func (a *App) AddFile(path string, filename string) models.ActionResponse {
+	finalPath := filepath.Join(path, filename)
+
+	if _, err := os.Stat(finalPath); err == nil {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
+	}
+
+	file, err := os.Create(finalPath)
+	if err != nil {
+		fmt.Println(err)
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error while creating the new file."}}
+	}
+	file.Close()
+
+	createdFile := GenerateSysFile(finalPath)
+
+	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
+}
+func (a *App) CutFile_s(fpaths []string) {
+	fmt.Println("TBD -1")
+}
+func (a *App) CopyFile_s(fpaths []string) {
+	fmt.Println("TBD -1")
+}
+func (a *App) PasteFile_s(fpaths []string) {
+	fmt.Println("TBD -1")
+}
+func (a *App) RenameFile(fpaths string) {
+	fmt.Println("TBD -1")
+}
+func (a *App) DeleteFile_s(fpaths []string) {
+	for _, fpath := range fpaths {
+		err := os.Remove(fpath)
+		if err != nil {
+			fmt.Printf("Error deleting the file '%s'\n", fpath)
+		}
+	}
+	// Return to front end the status of the operation
+}
+func (a *App) PropertiesFile(fpaths []string) {
+	fmt.Println("TBD -1")
 }
