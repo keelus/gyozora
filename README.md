@@ -20,7 +20,7 @@ haven't been developed yet.
 <br />
 
 ### To try it
-Just clone the repo, and rename `appcache/appcache_empty.db` to `appcache/appcache.db`. <br />
+Just clone the repo, and rename `data/appcache_empty.db` to `data/appcache.db`. <br />
 
 Then, execute the following command in the root folder:
 ```bash
