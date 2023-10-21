@@ -1,8 +1,7 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions } from "./store";
-import type { models } from "wailsjs/go/models";
 
-export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : models.SysFile) {
+export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element) {
 	fileContextMenu.classList.add("opened")
 
 	if(file == null) { // Right clicked in the body

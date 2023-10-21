@@ -49,6 +49,7 @@ $: if (fileBrowser) {
 		let clickedTarget = e.target as HTMLElement;
 		if(!clickedTarget) return;
 		let clickedFile = clickedTarget.closest("button.file")
+		if(!clickedFile) return;
 		
 		if(e.button == 0){ // Left click
 			closeFileContextMenu(fileContextMenu)
