@@ -407,14 +407,63 @@ main {
 	
 	&.home {fill:$font-1;}
 
-	&.folderDesktop {fill:$blue-1;}
-	&.folderDownloads, &.folderDownloads * {fill:$green-1;stroke-width: 3px;}
-	&.folderDocuments {color:orange;fill:orange;}
-	&.folderPictures {fill:lightgreen;}
-	&.folderMusic {fill:deeppink;}
-	&.folderVideo {fill:rgb(183, 0, 255);}
-	&.folderDisk {fill:$font-1;}
-	&.folder {fill:#ffd768;}
+
+	&.windows {
+		--folderDesktop:rgb(55, 151, 240);
+		--folderDownloads:#CED74D;
+		--folderDocuments:orange;
+		--folderPictures:lightgreen;
+		--folderMusic:deeppink;
+		--folderVideo:rgb(183, 0, 255);
+		--folderDisk:white; // ! $font-1
+		--folder: #ffd768;
+	}
+	
+	&.darwin {
+		--folderDesktop		:#00a5ff;
+		--folderDownloads	:#00a5ff;
+		--folderDocuments	:#00a5ff;
+		--folderPictures	:#00a5ff;
+		--folderMusic		:#00a5ff;
+		--folderVideo		:#00a5ff;
+		--folderApplications	:#00a5ff;
+		--folderMovies		:#00a5ff;
+		--folderDisk		:#00a5ff;
+		--folder			:#78cff2;
+	}
+
+	&.folderDesktop {
+		fill:var(--folderDesktop, white);
+	}
+	&.folderDownloads, &.folderDownloads * {
+		fill:var(--folderDownloads, white);
+		stroke-width: 3px;
+	}
+	&.folderDocuments {
+		color:var(--folderDocuments, white);
+		fill:var(--folderDocuments, white);
+	}
+	&.folderPictures {
+		fill:var(--folderPictures, white);
+	}
+	&.folderMusic {
+		fill:var(--folderMusic, white);
+	}
+	&.folderVideo {
+		fill:var(--folderVideo, white);
+	}
+	&.folderDisk {
+		fill:var(--foldfolderDisker, white);
+	}
+	&.folderApplications {
+		fill:var(--folderApplications, white);
+	}
+	&.folderMovies {
+		fill:var(--folderMovies, white);
+	}
+	&.folder {
+		fill:var(--folder, white);
+	}
 
 
 	&.fileImage {fill:lightgreen;}

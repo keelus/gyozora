@@ -39,6 +39,10 @@ func (a *App) Greet() {
 	fmt.Println("Hello world ✌️")
 }
 
+func (a *App) GetUserOS() string {
+	return runtime.GOOS
+}
+
 func (a *App) ReadPath(path string) []models.SysFile {
 	fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path

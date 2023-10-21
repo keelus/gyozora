@@ -1,6 +1,6 @@
 <script lang="ts">
 // Wails/backend functions & models
-import { GetStartingPath, LoadPinnedFolders, LoadYourComputer } from '../wailsjs/go/main/App.js'
+import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, GetUserOS } from '../wailsjs/go/main/App.js'
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 import type { models } from 'wailsjs/go/models.js';
 
@@ -18,6 +18,7 @@ import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelecte
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu } from "./contextMenu";
 
+let USER_OS : string = "";
 
 let pinnedFolders : models.LeftBarElement[] = []
 let yourComputer : models.LeftBarElement[] = []
@@ -35,6 +36,7 @@ document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) |
 
 async function FirstStart() {
 	console.log("✌️👻 Hi")
+	USER_OS = await GetUserOS();
 	$CURRENT_PATH = await GetStartingPath()
 	pinnedFolders = await LoadPinnedFolders()
 	yourComputer = await LoadYourComputer()
@@ -84,7 +86,7 @@ $: if (fileBrowser) {
 				{/if}
 					{#each pinnedFolders as content}
 						<button class="element" on:click={() => elementClicked(content.path, true)}>
-							<Icon src={IconDictionary[content.type]} className="icon {content.type}"/>
+							<Icon src={IconDictionary[content.type]} className="icon {content.type} {USER_OS}"/>
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
@@ -98,7 +100,7 @@ $: if (fileBrowser) {
 				{/if}
 				{#each yourComputer as content}
 					<button class="element" on:click={() => elementClicked(content.path, true)}>
-						<Icon src={IconDictionary[content.type]} className="icon {content.type}"/>
+						<Icon src={IconDictionary[content.type]} className="icon {content.type} {USER_OS}"/>
 						<div class="text">{content.name}</div>
 					</button>
 				{/each}
@@ -153,7 +155,7 @@ $: if (fileBrowser) {
 					{#if content.iconClass == "fileImage" && content.preview != ""}
 						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
-						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass}"/>
+						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {USER_OS}"/>
 					{/if}
 					<div class="text">{content ? content.filename : "Error"}</div>
 				</button>
