@@ -34,7 +34,8 @@ import FaSolidPaste from "svelte-icons-pack/fa/FaSolidPaste";
 import BsInputCursorText from "svelte-icons-pack/bs/BsInputCursorText";
 import FiTrash from "svelte-icons-pack/fi/FiTrash";
 import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
-
+import SiAppstore from "svelte-icons-pack/si/SiAppstore";
+import FaSolidPhotoVideo from "svelte-icons-pack/fa/FaSolidPhotoVideo";
 
 export const IconDictionary : {[key:string]:any} = {
 	"folder":  AiFillFolder ,
@@ -44,6 +45,8 @@ export const IconDictionary : {[key:string]:any} = {
 	"folderPictures": AiFillFileImage,
 	"folderMusic": RiMediaMusic2Fill,
 	"folderDisk": FiHardDrive,
+	"folderApplications": SiAppstore,
+	"folderMovies": FaSolidPhotoVideo,
 
 	"file": IoDocument,
 	"fileImage": AiFillFileImage,

@@ -19,29 +19,28 @@ func UserHomedir() string {
 }
 
 func UserRoots() []string {
-	var disks []string
-	if runtime.GOOS != "windows" {
-		fmt.Println("Only windows supported for now.")
-		os.Exit(1)
-	}
-
-	for i := 'A'; i <= 'Z'; i++ {
-		disk := string(i) + ":\\"
-		_, err := os.Stat(disk)
-		if err == nil {
-			disks = append(disks, disk)
+	if runtime.GOOS == "windows" {
+		var disks []string
+		for i := 'A'; i <= 'Z'; i++ {
+			disk := string(i) + ":\\"
+			_, err := os.Stat(disk)
+			if err == nil {
+				disks = append(disks, disk)
+			}
 		}
-	}
 
-	return disks
+		return disks
+	} else {
+		return []string{"/"}
+	}
 }
 
 func CacheDir() string {
-	if runtime.GOOS != "windows" {
-		fmt.Println("Only windows supported for now.")
-		os.Exit(1)
+	if runtime.GOOS == "windows" {
+		cacheDir, _ := os.UserCacheDir()
+		return path.Join(cacheDir, "gyozora")
+	} else {
+		return "-1"
 	}
 
-	cacheDir, _ := os.UserCacheDir()
-	return path.Join(cacheDir, "gyozora")
 }
