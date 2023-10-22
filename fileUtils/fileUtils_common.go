@@ -5,13 +5,16 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"gyozora/models"
 	"image"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
+	"log"
 	"math"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/nfnt/resize"
@@ -182,4 +185,35 @@ func GetImagePreview(fpath string, extension string) string {
 	previewStringB64 := base64.StdEncoding.EncodeToString(previewBytes)
 	return previewStringB64
 
+}
+
+func GenerateSysFile(path string, filename string) models.SysFile {
+	readFile, err := os.Stat(filepath.Join(path, filename))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
+	extension := strings.ToLower(filepath.Ext(readFile.Name()))
+	fullPath := filepath.Join(path, filename)
+	fileType := GetFileType(readFile.Name(), extension, readFile.IsDir())
+
+	preview := ""
+
+	file := models.SysFile{
+		Name:        name,
+		Extension:   extension,
+		Filename:    readFile.Name(),
+		Permissions: readFile.Mode().Perm().String(),
+		Path:        path,
+		PathFull:    fullPath,
+		Size:        int(readFile.Size()),
+		IconClass:   fileType,
+		IsFolder:    readFile.IsDir(),
+		IsHidden:    IsHidden(fullPath),
+		ModifiedAt:  ModifiedAt(fullPath),
+		Preview:     preview,
+	}
+
+	return file
 }

@@ -13,7 +13,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
 )
 
 var CURRENT_PATH = ""
@@ -54,7 +53,7 @@ func (a *App) ReadPath(path string) []models.SysFile {
 	}
 
 	for _, file := range files {
-		returningFiles = append(returningFiles, GenerateSysFile(path, file.Name()))
+		returningFiles = append(returningFiles, fileUtils.GenerateSysFile(path, file.Name()))
 	}
 
 	return returningFiles
@@ -200,36 +199,6 @@ func (a *App) OpenFile(fpath string) {
 	}
 }
 
-func GenerateSysFile(path string, filename string) models.SysFile {
-	readFile, err := os.Stat(filepath.Join(path, filename))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
-	extension := strings.ToLower(filepath.Ext(readFile.Name()))
-	fullPath := filepath.Join(path, filename)
-	fileType := fileUtils.GetFileType(readFile.Name(), extension, readFile.IsDir())
-
-	preview := ""
-
-	file := models.SysFile{
-		Name:        name,
-		Extension:   extension,
-		Filename:    readFile.Name(),
-		Permissions: readFile.Mode().Perm().String(),
-		Path:        path,
-		PathFull:    fullPath,
-		Size:        int(readFile.Size()),
-		IconClass:   fileType,
-		IsFolder:    readFile.IsDir(),
-		IsHidden:    fileUtils.IsHidden(fullPath),
-		ModifiedAt:  fileUtils.ModifiedAt(fullPath),
-		Preview:     preview,
-	}
-
-	return file
-}
 func (a *App) AddFile(path string, filename string) models.ActionResponse {
 	finalPath := filepath.Join(path, filename)
 
@@ -249,7 +218,7 @@ func (a *App) AddFile(path string, filename string) models.ActionResponse {
 	}
 	file.Close()
 
-	createdFile := GenerateSysFile(path, filename)
+	createdFile := fileUtils.GenerateSysFile(path, filename)
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
