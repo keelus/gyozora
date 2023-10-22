@@ -8,7 +8,6 @@ import (
 	"gyozora/models"
 	"gyozora/sysUtils"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -42,21 +41,22 @@ func (a *App) GetUserOS() string {
 	return runtime.GOOS
 }
 
-func (a *App) ReadPath(path string) []models.SysFile {
+func (a *App) ReadPath(path string) models.ReadPathResponse {
+
 	fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
 	returningFiles := make([]models.SysFile, 0)
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		log.Fatal(err)
+		return models.ReadPathResponse{DirContent: returningFiles, Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
 	}
 
 	for _, file := range files {
 		returningFiles = append(returningFiles, fileUtils.GenerateSysFile(path, file.Name()))
 	}
 
-	return returningFiles
+	return models.ReadPathResponse{DirContent: returningFiles, Error: models.SimpleError{Status: false}}
 }
 
 func (a *App) LoadPinnedFolders() []models.LeftBarElement {
@@ -178,7 +178,7 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 }
 
 // File(s) actions
-func (a *App) OpenFile(fpath string) {
+func (a *App) OpenFile(fpath string) models.ActionResponse {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
@@ -188,15 +188,16 @@ func (a *App) OpenFile(fpath string) {
 	case "linux":
 		cmd = exec.Command("xdg-open", fpath) // Test
 	default:
-		fmt.Println("Unsupported operating system")
-		os.Exit(1)
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unsupported operating system."}}
 	}
 
 	fmt.Printf("Trying to execute the file with '%s'\n", cmd)
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("Error opening the file: %v\n", err)
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
 	}
+
+	return models.ActionResponse{Error: models.SimpleError{Status: false}}
 }
 
 func (a *App) AddFile(path string, filename string) models.ActionResponse {
@@ -235,14 +236,20 @@ func (a *App) PasteFile_s(fpaths []string) {
 func (a *App) RenameFile(fpaths string) {
 	fmt.Println("TBD -1")
 }
-func (a *App) DeleteFile_s(fpaths []string) {
-	for _, fpath := range fpaths {
-		err := os.Remove(fpath)
+func (a *App) DeleteFile_s(files []models.SysFile) models.ActionResponse {
+	allDeleted := true // TODO: Return what files haven't been deleted.
+	for _, file := range files {
+		err := os.RemoveAll(file.PathFull)
 		if err != nil {
-			fmt.Printf("Error deleting the file '%s'\n", fpath)
+			fmt.Printf("Error deleting the file '%s'\n", file.PathFull)
+			allDeleted = false
 		}
 	}
-	// Return to front end the status of the operation
+	if !allDeleted {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Some files could not be deleted."}}
+	}
+
+	return models.ActionResponse{Error: models.SimpleError{Status: false}}
 }
 func (a *App) PropertiesFile(fpaths []string) {
 	fmt.Println("TBD -1")

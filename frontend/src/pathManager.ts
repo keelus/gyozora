@@ -1,17 +1,30 @@
-import { ReadPath, RenderPreview } from '../wailsjs/go/main/App.js';
+import { ReadPath, RenderPreview, OpenFile } from '../wailsjs/go/main/App.js';
 import type { models } from "wailsjs/go/models";
-import { OpenFile } from '../wailsjs/go/main/App.js'
 import { contents, selectedFiles } from "./store"
 import { get } from "svelte/store";
 import { CURRENT_PATH, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
+import { doAction } from './contextMenu.js';
+import { GenerateToast } from './toasts.js';
 
 export async function LoadFolder(newPath : string, goingBack : boolean, goingForward : boolean, ignorePathHistory : boolean) {
 	console.log("Loading folder 📂 ...")
-	console.log(newPath)
 	// Check if we are able to open directory
+
+	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath)
+
+	if(readPathResponse.error.status) {
+		GenerateToast("error", "Can't open the folder: " + readPathResponse.error.reason || "", "📂")
+		return console.log("Error reading path!", readPathResponse.error.reason)
+	}
+
 	contents.set([])
 	selectedFiles.set([])
-	const directoryElements = await ReadPath(newPath)
+
+
+
+	const directoryElements = readPathResponse.dirContent
+	
+
 	// if(error != null) ...
 	
 	if(!ignorePathHistory) {
@@ -91,13 +104,19 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	}
 	previewProgress.set("100")
 }
-
-export function elementClicked(fpath : string, isfolder : boolean) {
+export async function elementClicked(fpath : string, isfolder : boolean) {
 	if(isfolder){
-		return LoadFolder(fpath, false, false, false)
+		return LoadFolder(fpath, false, false, false) // TODO: Error handling
 	}
 
 	OpenFile(fpath)
+
+	const actionResponseOpen : models.ActionResponse = await OpenFile(fpath)
+	if(actionResponseOpen.error.status) {
+		GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
+	} else {
+		GenerateToast("success", "File opened.", "🚀")
+	}
 }
 
 export function buttonGoBack() {

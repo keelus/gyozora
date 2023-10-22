@@ -31,3 +31,8 @@ type SimpleError struct {
 	Status bool   `json:"status"`
 	Reason string `json:"reason"`
 }
+
+type ReadPathResponse struct {
+	DirContent []SysFile   `json:"dirContent"`
+	Error      SimpleError `json:"error"`
+}

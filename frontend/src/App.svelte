@@ -32,9 +32,19 @@ let fileContextMenu : HTMLDivElement;
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener("keyup", e => e.key == "Enter" && FirstStart()) // For debug
+document.addEventListener("keyup", e => e.key == "PageUp" && FirstStart()) // For debug
 document.addEventListener("keyup", e => e.key == "Escape" && ($selectedFiles = []))
 document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) || (e.button === 4 && buttonGoForward()));
+document.addEventListener("keyup", e => e.key == "Delete" && doAction("delete"));
+document.addEventListener("keydown", e => {
+	if(e.shiftKey && e.ctrlKey && e.key == "N"){ // For folder by default creating
+		e.preventDefault()
+		doAction("add")
+	}
+	if(e.key == "Enter"){ // For folder by default creating
+		doAction("open")
+	}
+});
 
 
 async function FirstStart() {

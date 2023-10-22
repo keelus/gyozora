@@ -5,6 +5,7 @@ import OpenModal from "./modal";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
 import { GenerateToast } from "./toasts";
+import { LoadFolder } from "./pathManager";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -106,8 +107,18 @@ export async function doAction(action : string) {
 	console.log("🔥 Doing the action: ", action)
 	switch(action) {
 		case "open":
-			OpenFile(selFiles[0].pathfull)
-		break;
+			const selFile = get(selectedFiles)[0]
+			if(selFile === undefined) return
+			if(selFile.isFolder)
+				return LoadFolder(selFile.pathfull, false, false, false) // TODO: Error handling
+
+			const actionResponseOpen : models.ActionResponse = await OpenFile(selFiles[0].pathfull)
+			if(actionResponseOpen.error.status) {
+				GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
+			} else {
+				GenerateToast("success", "File opened.", "🚀")
+			}
+			break;
 		case "add":
 			const modalResponse = await OpenModal("newFile")
 			if(!modalResponse?.cancelled)
@@ -128,22 +139,40 @@ export async function doAction(action : string) {
 				})
 				GenerateToast("success", "File created.", "📄")
 			}
-
-		break;
+			break;
 		case "cut":
-		break;
+			break;
 		case "copy":
-		break;
+			break;
 		case "paste":
-		break;
+			break;
 		case "rename":
-		break;
+			break;
 		case "delete":
-		break;
+			// TODO: Add confirmation dialog
+			const amountS = get(selectedFiles).length > 1 ? "s" : ""
+			const actionResponseDel : models.ActionResponse = await DeleteFile_s(get(selectedFiles))
+			if(actionResponseDel.error.status) {
+				console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
+				GenerateToast("error", `Error deleting the file${amountS}: ` + actionResponseDel.error.reason || "", "🗑️")
+			} else {
+				console.log(actionResponseDel.file)
+				contents.update(cts => {
+					let newCts : models.SysFile[] = []
+					for(let i = 0; i < cts.length; i++){
+						if(!get(selectedFiles).includes(cts[i]))
+							newCts.push(cts[i])
+					}
+					return newCts
+				})
+				selectedFiles.set([])
+				GenerateToast("success", `File${amountS} deleted.`, "🗑️")
+			}
+			break;
 		case "properties":
-		break;
+			break;
 		default:
 			console.log("📛 unknown action")
-		break;
+			break;
 	}
 }
