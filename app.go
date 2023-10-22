@@ -263,8 +263,13 @@ func (a *App) AddFile(path string, filename string) models.ActionResponse {
 
 	file, err := os.Create(finalPath)
 	if err != nil {
-		fmt.Println(err)
-		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error while creating the new file."}}
+		valid := sysUtils.IsFilenameValid(filename)
+
+		if !valid { // Uses an illegal character for a filename in that OS
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: fmt.Sprintf("A filename can't contain %s.", sysUtils.GetInvalidFilenameCharacters())}}
+		} else {
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error while creating the new file."}}
+		}
 	}
 	file.Close()
 

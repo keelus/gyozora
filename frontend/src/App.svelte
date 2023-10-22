@@ -18,6 +18,9 @@ import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelecte
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
 
+import toast, { Toaster } from 'svelte-french-toast';
+  import { GenerateToast } from './toasts.js';
+
 let USER_OS : string = "windows";
 
 let pinnedFolders : models.LeftBarElement[] = []
@@ -67,6 +70,7 @@ let temporalFilenameInputValue = "";
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
 <main>
+	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>
 	<div class="pathbar">
 		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><ArrowLeft class="icon"/></button>

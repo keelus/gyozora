@@ -6,6 +6,7 @@ import (
 	"os/user"
 	"path"
 	"runtime"
+	"strings"
 )
 
 func UserHomedir() string {
@@ -42,5 +43,29 @@ func CacheDir() string {
 	} else {
 		return "-1"
 	}
+
+}
+
+func IsFilenameValid(filename string) bool {
+	if filename == "" || filename == "." || filename == ".." {
+		return false
+	}
+
+	invalidChars := GetInvalidFilenameCharacters()
+
+	for _, char := range invalidChars {
+		if strings.ContainsRune(filename, char) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func GetInvalidFilenameCharacters() string {
+	if runtime.GOOS == "windows" {
+		return "<>:\"/\\|?*"
+	}
+	return "/"
 
 }

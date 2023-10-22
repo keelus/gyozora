@@ -3,6 +3,8 @@ import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from ".
 import { OpenFile, AddFile, CutFile_s, CopyFile_s, PasteFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
 import OpenModal from "./modal";
 import type { models } from 'wailsjs/go/models.js';
+import toast from "svelte-french-toast";
+import { GenerateToast } from "./toasts";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -115,14 +117,17 @@ export async function doAction(action : string) {
 
 			// Dialog...
 			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content)
-			if(actionResponse.error.status) { // TODO: Show toast?
-				if(actionResponse.error.reason) return console.error("File creation err:", actionResponse.error.reason)
-				return console.error("Unexpected error while creating the file.")
+			if(actionResponse.error.status) {
+				console.error("File creation err:", actionResponse.error.reason || "Unknown")
+				GenerateToast("error", "Error creating the new file. " + actionResponse.error.reason || "", "📄")
+			} else {
+				contents.update(cts => {
+					cts.push(actionResponse.file)
+					return cts
+				})
+				GenerateToast("success", "File created.", "📄")
 			}
-			contents.update(cts => {
-				cts.push(actionResponse.file)
-				return cts
-			})
+
 		break;
 		case "cut":
 		break;
