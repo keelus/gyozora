@@ -30,7 +30,7 @@ wails dev
 ### 🥟📂 Important incoming features:
 
 #### 💻 OS compatibility:
-- [ ] ~~🪟 Windows (10 & 11)~~
+- [x] ~~🪟 Windows (10 & 11)~~
 - [ ] 🍎 macOS (arm64[m1, m2] & amd64[intel])
 - [ ] 🐧 Linux (amd64, arm64 & arm)
 
@@ -38,9 +38,9 @@ wails dev
 - [x] ~~➕ Add/create a file~~
 - [ ] 📋 Copy file(s)
 - [ ] 📋 Cut file(s)
-- [ ] 📋 Delete file(s)
+- [ ] 📋 Paste file(s)
 - [ ] 🆔 Rename a file
-- [ ] 🗑️ Delete file(s)
+- [x] ~~🗑️ Delete file(s)~~
 - [ ] ℹ️ Properties of a file
 
 #### 🧑‍💻 User configuration related:
@@ -54,7 +54,7 @@ wails dev
 - [ ] 🌍 Internationalization
   - [x] ~~🇺🇸 English~~
   - [ ] 🇪🇸 Spanish
-- [ ] ℹ️ Error messages/toasts
+- [x] ~~ℹ️ Error messages/toasts~~
 
 <br />
 Made by <a href="https://github.com/keelus">keelus</a> ✌️
