@@ -121,6 +121,7 @@ export async function doAction(action : string) {
 				console.error("File creation err:", actionResponse.error.reason || "Unknown")
 				GenerateToast("error", "Error creating the new file. " + actionResponse.error.reason || "", "📄")
 			} else {
+				console.log(actionResponse.file)
 				contents.update(cts => {
 					cts.push(actionResponse.file)
 					return cts

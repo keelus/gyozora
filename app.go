@@ -225,14 +225,15 @@ func (a *App) OpenFile(fpath string) {
 	}
 }
 
-func GenerateSysFile(fpath string) models.SysFile {
-	readFile, err := os.Stat(fpath)
+func GenerateSysFile(path string, filename string) models.SysFile {
+	readFile, err := os.Stat(filepath.Join(path, filename))
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
 	extension := strings.ToLower(filepath.Ext(readFile.Name()))
-	fullPath := filepath.Join(fpath, readFile.Name())
+	fullPath := filepath.Join(path, filename)
 	fileType := fileUtils.GetFileType(readFile.Name(), extension, readFile.IsDir())
 
 	preview := ""
@@ -242,7 +243,7 @@ func GenerateSysFile(fpath string) models.SysFile {
 		Extension:   extension,
 		Filename:    readFile.Name(),
 		Permissions: readFile.Mode().Perm().String(),
-		Path:        fpath,
+		Path:        path,
 		PathFull:    fullPath,
 		Size:        int(readFile.Size()),
 		IconClass:   fileType,
@@ -273,10 +274,11 @@ func (a *App) AddFile(path string, filename string) models.ActionResponse {
 	}
 	file.Close()
 
-	createdFile := GenerateSysFile(finalPath)
+	createdFile := GenerateSysFile(path, filename)
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
+
 func (a *App) CutFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
