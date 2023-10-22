@@ -19,6 +19,8 @@ haven't been developed yet.
 ```
 <br />
 
+<img src=".github/gyozora_screenshot.webp"  alt="Gyozora screenshot" />
+
 ### To try it
 Just clone the repo, and rename `data/appcache_empty.db` to `data/appcache.db`. <br />
 
