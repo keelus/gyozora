@@ -1,7 +1,7 @@
 export default async function OpenModal(modalName : string) : (Promise<{[key:string] : any}>) {
 	const parentModal = document.querySelector(".modalParent")
 	if(!parentModal) return {error: true};
-	const targetModal = parentModal.querySelector(".modal.newFile")
+	const targetModal = parentModal.querySelector(`.modal.${modalName}`)
 	if(!targetModal) return {error: true};
 	
 	console.log("🪟 Opening the modal")

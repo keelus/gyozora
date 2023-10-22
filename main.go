@@ -33,14 +33,17 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 1},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
 			&models.LeftBarElement{},
 		},
 		Windows: &windows.Options{
-			Theme: windows.SystemDefault,
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			BackdropType:         windows.Acrylic,
+			Theme:                windows.SystemDefault,
 			CustomTheme: &windows.ThemeSettings{
 				DarkModeTitleBar:           windows.RGB(20, 20, 20),
 				DarkModeTitleBarInactive:   windows.RGB(0, 0, 0),

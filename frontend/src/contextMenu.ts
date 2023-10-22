@@ -147,6 +147,30 @@ export async function doAction(action : string) {
 		case "paste":
 			break;
 		case "rename":
+			const modalResponseRename = await OpenModal("rename")
+			if(!modalResponseRename?.cancelled)
+				console.log("🔥", modalResponseRename)
+			else
+				console.warn("Modal canceled :(")
+
+			// Dialog...
+			const targetFile = get(selectedFiles)[0];
+			const newFilename = modalResponseRename?.content
+			const actionResponseRename : models.ActionResponse = await RenameFile(targetFile, newFilename)
+			if(actionResponseRename.error.status) {
+				console.error("File rename err:", actionResponseRename.error.reason || "Unknown")
+				GenerateToast("error", "Error renaming the file. " + actionResponseRename.error.reason || "", "✏️")
+			} else {
+				// console.log(actionResponseRename.file)
+				contents.update(cts => {
+					for(let i = 0; i < cts.length; i++) {
+						if(cts[i].pathfull == targetFile.pathfull)
+							cts[i] = actionResponseRename.file
+					}
+					return cts
+				})
+				GenerateToast("success", "File renamed to \"" + newFilename + "\".", "✏️")
+			}
 			break;
 		case "delete":
 			// TODO: Add confirmation dialog

@@ -233,8 +233,26 @@ func (a *App) CopyFile_s(fpaths []string) {
 func (a *App) PasteFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
-func (a *App) RenameFile(fpaths string) {
-	fmt.Println("TBD -1")
+func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
+	newPath := filepath.Join(file.Path, newFilename)
+
+	if _, err := os.Stat(newPath); err == nil {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
+	}
+
+	err := os.Rename(file.PathFull, newPath)
+	if err != nil {
+		fmt.Println(err)
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
+	}
+
+	renamedFile := fileUtils.GenerateSysFile(file.Path, newFilename) // Generate a new sys file (to handle renaming to different extension)
+
+	if file.Extension == renamedFile.Extension {
+		renamedFile.Preview = file.Preview
+	}
+
+	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: renamedFile}
 }
 func (a *App) DeleteFile_s(files []models.SysFile) models.ActionResponse {
 	allDeleted := true // TODO: Return what files haven't been deleted.

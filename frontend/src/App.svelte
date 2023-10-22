@@ -19,7 +19,7 @@ import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
 
 import toast, { Toaster } from 'svelte-french-toast';
-  import { GenerateToast } from './toasts.js';
+import { GenerateToast } from './toasts.js';
 
 let USER_OS : string = "windows";
 
@@ -28,6 +28,7 @@ let yourComputer : models.LeftBarElement[] = []
 
 let fileBrowser : HTMLDivElement;
 let fileContextMenu : HTMLDivElement;
+let modalParent : HTMLDivElement;
 
 
 document.addEventListener("DOMContentLoaded", FirstStart)
@@ -42,7 +43,13 @@ document.addEventListener("keydown", e => {
 		doAction("add")
 	}
 	if(e.key == "Enter"){ // For folder by default creating
-		doAction("open")
+		const activeModal = modalParent.getAttribute("data-activeModal")
+		if(activeModal == "")
+			doAction("open")
+		else {
+			const confirmButton = modalParent.querySelector(`.${activeModal} > .bottom > button.confirm`) as HTMLButtonElement
+			confirmButton.click()
+		}
 	}
 });
 
@@ -75,6 +82,8 @@ $: if (fileBrowser) {
 }
 
 let temporalFilenameInputValue = "";
+let filenameRenameInputValue = "";
+
 
 </script>
 
@@ -203,8 +212,13 @@ let temporalFilenameInputValue = "";
 		</div>
 		<ChevronRight class="icon"/>
 		<div class="element">
-			<File class="icon folderDocuments"/>
-			<div class="text">Documents</div>
+			<File class="icon folderDesktop"/>
+			<div class="text">Desktop</div>
+		</div>
+		<ChevronRight class="icon"/>
+		<div class="element">
+			<File class="icon folder"/>
+			<div class="text">My folder</div>
 		</div>
 	</div>
 
@@ -216,7 +230,7 @@ let temporalFilenameInputValue = "";
 		<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
 	</div>
 </div>
-<div class="modalParent" data-activeModal="">
+<div class="modalParent" data-activeModal="" bind:this={modalParent}>
 	<div class="modal newFile">
 		<div class="top">
 			<div class="title">Create a new file</div>
@@ -228,6 +242,19 @@ let temporalFilenameInputValue = "";
 		<div class="bottom">
 			<button class="cancel">Cancel</button>
 			<button class="confirm" disabled={temporalFilenameInputValue == ""}>Create</button>
+		</div>
+	</div>
+	<div class="modal rename">
+		<div class="top">
+			<div class="title">Rename a file</div>
+		</div>
+		<div class="middle">
+			<!-- <div class="message"></div> -->
+			<input type="text" placeholder="New filename and extension..." bind:value={filenameRenameInputValue}>
+		</div>
+		<div class="bottom">
+			<button class="cancel">Cancel</button>
+			<button class="confirm" disabled={filenameRenameInputValue == ""}>Rename</button>
 		</div>
 	</div>
 </div>
