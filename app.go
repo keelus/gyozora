@@ -53,33 +53,8 @@ func (a *App) ReadPath(path string) []models.SysFile {
 		log.Fatal(err)
 	}
 
-	for _, file := range files { // TODO: Change to a single function for each file
-		name := file.Name()[:len(file.Name())-len(filepath.Ext(file.Name()))]
-		extension := strings.ToLower(filepath.Ext(file.Name()))
-		fullPath := filepath.Join(path, file.Name())
-		fileType := fileUtils.GetFileType(file.Name(), extension, file.IsDir())
-
-		preview := ""
-		// if fileType == "fileImage" {
-		// 	preview = fileUtils.GetImagePreview(fullPath, extension)
-		// }
-
-		newFile := models.SysFile{
-			Name:        name,
-			Extension:   extension,
-			Filename:    file.Name(),
-			Permissions: file.Mode().Perm().String(),
-			Path:        path,
-			PathFull:    fullPath,
-			Size:        int(file.Size()),
-			IconClass:   fileType,
-			IsFolder:    file.IsDir(),
-			IsHidden:    fileUtils.IsHidden(fullPath),
-			ModifiedAt:  fileUtils.ModifiedAt(fullPath),
-			Preview:     preview,
-		}
-
-		returningFiles = append(returningFiles, newFile)
+	for _, file := range files {
+		returningFiles = append(returningFiles, GenerateSysFile(path, file.Name()))
 	}
 
 	return returningFiles
