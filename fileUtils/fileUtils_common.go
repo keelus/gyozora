@@ -10,12 +10,13 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
 	"path/filepath"
 	"strings"
+
+	_ "embed"
 
 	"github.com/nfnt/resize"
 	"github.com/srwiley/oksvg"
@@ -66,16 +67,19 @@ func ModifiedAt(fpath string) int {
 
 var fileTypeMap map[string]string
 
+//go:embed extensionData.json
+var jsonContent []byte
+
 func LoadJSON() {
-	jsonUbi := "./data/extensionData.json"
+	// jsonUbi := "./data/extensionData.json"
 
-	jsonContent, err := ioutil.ReadFile(jsonUbi)
-	if err != nil {
-		fmt.Printf("Error reading file type json:%s\n", err)
-		os.Exit(1)
-	}
+	// jsonContent, err := ioutil.ReadFile(jsonUbi)
+	// if err != nil {
+	// 	fmt.Printf("Error reading file type json:%s\n", err)
+	// 	os.Exit(1)
+	// }
 
-	err = json.Unmarshal([]byte(jsonContent), &fileTypeMap)
+	err := json.Unmarshal([]byte(jsonContent), &fileTypeMap)
 	if err != nil {
 		fmt.Printf("Error reading file type json:%s\n", err)
 		os.Exit(1)

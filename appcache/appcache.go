@@ -24,11 +24,24 @@ func ConnectDB() {
 		os.Exit(-1)
 	}
 
-	DBPath := AbsPath + "/data/appcache.db"
+	DBPath := AbsPath + "/appcache.db" // TODO: Cache location
 
 	DBCache, err = sqlx.Open("sqlite", DBPath)
 	if err != nil {
 		fmt.Printf("Error starting appcache database. Error: %s\n", err)
+		os.Exit(-1)
+	}
+
+	cacheTable := `CREATE TABLE IF NOT EXISTS "cache" (
+							"pathfull"	TEXT NOT NULL UNIQUE,
+							"dateModification"	INTEGER NOT NULL,
+							"preview"	BLOB NOT NULL,
+							PRIMARY KEY("pathfull")
+						);`
+
+	_, err = DBCache.Exec(cacheTable)
+	if err != nil {
+		fmt.Printf("Error creating the cache table. Error: %s\n", err)
 		os.Exit(-1)
 	}
 }

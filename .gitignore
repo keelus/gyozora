@@ -12,4 +12,4 @@ frontend/*.mjs
 frontend/package.json.md5
 
 # Local cache
-data/appcache.db
+appcache.db
