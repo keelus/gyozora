@@ -89,6 +89,7 @@ let filenameRenameInputValue = "";
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
 <main>
+	<div class="appTitleBar" style="widows: 1;"></div>
 	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>
 	<div class="pathbar">

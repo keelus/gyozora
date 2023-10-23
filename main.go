@@ -61,14 +61,20 @@ func main() {
 			},
 		},
 		Mac: &mac.Options{
+			TitleBar: &mac.TitleBar{
+				TitlebarAppearsTransparent: true, // Set to false
+				HideToolbarSeparator:       true,
+			},
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
-			Appearance:           mac.NSAppearanceNameDarkAqua,
 			About: &mac.AboutInfo{
 				Title:   "Gyozora",
 				Message: "© 2023 keelus",
 			},
 		},
+		Frameless:       false,
+		CSSDragProperty: "widows",
+		CSSDragValue:    "1",
 	})
 
 	if err != nil {
