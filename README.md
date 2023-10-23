@@ -22,9 +22,7 @@ haven't been developed yet.
 <img src=".github/gyozora_screenshot.webp"  alt="Gyozora screenshot" />
 
 ### To try it
-Just clone the repo, and rename `data/appcache_empty.db` to `data/appcache.db`. <br />
-
-Then, execute the following command in the root folder:
+Just clone the repo and then, execute the following command in the root folder:
 ```bash
 wails dev
 ```
