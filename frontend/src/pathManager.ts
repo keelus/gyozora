@@ -22,7 +22,10 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 
 
 
-	const directoryElements = readPathResponse.dirContent
+	const dirFiles = readPathResponse.dirFiles.sort((f1, f2) => f1.filename.localeCompare(f2.filename));
+	const dirFolders = readPathResponse.dirFolders.sort((f1, f2) => f1.filename.localeCompare(f2.filename));
+
+	const directoryElements = dirFolders.concat(dirFiles) // Sort by filename ascending. Add .reversed() if sorted by name descending
 	
 
 	// if(error != null) ...

@@ -28,6 +28,8 @@ let fileBrowser : HTMLDivElement;
 let fileContextMenu : HTMLDivElement;
 let modalParent : HTMLDivElement;
 
+let newFileActiveType : string = "file";
+
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());
@@ -190,7 +192,7 @@ let filenameRenameInputValue = "";
 			{#if content != undefined}
 				<button class="file {$selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
 					{#if content.iconClass == "fileImage" && content.preview != ""}
-						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
+						<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
 						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {$USER_OS}"/>
 					{/if}
@@ -240,12 +242,24 @@ let filenameRenameInputValue = "";
 	</div>
 </div>
 <div class="modalParent" data-activeModal="" bind:this={modalParent}>
-	<div class="modal newFile">
+	<div class="modal newFile" data-activeType={newFileActiveType}>
 		<div class="top">
 			<div class="title">Create a new file</div>
 		</div>
 		<div class="middle">
+			<div class="categoryTitle">Type of file</div>
 			<!-- <div class="message"></div> -->
+			<div class="typeOptions">
+				<button class="option {newFileActiveType == "file" ? "active" : ""}" on:click={() => newFileActiveType="file"}>
+					<Icon src={IconDictionary["file"]} className="icon file {$USER_OS}"/>
+					<div class="text">File</div>
+				</button>
+				<button class="option {newFileActiveType == "folder" ? "active" : ""}" on:click={() => newFileActiveType="folder"}>
+					<Icon src={IconDictionary["folder"]} className="icon folder {$USER_OS}"/>
+					<div class="text">Folder</div>
+				</button>
+			</div>
+			<div class="categoryTitle" style="margin-top:10px;">Filename</div>
 			<input type="text" placeholder="Filename and extension..." bind:value={temporalFilenameInputValue}>
 		</div>
 		<div class="bottom">

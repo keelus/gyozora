@@ -30,7 +30,9 @@ async function WaitForModalResponse(tgtModal : Element) {
 		})
 		confirmButton.addEventListener("click", () => {
 			console.log("Modal create button")
-			resolve(filenameInput.value)
+			const activeType = tgtModal.getAttribute("data-activeType") // Only for new modal TODO: better
+			tgtModal.setAttribute("data-activeType", "file") // TODO fix
+			resolve([filenameInput.value, activeType])
 		})
 	})
 }

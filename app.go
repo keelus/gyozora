@@ -42,21 +42,25 @@ func (a *App) GetUserOS() string {
 }
 
 func (a *App) ReadPath(path string) models.ReadPathResponse {
-
 	fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
-	returningFiles := make([]models.SysFile, 0)
+	dirFiles := make([]models.SysFile, 0)
+	dirFolders := make([]models.SysFile, 0)
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return models.ReadPathResponse{DirContent: returningFiles, Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
+		return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
 	}
 
 	for _, file := range files {
-		returningFiles = append(returningFiles, fileUtils.GenerateSysFile(path, file.Name()))
+		if file.IsDir() {
+			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(path, file.Name()))
+		} else {
+			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(path, file.Name()))
+		}
 	}
 
-	return models.ReadPathResponse{DirContent: returningFiles, Error: models.SimpleError{Status: false}}
+	return models.ReadPathResponse{DirFiles: dirFiles, DirFolders: dirFolders, Error: models.SimpleError{Status: false}}
 }
 
 func (a *App) LoadPinnedFolders() []models.LeftBarElement {
@@ -200,14 +204,21 @@ func (a *App) OpenFile(fpath string) models.ActionResponse {
 	return models.ActionResponse{Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) AddFile(path string, filename string) models.ActionResponse {
+func (a *App) AddFile(path string, filename string, fileType string) models.ActionResponse {
 	finalPath := filepath.Join(path, filename)
 
 	if _, err := os.Stat(finalPath); err == nil {
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
 	}
-
-	file, err := os.Create(finalPath)
+	fmt.Println("Type inputed:")
+	fmt.Println(fileType)
+	var file *os.File
+	var err error
+	if fileType == "folder" {
+		err = os.Mkdir(finalPath, 0755) // TODO: perms
+	} else {
+		file, err = os.Create(finalPath)
+	}
 	if err != nil {
 		valid := sysUtils.IsFilenameValid(filename)
 

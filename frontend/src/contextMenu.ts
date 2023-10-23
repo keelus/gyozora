@@ -128,7 +128,7 @@ export async function doAction(action : string) {
 				console.warn("Modal canceled :(")
 
 			// Dialog...
-			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content)
+			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content[0], modalResponse?.content[1])
 			if(actionResponse.error.status) {
 				console.error("File creation err:", actionResponse.error.reason || "Unknown")
 				GenerateToast("error", "Error creating the new file. " + actionResponse.error.reason || "", "📄")
@@ -156,7 +156,7 @@ export async function doAction(action : string) {
 
 			// Dialog...
 			const targetFile = get(selectedFiles)[0];
-			const newFilename = modalResponseRename?.content
+			const newFilename = modalResponseRename?.content[0]
 			const actionResponseRename : models.ActionResponse = await RenameFile(targetFile, newFilename)
 			if(actionResponseRename.error.status) {
 				console.error("File rename err:", actionResponseRename.error.reason || "Unknown")
