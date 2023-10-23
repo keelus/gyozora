@@ -3,7 +3,6 @@
 import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, GetUserOS } from '../wailsjs/go/main/App.js'
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 import type { models } from 'wailsjs/go/models.js';
-import { get } from 'svelte/store';
 // Gyozora icons
 import favicon from "./assets/icons/favicon.ico"
 import appicon from './assets/icons/gyozora.svg'
@@ -70,7 +69,7 @@ $: if (fileBrowser) {
 		let clickedFile = clickedTarget.closest("button.file")
 		let clickedCtxMenu = clickedTarget.closest(".fileContextMenu")
 		
-		if(get(USER_OS) == "darwin") {
+		if($USER_OS == "darwin") {
 			if(e.button == 0 && ! e.ctrlKey){ // Left click
 				closeFileContextMenu(fileContextMenu)
 				if(!clickedCtxMenu) // Prevent doAction for receiving an empty $selectedFiles & let doAction selectFiles depending on clicked mode
@@ -97,7 +96,7 @@ let filenameRenameInputValue = "";
 </script>
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
-<main>
+<main data-user-os={$USER_OS}>
 	<div class="appTitleBar" style="widows: 1;"></div>
 	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>
@@ -123,8 +122,8 @@ let filenameRenameInputValue = "";
 					<div class="emptyMessage">No pinned folders found 👎</div>
 				{/if}
 					{#each pinnedFolders as content}
-						<button class="element" on:click={() => elementClicked(content.path, true)}>
-							<Icon src={IconDictionary[content.type]} className="icon {content.type} {get(USER_OS)}"/>
+						<button class="element {$CURRENT_PATH == content.path ? "active" : ""}" on:click={() => elementClicked(content.path, true)}>
+							<Icon src={IconDictionary[content.type]} className="icon {content.type} {$USER_OS}"/>
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
@@ -138,7 +137,7 @@ let filenameRenameInputValue = "";
 				{/if}
 				{#each yourComputer as content}
 					<button class="element" on:click={() => elementClicked(content.path, true)}>
-						<Icon src={IconDictionary[content.type]} className="icon {content.type} {get(USER_OS)}"/>
+						<Icon src={IconDictionary[content.type]} className="icon {content.type} {$USER_OS}"/>
 						<div class="text">{content.name}</div>
 					</button>
 				{/each}
@@ -193,7 +192,7 @@ let filenameRenameInputValue = "";
 					{#if content.iconClass == "fileImage" && content.preview != ""}
 						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
-						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {get(USER_OS)}"/>
+						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {$USER_OS}"/>
 					{/if}
 					<div class="text">{content ? content.filename : "Error"}</div>
 				</button>
