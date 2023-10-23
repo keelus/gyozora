@@ -9,6 +9,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
@@ -57,6 +58,15 @@ func main() {
 				LightModeTitleTextInactive: windows.RGB(20, 20, 20),
 				LightModeBorder:            windows.RGB(255, 255, 255),
 				LightModeBorderInactive:    windows.RGB(255, 255, 255),
+			},
+		},
+		Mac: &mac.Options{
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			Appearance:           mac.NSAppearanceNameDarkAqua,
+			About: &mac.AboutInfo{
+				Title:   "Gyozora",
+				Message: "© 2023 keelus",
 			},
 		},
 	})
