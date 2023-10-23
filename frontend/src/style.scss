@@ -780,6 +780,7 @@ input[type=text]::selection {
 		display:none;
 	}
 	&[data-activemodal="newFile"] > .modal.newFile {display:flex;}
+	&[data-activemodal="aTest"] > .modal.aTest {display:flex;}
 	&[data-activemodal="rename"] > .modal.rename {display:flex;}
 
 }

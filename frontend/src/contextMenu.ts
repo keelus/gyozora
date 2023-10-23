@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
 import { OpenFile, AddFile, CutFile_s, CopyFile_s, PasteFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
-import OpenModal from "./modal";
+import OpenModal from "./modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
 import { GenerateToast } from "./toasts";
@@ -122,10 +122,7 @@ export async function doAction(action : string) {
 			break;
 		case "add":
 			const modalResponse = await OpenModal("newFile")
-			if(!modalResponse?.cancelled)
-				console.log("🔥", modalResponse)
-			else
-				console.warn("Modal canceled :(")
+			if(modalResponse?.cancelled) return;
 
 			// Dialog...
 			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content[0], modalResponse?.content[1])

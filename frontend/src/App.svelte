@@ -30,6 +30,8 @@ let modalParent : HTMLDivElement;
 
 let newFileActiveType : string = "file";
 
+import TestModal from './modals/NewFile.svelte'
+
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());
@@ -242,54 +244,5 @@ let filenameRenameInputValue = "";
 	</div>
 </div>
 <div class="modalParent" data-activeModal="" bind:this={modalParent}>
-	<div class="modal newFile" data-activeType={newFileActiveType}>
-		<div class="top">
-			<div class="title">Create a new file</div>
-		</div>
-		<div class="middle">
-			<div class="categoryTitle">Type of file</div>
-			<!-- <div class="message"></div> -->
-			<div class="typeOptions">
-				<button class="option {newFileActiveType == "file" ? "active" : ""}" on:click={() => newFileActiveType="file"}>
-					<Icon src={IconDictionary["file"]} className="icon file {$USER_OS}"/>
-					<div class="text">File</div>
-				</button>
-				<button class="option {newFileActiveType == "folder" ? "active" : ""}" on:click={() => newFileActiveType="folder"}>
-					<Icon src={IconDictionary["folder"]} className="icon folder {$USER_OS}"/>
-					<div class="text">Folder</div>
-				</button>
-			</div>
-			<div class="categoryTitle" style="margin-top:10px;">Filename</div>
-			<input type="text" placeholder="Filename and extension..." bind:value={temporalFilenameInputValue}>
-		</div>
-		<div class="bottom">
-			<button class="cancel">Cancel</button>
-			<button class="confirm" disabled={temporalFilenameInputValue == ""}>Create</button>
-		</div>
-	</div>
-	<div class="modal rename">
-		<div class="top">
-			<div class="title">Rename a file</div>
-		</div>
-		<div class="middle">
-			<!-- <div class="message"></div> -->
-			<input type="text" placeholder="New filename and extension..." bind:value={filenameRenameInputValue}>
-		</div>
-		<div class="bottom">
-			<button class="cancel">Cancel</button>
-			<button class="confirm" disabled={filenameRenameInputValue == ""}>Rename</button>
-		</div>
-	</div>
 </div>
-<!-- <img alt="Wails logo" id="logo" src="{logo}">
-<div class="result" id="result">{resultText}</div>
-<div class="input-box" id="input">
-	<h1>This is a test! Value 👉"{name}"👈</h1>
-	<input autocomplete="off" bind:value={name} class="input" id="name" type="text"/>
-	<button class="btn" on:click={greet}>Greet</button>
-</div> -->
 </main>
-
-<style>
-</style>
-	
