@@ -39,7 +39,7 @@ wails dev
 - [ ] 📋 Copy file(s)
 - [ ] 📋 Cut file(s)
 - [ ] 📋 Paste file(s)
-- [ ] 🆔 Rename a file
+- [x] ~~🆔 Rename a file~~
 - [x] ~~🗑️ Delete file(s)~~
 - [ ] ℹ️ Properties of a file
 
