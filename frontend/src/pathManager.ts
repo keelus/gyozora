@@ -1,6 +1,6 @@
 import { ReadPath, RenderPreview, OpenFile } from '../wailsjs/go/main/App.js';
 import type { models } from "wailsjs/go/models";
-import { contents, selectedFiles } from "./store"
+import { USER_OS, contents, selectedFiles } from "./store"
 import { get } from "svelte/store";
 import { CURRENT_PATH, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
 import { doAction } from './contextMenu.js';
@@ -149,14 +149,14 @@ export function buttonGoForward() {
 export function addToSelected(ev : MouseEvent, file : models.SysFile) {
 	if(ev.button != 0 && ev.button != 2) return;
 
-	if(ev.button == 2) {
+	if(ev.button == 2 || (get(USER_OS) == "darwin" && ev.button == 0 && ev.ctrlKey)) { // RIGHT CLICK
 		if(get(selectedFiles).includes(file)) return; // If right clicked multiple, do nothing
 		let newSelectedFiles = [file] // if right clicked one that is not selected, then we select this
 		selectedFiles.set(newSelectedFiles)
 		return
 	}
 
-	if(ev.ctrlKey && !ev.shiftKey) {
+	if(ev.ctrlKey && !ev.shiftKey || (get(USER_OS) == "darwin" && ev.button == 0 && ev.metaKey)) { // CTRL LEFT CLICK
 		let newSelectedFiles = []
 		if(get(selectedFiles).includes(file)){
 			for(let i = 0; i < get(selectedFiles).length; i++) {

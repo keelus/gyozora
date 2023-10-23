@@ -1,6 +1,7 @@
 import { writable, derived } from 'svelte/store'
 import type { models } from 'wailsjs/go/models.js';
 
+export const USER_OS = writable('')
 export const backHistory = writable<string[]>([])
 export const forwardHistory = writable<string[]>([])
 export const goBackEnabled = writable<boolean>(false)

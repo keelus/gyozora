@@ -9,6 +9,7 @@ import { LoadFolder } from "./pathManager";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
+	console.log(get(selectedFiles))
 
 	if(file == null) { // Right clicked in the body
 		await setContextMenuOptions("none")

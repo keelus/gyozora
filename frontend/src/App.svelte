@@ -3,7 +3,7 @@
 import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, GetUserOS } from '../wailsjs/go/main/App.js'
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 import type { models } from 'wailsjs/go/models.js';
-
+import { get } from 'svelte/store';
 // Gyozora icons
 import favicon from "./assets/icons/favicon.ico"
 import appicon from './assets/icons/gyozora.svg'
@@ -13,7 +13,7 @@ import Icon from 'svelte-icons-pack/Icon.svelte';
 import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
 
 // Gyozora browser, icons & logic
-import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress } from "./store";
+import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
@@ -21,7 +21,6 @@ import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMe
 import toast, { Toaster } from 'svelte-french-toast';
 import { GenerateToast } from './toasts.js';
 
-let USER_OS : string = "windows";
 
 let pinnedFolders : models.LeftBarElement[] = []
 let yourComputer : models.LeftBarElement[] = []
@@ -56,7 +55,7 @@ document.addEventListener("keydown", e => {
 
 async function FirstStart() {
 	console.log("✌️👻 Hi")
-	USER_OS = await GetUserOS();
+	USER_OS.set(await GetUserOS());
 	$CURRENT_PATH = await GetStartingPath()
 	pinnedFolders = await LoadPinnedFolders()
 	yourComputer = await LoadYourComputer()
@@ -71,12 +70,22 @@ $: if (fileBrowser) {
 		let clickedFile = clickedTarget.closest("button.file")
 		let clickedCtxMenu = clickedTarget.closest(".fileContextMenu")
 		
-		if(e.button == 0){ // Left click
-			closeFileContextMenu(fileContextMenu)
-			if(!clickedCtxMenu) // Prevent doAction for receiving an empty $selectedFiles & let doAction selectFiles depending on clicked mode
-				if(!clickedFile) $selectedFiles = []
-		} else if (e.button == 2) { // Right click
-			openFileContextMenu(fileContextMenu, {x:e.clientX, y:e.clientY}, clickedFile)
+		if(get(USER_OS) == "darwin") {
+			if(e.button == 0 && ! e.ctrlKey){ // Left click
+				closeFileContextMenu(fileContextMenu)
+				if(!clickedCtxMenu) // Prevent doAction for receiving an empty $selectedFiles & let doAction selectFiles depending on clicked mode
+					if(!clickedFile) $selectedFiles = []
+			} else if (e.button == 0 && e.ctrlKey) { // Right click
+				openFileContextMenu(fileContextMenu, {x:e.clientX, y:e.clientY}, clickedFile)
+			}
+		} else {
+			if(e.button == 0){ // Left click
+				closeFileContextMenu(fileContextMenu)
+				if(!clickedCtxMenu) // Prevent doAction for receiving an empty $selectedFiles & let doAction selectFiles depending on clicked mode
+					if(!clickedFile) $selectedFiles = []
+			} else if (e.button == 2) { // Right click
+				openFileContextMenu(fileContextMenu, {x:e.clientX, y:e.clientY}, clickedFile)
+			}
 		}
 	})
 }
@@ -115,7 +124,7 @@ let filenameRenameInputValue = "";
 				{/if}
 					{#each pinnedFolders as content}
 						<button class="element" on:click={() => elementClicked(content.path, true)}>
-							<Icon src={IconDictionary[content.type]} className="icon {content.type} {USER_OS}"/>
+							<Icon src={IconDictionary[content.type]} className="icon {content.type} {get(USER_OS)}"/>
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
@@ -129,7 +138,7 @@ let filenameRenameInputValue = "";
 				{/if}
 				{#each yourComputer as content}
 					<button class="element" on:click={() => elementClicked(content.path, true)}>
-						<Icon src={IconDictionary[content.type]} className="icon {content.type} {USER_OS}"/>
+						<Icon src={IconDictionary[content.type]} className="icon {content.type} {get(USER_OS)}"/>
 						<div class="text">{content.name}</div>
 					</button>
 				{/each}
@@ -184,7 +193,7 @@ let filenameRenameInputValue = "";
 					{#if content.iconClass == "fileImage" && content.preview != ""}
 						<div style="background-image:url(data:image/png;base64,{content.preview});width:90px;height:90px;background-size:contain;background-repeat:no-repeat;background-position:center;{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
-						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {USER_OS}"/>
+						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {get(USER_OS)}"/>
 					{/if}
 					<div class="text">{content ? content.filename : "Error"}</div>
 				</button>
