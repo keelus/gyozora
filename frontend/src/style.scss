@@ -297,8 +297,6 @@ input[type=text]::selection {
 			}
 
 			& > .imagePreview {
-				border:1px solid $background-5;
-				background:$background-4;
 				width:90px;
 				height:90px;
 				background-size:contain;
