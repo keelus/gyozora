@@ -46,7 +46,7 @@ html, body {
 }
 main {
 	&, & > *, * {
-		--baseBg:rgba(0,0,0, .4);
+		--baseBg:rgba(0,0,0, 1);
 	}
 
 	.appTitleBar {display:none;}
@@ -294,6 +294,17 @@ input[type=text]::selection {
 				width:90px;
 				height:90px;
 				stroke-width: .5px;
+			}
+
+			& > .imagePreview {
+				border:1px solid $background-5;
+				background:$background-4;
+				width:90px;
+				height:90px;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+
 			}
 
 			& > .text {
