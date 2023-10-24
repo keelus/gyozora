@@ -43,6 +43,6 @@ onMount(() => {
 	</div>
 	<div class="bottom">
 		<button class="cancel" bind:this={cancelButton}>Cancel</button>
-		<button class="confirm" bind:this={confirmButton}>Confirm</button>
+		<button class="confirm" bind:this={confirmButton} style="background-color:#F61C2C;">Delete</button>
 	</div>
 </div>
