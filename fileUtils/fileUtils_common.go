@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gyozora/models"
+	"gyozora/sysUtils"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -191,32 +192,45 @@ func GetImagePreview(fpath string, extension string) string {
 
 }
 
-func GenerateSysFile(path string, filename string) models.SysFile {
-	readFile, err := os.Stat(filepath.Join(path, filename))
+func GenerateSysFile(fpath string) models.SysFile {
+	readFile, err := os.Stat(fpath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
 	extension := strings.ToLower(filepath.Ext(readFile.Name()))
-	fullPath := filepath.Join(path, filename)
 	fileType := GetFileType(readFile.Name(), extension, readFile.IsDir())
 
-	preview := ""
+	path := filepath.Dir(fpath)
+
+	filename := readFile.Name()
+
+	isRoot := false
+	for _, root := range sysUtils.UserRoots() {
+		if fpath == root {
+			isRoot = true
+		}
+	}
+
+	if isRoot {
+		filename = fpath // Preserve windows disk letters
+		fileType = "folderDisk"
+	}
 
 	file := models.SysFile{
 		Name:        name,
 		Extension:   extension,
-		Filename:    readFile.Name(),
+		Filename:    filename,
 		Permissions: readFile.Mode().Perm().String(),
 		Path:        path,
-		PathFull:    fullPath,
+		PathFull:    fpath,
 		Size:        int(readFile.Size()),
 		IconClass:   fileType,
 		IsFolder:    readFile.IsDir(),
-		IsHidden:    IsHidden(fullPath),
-		ModifiedAt:  ModifiedAt(fullPath),
-		Preview:     preview,
+		IsHidden:    IsHidden(fpath),
+		ModifiedAt:  ModifiedAt(fpath),
+		Preview:     "",
 	}
 
 	return file

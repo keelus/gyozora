@@ -46,21 +46,42 @@ func (a *App) ReadPath(path string) models.ReadPathResponse {
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
 	dirFolders := make([]models.SysFile, 0)
+	breadcrumbs := make([]models.SysFile, 0)
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
 	}
 
+	// Load path content
 	for _, file := range files {
 		if file.IsDir() {
-			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(path, file.Name()))
+			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(filepath.Join(path, file.Name())))
 		} else {
-			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(path, file.Name()))
+			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(filepath.Join(path, file.Name())))
 		}
 	}
 
-	return models.ReadPathResponse{DirFiles: dirFiles, DirFolders: dirFolders, Error: models.SimpleError{Status: false}}
+	// Load path as breadcrumbs
+	for _, folderPath := range GetPathFolders(path) {
+		breadcrumbs = append(breadcrumbs, fileUtils.GenerateSysFile(folderPath))
+	}
+
+	return models.ReadPathResponse{DirFiles: dirFiles, DirFolders: dirFolders, Breadcrumbs: breadcrumbs, Error: models.SimpleError{Status: false}}
+}
+
+func GetPathFolders(fpath string) []string {
+	var pathes []string
+
+	previousPath := ""
+	curPath := fpath
+	for curPath != "" && curPath != previousPath {
+		pathes = append(pathes, curPath)
+		previousPath = curPath
+		curPath = filepath.Dir(curPath)
+	}
+
+	return pathes
 }
 
 func (a *App) LoadPinnedFolders() []models.LeftBarElement {
@@ -230,7 +251,7 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 	}
 	file.Close()
 
-	createdFile := fileUtils.GenerateSysFile(path, filename)
+	createdFile := fileUtils.GenerateSysFile(filepath.Join(path, filename))
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
@@ -257,7 +278,7 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
 
-	renamedFile := fileUtils.GenerateSysFile(file.Path, newFilename) // Generate a new sys file (to handle renaming to different extension)
+	renamedFile := fileUtils.GenerateSysFile(filepath.Join(file.Path, newFilename)) // Generate a new sys file (to handle renaming to different extension)
 
 	if file.Extension == renamedFile.Extension {
 		renamedFile.Preview = file.Preview
@@ -280,6 +301,6 @@ func (a *App) DeleteFile_s(files []models.SysFile) models.ActionResponse {
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}}
 }
-func (a *App) PropertiesFile(fpaths []string) {
-	fmt.Println("TBD -1")
+func (a *App) PropertiesFile(fpath string) models.SysFile {
+	return fileUtils.GenerateSysFile(fpath)
 }

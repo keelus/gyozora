@@ -33,7 +33,8 @@ type SimpleError struct {
 }
 
 type ReadPathResponse struct {
-	DirFiles   []SysFile   `json:"dirFiles"`
-	DirFolders []SysFile   `json:"dirFolders"`
-	Error      SimpleError `json:"error"`
+	DirFiles    []SysFile   `json:"dirFiles"`
+	DirFolders  []SysFile   `json:"dirFolders"`
+	Breadcrumbs []SysFile   `json:"breadcrumbs"`
+	Error       SimpleError `json:"error"`
 }

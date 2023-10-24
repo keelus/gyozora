@@ -1,10 +1,11 @@
 import NewFileModal from './NewFile.svelte'
 import RenameFileModal from './RenameFile.svelte'
 import DeleteFileModal from './DeleteFile.svelte'
+import PropertiesFileModal from './PropertiesFile.svelte'
 
 export default async function OpenModal(modalName : string) : (Promise<{[key:string] : any}>) {
 	const parentModal = document.querySelector(".modalParent")
-	if(!parentModal) return;
+	if(!parentModal) return {error: true};
 	
 	parentModal.setAttribute("data-activeModal", modalName)
 
@@ -20,9 +21,12 @@ export default async function OpenModal(modalName : string) : (Promise<{[key:str
 		renameFileModal.$destroy()
 	} else if(modalName == "delete") {
 		const deleteFileModal = new DeleteFileModal({target: parentModal});
-		deleteFileModal.prop
 		result = await deleteFileModal.WaitForModalResponse();
 		deleteFileModal.$destroy()
+	} else if(modalName == "properties") {
+		const propertiesFileModal = new PropertiesFileModal({target: parentModal});
+		result = await propertiesFileModal.WaitForModalResponse();
+		propertiesFileModal.$destroy()
 	}
 
 

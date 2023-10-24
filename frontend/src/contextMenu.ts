@@ -188,6 +188,8 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "properties":
+			const modalResponseProperties = await OpenModal("properties")
+			if(modalResponseProperties?.cancelled) return;
 			break;
 		default:
 			console.log("📛 unknown action")

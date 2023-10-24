@@ -12,7 +12,7 @@ import Icon from 'svelte-icons-pack/Icon.svelte';
 import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
 
 // Gyozora browser, icons & logic
-import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS } from "./store";
+import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
@@ -208,31 +208,16 @@ let filenameRenameInputValue = "";
 	<div class="progress" style="--loadProgress:{$previewProgress == "100" || $previewProgress == "100.00" ? "0" : $previewProgress}%;"></div>
 </div>
 <div class="bottom">
-	<div class="breadcrumb">
-		<div class="element">
-			<HardDrive class="icon folderDisk"/>
-			<div class="text">Disk one (C:)</div>
-		</div>
-		<ChevronRight class="icon"/>
-		<div class="element">
-			<Folder class="icon folder"/>
-			<div class="text">Users</div>
-		</div>
-		<ChevronRight class="icon"/>
-		<div class="element">
-			<Folder class="icon folder"/>
-			<div class="text">hugom</div>
-		</div>
-		<ChevronRight class="icon"/>
-		<div class="element">
-			<File class="icon folderDesktop"/>
-			<div class="text">Desktop</div>
-		</div>
-		<ChevronRight class="icon"/>
-		<div class="element">
-			<File class="icon folder"/>
-			<div class="text">My folder</div>
-		</div>
+	<div class="breadcrumbs">
+		{#each $CURRENT_PATH_BREADCRUMB_ELEMENTS as breadcrumb}
+			<button class="breadcrumb" on:click={() => elementClicked(breadcrumb.pathfull, breadcrumb.isFolder)}>
+				<Icon src={GetIconByType(breadcrumb.iconClass)} className="icon {breadcrumb.iconClass} {$USER_OS}"/>
+				<div class="text">{breadcrumb.filename}</div>
+			</button>
+			{#if $CURRENT_PATH_BREADCRUMB_ELEMENTS[$CURRENT_PATH_BREADCRUMB_ELEMENTS.length - 1] !== breadcrumb}
+				<ChevronRight class="icon"/>
+			{/if}
+		{/each}
 	</div>
 
 	{#if $previewProgress != "100" && $previewProgress != "100.00"}

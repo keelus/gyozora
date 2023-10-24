@@ -2,7 +2,7 @@ import { ReadPath, RenderPreview, OpenFile } from '../wailsjs/go/main/App.js';
 import type { models } from "wailsjs/go/models";
 import { USER_OS, contents, selectedFiles } from "./store"
 import { get } from "svelte/store";
-import { CURRENT_PATH, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
+import { CURRENT_PATH, CURRENT_PATH_BREADCRUMB_ELEMENTS, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
 import { doAction } from './contextMenu.js';
 import { GenerateToast } from './toasts.js';
 
@@ -24,6 +24,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 
 	const dirFiles = readPathResponse.dirFiles.sort((f1, f2) => f1.filename.localeCompare(f2.filename));
 	const dirFolders = readPathResponse.dirFolders.sort((f1, f2) => f1.filename.localeCompare(f2.filename));
+	const breadcrumbs = readPathResponse.breadcrumbs.reverse()
 
 	const directoryElements = dirFolders.concat(dirFiles) // Sort by filename ascending. Add .reversed() if sorted by name descending
 	
@@ -59,6 +60,12 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 		...element,
 	}))
 	contents.set(newElements)
+	// Load breadcrumb:
+
+	CURRENT_PATH_BREADCRUMB_ELEMENTS.set(breadcrumbs)
+
+	console.log(breadcrumbs)
+	console.log(CURRENT_PATH_BREADCRUMB_ELEMENTS)
 
 
 	let previewTotalCount = directoryElements.filter(element => element.iconClass == "fileImage").length
