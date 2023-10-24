@@ -41,7 +41,7 @@ wails dev
 - [ ] 📋 Paste file(s)
 - [x] ~~🆔 Rename a file~~
 - [x] ~~🗑️ Delete file(s)~~
-- [ ] ℹ️ Properties of a file
+- [x] ~~ℹ️ Properties of a file~~
 
 #### 🧑‍💻 User configuration related:
 - [ ] 🎨 Choose color theme
