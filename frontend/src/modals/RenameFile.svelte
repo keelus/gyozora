@@ -19,11 +19,12 @@
 </script>
 <div class="modal rename">
 	<div class="top">
-		<div class="title">Rename a file yes!</div>
+		<div class="title">Rename a file</div>
 	</div>
 	<div class="middle">
-		<!-- <div class="message"></div> -->
-		<input type="text" placeholder="New filename and extension..." bind:value={filename}>
+		<div class="flexContent">
+			<input type="text" placeholder="New filename and extension..." bind:value={filename}>
+		</div>
 	</div>
 	<div class="bottom">
 		<button class="cancel" bind:this={cancelButton} >Cancel</button>

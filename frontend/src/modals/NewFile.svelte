@@ -25,23 +25,25 @@ export async function WaitForModalResponse() {
 </script>
 <div class="modal newFile">
 	<div class="top">
-		<div class="title">Create a new file yes!</div>
+		<div class="title">Create a new file</div>
 	</div>
-	<div class="middle">
-		<div class="categoryTitle">Type of file</div>
-		<!-- <div class="message"></div> -->
-		<div class="typeOptions">
-			<button class="option {activeFileType == "file" ? "active" : "" }" on:click={() => activeFileType="file"}>
-				<Icon src={IconDictionary["file"]} className="icon file {get(USER_OS)}"/>
-				<div class="text">File</div>
-			</button>
-			<button class="option {activeFileType == "folder" ? "active" : "" }" on:click={() => activeFileType="folder"}>
-				<Icon src={IconDictionary["folder"]} className="icon folder {get(USER_OS)}"/>
-				<div class="text">Folder</div>
-			</button>
+	<div class="middle" style="padding:0 !important;">
+		<div class="flexContent">
+			<div class="categoryTitle">Type of file</div>
+			<!-- <div class="message"></div> -->
+			<div class="typeOptions">
+				<button class="option {activeFileType == "file" ? "active" : "" }" on:click={() => activeFileType="file"}>
+					<Icon src={IconDictionary["file"]} className="icon file {get(USER_OS)}"/>
+					<div class="text">File</div>
+				</button>
+				<button class="option {activeFileType == "folder" ? "active" : "" }" on:click={() => activeFileType="folder"}>
+					<Icon src={IconDictionary["folder"]} className="icon folder {get(USER_OS)}"/>
+					<div class="text">Folder</div>
+				</button>
+			</div>
+			<div class="categoryTitle" style="margin-top:10px;">Filename</div>
+			<input type="text" placeholder="Filename and extension..." bind:value={filename}>
 		</div>
-		<div class="categoryTitle" style="margin-top:10px;">Filename</div>
-		<input type="text" placeholder="Filename and extension..." bind:value={filename}>
 	</div>
 	<div class="bottom">
 		<button class="cancel" bind:this={cancelButton}>Cancel</button>

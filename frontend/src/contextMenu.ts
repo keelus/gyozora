@@ -130,7 +130,6 @@ export async function doAction(action : string) {
 				console.error("File creation err:", actionResponse.error.reason || "Unknown")
 				GenerateToast("error", "Error creating the new file. " + actionResponse.error.reason || "", "📄")
 			} else {
-				console.log(actionResponse.file)
 				contents.update(cts => {
 					cts.push(actionResponse.file)
 					return cts
@@ -146,10 +145,7 @@ export async function doAction(action : string) {
 			break;
 		case "rename":
 			const modalResponseRename = await OpenModal("rename")
-			if(!modalResponseRename?.cancelled)
-				console.log("🔥", modalResponseRename)
-			else
-				console.warn("Modal canceled :(")
+			if(modalResponseRename?.cancelled) return
 
 			// Dialog...
 			const targetFile = get(selectedFiles)[0];
@@ -159,7 +155,6 @@ export async function doAction(action : string) {
 				console.error("File rename err:", actionResponseRename.error.reason || "Unknown")
 				GenerateToast("error", "Error renaming the file. " + actionResponseRename.error.reason || "", "✏️")
 			} else {
-				// console.log(actionResponseRename.file)
 				contents.update(cts => {
 					for(let i = 0; i < cts.length; i++) {
 						if(cts[i].pathfull == targetFile.pathfull)
@@ -171,14 +166,15 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "delete":
-			// TODO: Add confirmation dialog
+			const modalResponseDelete = await OpenModal("delete")
+			if(modalResponseDelete?.cancelled) return;
+			
 			const amountS = get(selectedFiles).length > 1 ? "s" : ""
 			const actionResponseDel : models.ActionResponse = await DeleteFile_s(get(selectedFiles))
 			if(actionResponseDel.error.status) {
 				console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
 				GenerateToast("error", `Error deleting the file${amountS}: ` + actionResponseDel.error.reason || "", "🗑️")
 			} else {
-				console.log(actionResponseDel.file)
 				contents.update(cts => {
 					let newCts : models.SysFile[] = []
 					for(let i = 0; i < cts.length; i++){

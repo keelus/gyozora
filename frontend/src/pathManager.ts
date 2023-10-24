@@ -112,8 +112,6 @@ export async function elementClicked(fpath : string, isfolder : boolean) {
 		return LoadFolder(fpath, false, false, false) // TODO: Error handling
 	}
 
-	OpenFile(fpath)
-
 	const actionResponseOpen : models.ActionResponse = await OpenFile(fpath)
 	if(actionResponseOpen.error.status) {
 		GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
