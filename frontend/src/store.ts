@@ -12,6 +12,7 @@ export const CURRENT_PATH = writable<string>('')
 export const CURRENT_PATH_BREADCRUMB_ELEMENTS = writable<models.SysFile[]>([])
 export const contents = writable<models.SysFile[]>([])
 export const selectedFiles = writable<models.SysFile[]>([])
+export const clipboardFiles = writable<models.SysFile[]>([])
 export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boolean}}>({	
 	add:{show:true,disabled:false},
 	open:{show:true,disabled:false},

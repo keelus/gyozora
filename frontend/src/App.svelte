@@ -31,12 +31,12 @@ let modalParent : HTMLDivElement;
 let newFileActiveType : string = "file";
 
 import TestModal from './modals/NewFile.svelte'
+  import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
 
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener("keyup", e => e.key == "PageUp" && FirstStart()) // For debug
-document.addEventListener("keyup", e => e.key == "Escape" && ($selectedFiles = []))
 document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) || (e.button === 4 && buttonGoForward()));
 document.addEventListener("keyup", e => e.key == "Delete" && doAction("delete"));
 document.addEventListener("keydown", e => {
@@ -44,16 +44,32 @@ document.addEventListener("keydown", e => {
 		e.preventDefault()
 		doAction("add")
 	}
-	if(e.key == "Enter"){ // For folder by default creating
+	if(e.key == "Enter"){
 		const activeModal = modalParent.getAttribute("data-activeModal")
 		if(activeModal == "")
 			doAction("open")
 		else {
 			const confirmButton = modalParent.querySelector(`.${activeModal} > .bottom > button.confirm`) as HTMLButtonElement
-			confirmButton.click()
+			if(confirmButton) confirmButton.click()
+		}
+	} else if(e.key == "Escape"){
+		const activeModal = modalParent.getAttribute("data-activeModal")
+		if(activeModal == "")
+			$selectedFiles = []
+		else {
+			const cancelButton = modalParent.querySelector(`.${activeModal} > .bottom > button.cancel`) as HTMLButtonElement
+			if(cancelButton) cancelButton.click()
 		}
 	}
 });
+document.addEventListener("copy", e => {
+	if(e.target != document.body) return;
+	CopyToClipboard();
+})
+document.addEventListener("paste", e => {
+	if(e.target != document.body) return;
+	PasteFromClipboard();
+})
 
 
 async function FirstStart() {

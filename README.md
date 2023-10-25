@@ -36,8 +36,8 @@ wails dev
 
 #### 📄 Context menu/file related:
 - [x] ~~➕ Add/create a file~~
-- [ ] 📋 Copy file(s)
-- [ ] 📋 Cut file(s)
+- [x] ~~📋 Copy file(s)~~
+- [x] ~~📋 Cut file(s)~~
 - [ ] 📋 Paste file(s)
 - [x] ~~🆔 Rename a file~~
 - [x] ~~🗑️ Delete file(s)~~

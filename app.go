@@ -12,6 +12,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	cp "github.com/otiai10/copy"
 )
 
 var CURRENT_PATH = ""
@@ -262,8 +264,49 @@ func (a *App) CutFile_s(fpaths []string) {
 func (a *App) CopyFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
-func (a *App) PasteFile_s(fpaths []string) {
-	fmt.Println("TBD -1")
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string) bool { // TODO: Add previews to cache. Return error details
+	fmt.Println("Pasting file")
+	srcPath := srcFile.PathFull
+	tgtPathFinal := filepath.Join(tgtPath, srcFile.Filename)
+
+	_, err := os.Stat(srcPath)
+	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
+		return false
+	}
+
+	_, err = os.Stat(tgtPath)
+	if err != nil { // If target path doesn't exist, ignore and return not completed
+		return false
+	}
+
+	//Check if pasting location exist a file with that filename
+	_, err = os.Stat(tgtPathFinal)
+	if err == nil { // Exists with that name, ignore and return not completed
+		fmt.Println("File with that filename already exists")
+		return false
+	}
+
+	if srcFile.IsFolder {
+		err := cp.Copy(srcPath, tgtPathFinal)
+		if err != nil {
+			fmt.Println("ERR N 3")
+			fmt.Println(err)
+			return false
+		}
+		return true
+	} else {
+		content, err := os.ReadFile(srcPath)
+		if err != nil {
+			return false
+		}
+
+		err = os.WriteFile(tgtPathFinal, content, 0644) // TODO: Perms
+		if err != nil {
+			return false
+		}
+	}
+
+	return true
 }
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
 	newPath := filepath.Join(file.Path, newFilename)

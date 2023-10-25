@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/otiai10/copy v1.14.0
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef
 	github.com/wailsapp/wails/v2 v2.6.0
@@ -42,6 +43,7 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	lukechampine.com/uint128 v1.2.0 // indirect

@@ -1,11 +1,12 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
-import { OpenFile, AddFile, CutFile_s, CopyFile_s, PasteFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
+import { OpenFile, AddFile, CutFile_s, CopyFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
 import OpenModal from "./modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
 import { GenerateToast } from "./toasts";
 import { LoadFolder } from "./pathManager";
+import { CopyToClipboard, PastableFromClipboard, PasteFromClipboard } from "./clipboard";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -60,6 +61,7 @@ export async function setContextMenuOptions(mode : string) {
 	})
 
 	if(mode == "") return;
+	const clipboardPastable = PastableFromClipboard()
 
 	if(mode == "none") {
 		fileContextMenuOptions.update(options => {
@@ -68,7 +70,7 @@ export async function setContextMenuOptions(mode : string) {
 			open: { show: false, disabled: false },
 			cut: { show: false, disabled: false },
 			copy: { show: false, disabled: false },
-			paste: { show: true, disabled: true },  // Check clipboard
+			paste: { show: true, disabled: !clipboardPastable },  // Check clipboard
 			rename: { show: false, disabled: false },
 			delete: { show: false, disabled: false }
 		  };
@@ -80,7 +82,7 @@ export async function setContextMenuOptions(mode : string) {
 		  return {
 			...options,
 			add: { show: false, disabled: false },
-			paste: { show: true, disabled: true }  // Check clipboard
+			paste: { show: true, disabled: !clipboardPastable }  // Check clipboard
 		  };
 		});
 	}
@@ -91,7 +93,7 @@ export async function setContextMenuOptions(mode : string) {
 			...options,
 			add: { show: false, disabled: false },
 			open: { show: false, disabled: false },
-			paste: { show: true, disabled: true },  // Check clipboard
+			paste: { show: true, disabled: !clipboardPastable },  // Check clipboard
 			rename: { show: false, disabled: false },
 			properties: { show: false, disabled: false }
 		  };
@@ -140,8 +142,10 @@ export async function doAction(action : string) {
 		case "cut":
 			break;
 		case "copy":
+			CopyToClipboard()
 			break;
 		case "paste":
+			PasteFromClipboard()
 			break;
 		case "rename":
 			const modalResponseRename = await OpenModal("rename")
