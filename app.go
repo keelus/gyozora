@@ -12,8 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-
-	cp "github.com/otiai10/copy"
+	"strings"
 )
 
 var CURRENT_PATH = ""
@@ -43,7 +42,7 @@ func (a *App) GetUserOS() string {
 	return runtime.GOOS
 }
 
-func (a *App) ReadPath(path string) models.ReadPathResponse {
+func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse {
 	fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
@@ -58,15 +57,15 @@ func (a *App) ReadPath(path string) models.ReadPathResponse {
 	// Load path content
 	for _, file := range files {
 		if file.IsDir() {
-			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(filepath.Join(path, file.Name())))
+			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(currentpath, filepath.Join(path, file.Name())))
 		} else {
-			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(filepath.Join(path, file.Name())))
+			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(currentpath, filepath.Join(path, file.Name())))
 		}
 	}
 
 	// Load path as breadcrumbs
 	for _, folderPath := range GetPathFolders(path) {
-		breadcrumbs = append(breadcrumbs, fileUtils.GenerateSysFile(folderPath))
+		breadcrumbs = append(breadcrumbs, fileUtils.GenerateSysFile(currentpath, folderPath))
 	}
 
 	return models.ReadPathResponse{DirFiles: dirFiles, DirFolders: dirFolders, Breadcrumbs: breadcrumbs, Error: models.SimpleError{Status: false}}
@@ -253,7 +252,7 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 	}
 	file.Close()
 
-	createdFile := fileUtils.GenerateSysFile(filepath.Join(path, filename))
+	createdFile := fileUtils.GenerateSysFile(path, filepath.Join(path, filename))
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
@@ -264,49 +263,82 @@ func (a *App) CutFile_s(fpaths []string) {
 func (a *App) CopyFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
-func (a *App) PasteFile(srcFile models.SysFile, tgtPath string) bool { // TODO: Add previews to cache. Return error details
+
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, layerIndex int) models.PastFileResponse { // TODO: Add previews to cache. Return error details
 	fmt.Println("Pasting file")
 	srcPath := srcFile.PathFull
 	tgtPathFinal := filepath.Join(tgtPath, srcFile.Filename)
 
 	_, err := os.Stat(srcPath)
 	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
-		return false
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	_, err = os.Stat(tgtPath)
 	if err != nil { // If target path doesn't exist, ignore and return not completed
-		return false
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	//Check if pasting location exist a file with that filename
 	_, err = os.Stat(tgtPathFinal)
 	if err == nil { // Exists with that name, ignore and return not completed
 		fmt.Println("File with that filename already exists")
-		return false
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
 
+	// Final path? Where the folder/file would be:
+
+	finalPath := ""
+	fullFinalPath := ""
 	if srcFile.IsFolder {
-		err := cp.Copy(srcPath, tgtPathFinal)
-		if err != nil {
-			fmt.Println("ERR N 3")
-			fmt.Println(err)
-			return false
+		finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
+		if layerIndex > 0 {
+			relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
+			relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
+			finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
 		}
-		return true
+		fmt.Printf("%s folder would go in '%s'\n", srcFile.Filename, finalPath)
+
+		//Check exists folder
+		//Then if not:
+		fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
+		err := os.Mkdir(fullFinalPath, 0644)
+		if err != nil {
+			return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		}
+
+		// err := cp.Copy(srcPath, tgtPathFinal)
+		// if err != nil {
+		// 	fmt.Println("ERR N 3")
+		// 	fmt.Println(err)
+		// 	return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		// }
 	} else {
+		finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
+		if layerIndex > 0 {
+			relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
+			relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
+			finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
+		}
+		fmt.Printf("%s file would go in '%s'\n", srcFile.Filename, finalPath)
+
 		content, err := os.ReadFile(srcPath)
 		if err != nil {
-			return false
+			return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 		}
 
-		err = os.WriteFile(tgtPathFinal, content, 0644) // TODO: Perms
+		fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
+		err = os.WriteFile(fullFinalPath, content, 0644) // TODO: Perms
 		if err != nil {
-			return false
+			return models.PastFileResponse{Error: models.SimpleError{Status: true}}
 		}
 	}
 
-	return true
+	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
+	pastedFile.Preview = srcFile.Preview
+
+	fmt.Println("Seems no errors")
+	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
 	newPath := filepath.Join(file.Path, newFilename)
@@ -321,7 +353,7 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
 
-	renamedFile := fileUtils.GenerateSysFile(filepath.Join(file.Path, newFilename)) // Generate a new sys file (to handle renaming to different extension)
+	renamedFile := fileUtils.GenerateSysFile(file.Path, filepath.Join(file.Path, newFilename)) // Generate a new sys file (to handle renaming to different extension)
 
 	if file.Extension == renamedFile.Extension {
 		renamedFile.Preview = file.Preview
@@ -345,5 +377,5 @@ func (a *App) DeleteFile_s(files []models.SysFile) models.ActionResponse {
 	return models.ActionResponse{Error: models.SimpleError{Status: false}}
 }
 func (a *App) PropertiesFile(fpath string) models.SysFile {
-	return fileUtils.GenerateSysFile(fpath)
+	return fileUtils.GenerateSysFile(fpath, fpath)
 }

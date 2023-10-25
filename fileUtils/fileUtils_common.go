@@ -192,7 +192,7 @@ func GetImagePreview(fpath string, extension string) string {
 
 }
 
-func GenerateSysFile(fpath string) models.SysFile {
+func GenerateSysFile(bpath string, fpath string) models.SysFile {
 	readFile, err := os.Stat(fpath)
 	if err != nil {
 		log.Fatal(err)
@@ -203,6 +203,8 @@ func GenerateSysFile(fpath string) models.SysFile {
 	fileType := GetFileType(readFile.Name(), extension, readFile.IsDir())
 
 	path := filepath.Dir(fpath)
+
+	pathfullRelative, _ := filepath.Rel(bpath, fpath)
 
 	filename := readFile.Name()
 
@@ -219,18 +221,19 @@ func GenerateSysFile(fpath string) models.SysFile {
 	}
 
 	file := models.SysFile{
-		Name:        name,
-		Extension:   extension,
-		Filename:    filename,
-		Permissions: readFile.Mode().Perm().String(),
-		Path:        path,
-		PathFull:    fpath,
-		Size:        int(readFile.Size()),
-		IconClass:   fileType,
-		IsFolder:    readFile.IsDir(),
-		IsHidden:    IsHidden(fpath),
-		ModifiedAt:  ModifiedAt(fpath),
-		Preview:     "",
+		Name:             name,
+		Extension:        extension,
+		Filename:         filename,
+		Permissions:      readFile.Mode().Perm().String(),
+		Path:             path,
+		PathFull:         fpath,
+		PathRelativeFull: pathfullRelative,
+		Size:             int(readFile.Size()),
+		IconClass:        fileType,
+		IsFolder:         readFile.IsDir(),
+		IsHidden:         IsHidden(fpath),
+		ModifiedAt:       ModifiedAt(fpath),
+		Preview:          "",
 	}
 
 	return file

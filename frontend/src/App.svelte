@@ -1,6 +1,6 @@
 <script lang="ts">
 // Wails/backend functions & models
-import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, GetUserOS } from '../wailsjs/go/main/App.js'
+import { GetStartingPath, LoadPinnedFolders, LoadYourComputer, GetUserOS, ReadPath } from '../wailsjs/go/main/App.js'
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 import type { models } from 'wailsjs/go/models.js';
 // Gyozora icons
@@ -31,8 +31,7 @@ let modalParent : HTMLDivElement;
 let newFileActiveType : string = "file";
 
 import TestModal from './modals/NewFile.svelte'
-  import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
-
+import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 document.addEventListener('contextmenu', e => e.preventDefault());

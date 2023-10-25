@@ -7,24 +7,26 @@ type LeftBarElement struct {
 }
 
 type SysFile struct {
-	Name        string `json:"name"`
-	Extension   string `json:"extension"`
-	Filename    string `json:"filename"`
-	Permissions string `json:"permissions"`
-	Path        string `json:"path"`
-	PathFull    string `json:"pathfull"`
-	Size        int    `json:"size"`
-	IconClass   string `json:"iconClass"`
-	IsFolder    bool   `json:"isFolder"`
-	IsHidden    bool   `json:"isHidden"`
-	ModifiedAt  int    `json:"modifiedAt"`
-	Preview     string `json:"preview"`
-	Selected    bool   `json:"selected"`
+	Name             string `json:"name"`
+	Extension        string `json:"extension"`
+	Filename         string `json:"filename"`
+	Permissions      string `json:"permissions"`
+	Path             string `json:"path"`
+	PathFull         string `json:"pathfull"`
+	PathRelative     string `json:"pathrelative"`
+	PathRelativeFull string `json:"pathrelativefull"`
+	Size             int    `json:"size"`
+	IconClass        string `json:"iconClass"`
+	IsFolder         bool   `json:"isFolder"`
+	IsHidden         bool   `json:"isHidden"`
+	ModifiedAt       int    `json:"modifiedAt"`
+	Preview          string `json:"preview"`
+	Selected         bool   `json:"selected"`
 }
 
 type ActionResponse struct {
-	Error SimpleError `json:"error"`
 	File  SysFile     `json:"file"`
+	Error SimpleError `json:"error"`
 }
 
 type SimpleError struct {
@@ -37,4 +39,9 @@ type ReadPathResponse struct {
 	DirFolders  []SysFile   `json:"dirFolders"`
 	Breadcrumbs []SysFile   `json:"breadcrumbs"`
 	Error       SimpleError `json:"error"`
+}
+
+type PastFileResponse struct {
+	File  SysFile     `json:"file"`
+	Error SimpleError `json:"error"`
 }

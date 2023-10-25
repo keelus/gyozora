@@ -10,7 +10,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	console.log("Loading folder 📂 ...")
 	// Check if we are able to open directory
 
-	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath)
+	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath, newPath)
 
 	if(readPathResponse.error.status) {
 		GenerateToast("error", "Can't open the folder: " + readPathResponse.error.reason || "", "📂")
