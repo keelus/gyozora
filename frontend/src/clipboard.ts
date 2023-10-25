@@ -1,19 +1,196 @@
-import { PasteFile, ReadPath } from "../wailsjs/go/main/App.js";
+import { PasteFile, PasteFolder, ReadPath  } from "../wailsjs/go/main/App.js";
 import { LoadFolder } from "./pathManager.js";
 import { CURRENT_PATH, clipboardFiles, contents, currentJob, selectedFiles } from "./store"
 import { get } from "svelte/store"
 import { GenerateToast } from "./toasts.js";
 import toast from "svelte-french-toast";
 import { models } from "../wailsjs/go/models.js";
-
 export function CopyToClipboard() {
 	clipboardFiles.set(get(selectedFiles))
 }
 
+
 export async function PasteFromClipboard() {
-	if(!PastableFromClipboard) return;
-	const targetLocation = get(CURRENT_PATH);
-	const pastingFiles = get(clipboardFiles)
+	let failedPastes : models.SysFile[] = []
+	const targetPath = get(CURRENT_PATH);
+
+	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
+		console.warn("🌳 tree generation start.")
+		let baseFiles = files
+		for(let i = 0; i < baseFiles.length; i++) {
+			if(!baseFiles[i].isFolder) continue;
+	
+			let childrens = await getChildrens(files[i])
+	
+			files[i].childrenFiles = childrens.dirFiles;
+			files[i].childrenFolders = childrens.dirFolders;
+	
+		}
+	
+		console.warn("🌳 tree generation end.")
+		return files;
+	}
+	
+	async function getChildrens(folder : models.SysFile) : Promise<models.ReadPathResponse> {
+		let baseChildrens = await ReadPath(targetPath, folder.pathfull)
+		let hasFolders = baseChildrens.dirFolders.length > 0
+	
+		if(hasFolders) {
+			for(let i = 0; i < baseChildrens.dirFolders.length; i++){
+				let childrens = await getChildrens(baseChildrens.dirFolders[i])
+				baseChildrens.dirFolders[i].childrenFiles = childrens.dirFiles
+				baseChildrens.dirFolders[i].childrenFolders = childrens.dirFolders
+			}
+		}
+	
+		return baseChildrens;
+	}
+
+	async function copyFiles(files : models.SysFile[], isBase : boolean) : Promise<any> {
+		for(let file of files) {
+			const response = await PasteFile(file, targetPath, isBase);
+			if(response.error.status) {
+				failedPastes.push(file)
+				console.error(response.error.reason)
+			} else {
+				// console.warn("Update visual content if in current path.")
+			}
+		}
+	}
+
+	async function copyFolder(folder : models.SysFile, isBase : boolean) : Promise<any> {
+		let failed = false;
+		
+		let sendingFolder = { ...folder};
+		sendingFolder.childrenFiles = []
+		sendingFolder.childrenFolders = []
+		const response = await PasteFolder(sendingFolder, targetPath, isBase);
+		if(response.error.status) {
+			failedPastes.push(folder)
+			console.error(response.error.reason)
+			failed = true;
+		} else {
+			// console.log("Update visual content if in current path.")
+			// console.warn("Pasted '" + folder.pathfull + "'.")
+		}
+
+		return failed;
+	}
+
+	async function processNode(folder : models.SysFile) : Promise<any> {
+		// console.warn("📍 node processing start")
+		let folderPromises = []
+
+		const responseThisFolder = await copyFolder(folder, false)
+		
+		if(responseThisFolder == true) {
+			console.warn("A folder creation failed. Cancelling this one.")
+			return;
+		}
+
+		if(folder.childrenFiles.length > 0)
+			folderPromises.push(copyFiles(folder.childrenFiles, false))
+
+		await Promise.all(folderPromises)
+
+		let subpromises = []
+
+		if(folder.childrenFolders.length > 0)
+			for(let subfolder of folder.childrenFolders) {
+				const subpromise = processNode(subfolder)
+				subpromises.push(subpromise)
+			}
+
+		await Promise.all(subpromises)
+		// console.warn("📍 node processing end")
+	}
+
+	async function processTree(tree : models.SysFile[]) {
+		// console.warn("🌳 tree processing start")
+		let baseFolders = tree.filter(file => file.isFolder)
+		let baseFiles = tree.filter(file => !file.isFolder)
+	
+		let basePromises = []
+
+		if(baseFolders.length > 0)
+			for(let baseFolder of baseFolders) {
+				basePromises.push(processNode(baseFolder))
+			}
+
+		if(baseFiles.length > 0)
+			basePromises.push(copyFiles(baseFiles, true))
+
+		await Promise.all(basePromises)
+		// console.warn("🌳 tree processing end")
+	}
+
+
+	(async function main() {
+		if(!PastableFromClipboard()) return;
+		console.log("Pasting from clibpoard!")
+
+		const pastingFiles = get(clipboardFiles)
+
+		
+		const beginning = new Date()
+		let fileTree : models.SysFile[];
+		await toast.promise(
+			new Promise(async (resolve, reject) => {
+				fileTree = await getTree(pastingFiles);
+				return resolve(0)
+			}),
+			{
+				loading:"Generating 🌳...",
+				success:"Generated.",
+				error:"Error generating the tree."
+			},
+			{
+				position:'bottom-right'
+			}
+		).catch(error => {})
+		
+		await toast.promise(
+			processTree(fileTree),
+			{
+				loading:"Copying files 📋...",
+				success:"All Copied.",
+				error:"Error copying files."
+			},
+			{
+				position:'bottom-right'
+			}
+		).catch(error => {})
+		const end = new Date()
+
+		const diffSeconds = Math.floor((end - beginning) / 1000);
+		console.log("Difference in seconds: ", diffSeconds)
+		console.log("Difference in minutes and seconds: ", Math.floor(diffSeconds / 60) + ":" + diffSeconds % 60)
+		
+		
+		// await toast.promise(
+		// 	new Promise(async (resolve, reject) => {
+		// 		const fileTree = await getTree(pastingFiles);
+		// 		await processTree(fileTree)
+
+		// 		if(failedPastes.length > 0)
+		// 			return reject()
+		// 		return resolve(0)
+		// 	}),
+		// 	{
+		// 		loading:"Pasting...",
+		// 		success:"Pasted all!",
+		// 		error:"Some not pasted!"
+		// 	},
+		// 	{
+		// 		position:'bottom-right'
+		// 	}
+		// ).catch(error => {})
+
+		console.log("PASTE ENDED")
+		LoadFolder(targetPath, false, false, true) // TODO: Remove this
+	})()
+
+	return;
 
 	await toast.promise(
 		PastePerLayer(pastingFiles, targetLocation),
@@ -40,7 +217,6 @@ export function PastableFromClipboard() {
 	return get(clipboardFiles).length > 0
 }
 
-
 export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath : string) {
 	return new Promise(async(resolve, reject) => {
 		let errors = false;
@@ -61,7 +237,6 @@ export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath
 		let failedPastes = []
 		
 		// Copy paste current layer. Then keep going
-		console.log(currentLayer)
 		failedPastes = await layerPaste(currentLayer, targetPath, layerIndex)
 		
 
@@ -84,7 +259,6 @@ export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath
 
 			// Copy paste current layer. Then keep going
 			failedPastes = failedPastes.concat(await layerPaste(currentLayer, targetPath, layerIndex))
-			console.log(currentLayer)
 		}
 		console.log("Algorythim ended")
 
@@ -99,7 +273,6 @@ export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath
 }
 
 async function layerPaste(layerElements : models.SysFile[], targetPath : string, layerIndex : number) : Promise<models.SysFile[]> {
-	console.warn("BEGIN LAYER")
 	let failedPastes : models.SysFile[] = []
 
 	for(let elem of layerElements) {
@@ -110,20 +283,15 @@ async function layerPaste(layerElements : models.SysFile[], targetPath : string,
 			console.error(response.error.reason)
 			failedPastes.push(elem)
 		}else {
-			console.log("Pasted '" + elem.pathfull + "'")
 			if(get(CURRENT_PATH) == response.file.path){ // If user is currently on the pasting path (of the newly file created)
 
-				console.log(contents)
-				console.log(elem)
 				contents.update(cts => {
 					cts.push(response.file)
 					return cts
 				})
-				console.log(contents)
 			}
 		}
 	}
 
-	console.warn("END LAYER")
 	return failedPastes
 }

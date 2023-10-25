@@ -43,7 +43,7 @@ func (a *App) GetUserOS() string {
 }
 
 func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse {
-	fmt.Println("########## FOLDER READ ##########")
+	// fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
 	dirFolders := make([]models.SysFile, 0)
@@ -264,10 +264,67 @@ func (a *App) CopyFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
 
-func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, layerIndex int) models.PastFileResponse { // TODO: Add previews to cache. Return error details
-	fmt.Println("Pasting file")
+func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PastFileResponse {
+	srcPath := srcFolder.PathFull
+	tgtPathFinal := filepath.Join(tgtPath, srcFolder.Filename)
+
+	_, err := os.Stat(srcPath)
+	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
+		fmt.Println(err)
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	}
+
+	_, err = os.Stat(tgtPath)
+	if err != nil { // If target path doesn't exist, ignore and return not completed
+		fmt.Println(err)
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	}
+
+	//Check if pasting location exist a file with that filename
+	_, err = os.Stat(tgtPathFinal)
+	if err == nil { // Exists with that name, ignore and return not completed
+		fmt.Println("File with that filename already exists")
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
+	}
+
+	// Final path? Where the folder/file would be:
+	finalPath := ""
+	fullFinalPath := ""
+	finalPath = filepath.Dir(filepath.Join(tgtPath, srcFolder.Filename)) // TODO: Revise this
+
+	if !isBase {
+		relPath := strings.Replace(srcFolder.PathRelativeFull, "..", "", 1)
+		relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
+		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
+	}
+
+	//Check exists folder
+	//Then if not:
+	fullFinalPath = filepath.Join(finalPath, srcFolder.Filename)
+	// fmt.Printf("Execute os.Mkdir(%s, 0644)\n", fullFinalPath)
+	err = os.Mkdir(fullFinalPath, 0644)
+	if err != nil {
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	}
+
+	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
+	pastedFile.Preview = srcFolder.Preview
+
+	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
+}
+
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PastFileResponse { // TODO: Add previews to cache. Return error details
 	srcPath := srcFile.PathFull
-	tgtPathFinal := filepath.Join(tgtPath, srcFile.Filename)
+
+	finalPath := ""
+	fullFinalPath := ""
+	finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
+	if !isBase {
+		relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
+		relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
+		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
+	}
+	fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
 
 	_, err := os.Stat(srcPath)
 	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
@@ -280,7 +337,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, layerIndex int) 
 	}
 
 	//Check if pasting location exist a file with that filename
-	_, err = os.Stat(tgtPathFinal)
+	_, err = os.Stat(fullFinalPath)
 	if err == nil { // Exists with that name, ignore and return not completed
 		fmt.Println("File with that filename already exists")
 		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
@@ -288,56 +345,19 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, layerIndex int) 
 
 	// Final path? Where the folder/file would be:
 
-	finalPath := ""
-	fullFinalPath := ""
-	if srcFile.IsFolder {
-		finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
-		if layerIndex > 0 {
-			relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
-			relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
-			finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
-		}
-		fmt.Printf("%s folder would go in '%s'\n", srcFile.Filename, finalPath)
+	content, err := os.ReadFile(srcPath)
+	if err != nil {
+		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	}
 
-		//Check exists folder
-		//Then if not:
-		fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
-		err := os.Mkdir(fullFinalPath, 0644)
-		if err != nil {
-			return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
-		}
-
-		// err := cp.Copy(srcPath, tgtPathFinal)
-		// if err != nil {
-		// 	fmt.Println("ERR N 3")
-		// 	fmt.Println(err)
-		// 	return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
-		// }
-	} else {
-		finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
-		if layerIndex > 0 {
-			relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
-			relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
-			finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
-		}
-		fmt.Printf("%s file would go in '%s'\n", srcFile.Filename, finalPath)
-
-		content, err := os.ReadFile(srcPath)
-		if err != nil {
-			return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
-		}
-
-		fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
-		err = os.WriteFile(fullFinalPath, content, 0644) // TODO: Perms
-		if err != nil {
-			return models.PastFileResponse{Error: models.SimpleError{Status: true}}
-		}
+	err = os.WriteFile(fullFinalPath, content, 0644) // TODO: Perms
+	if err != nil {
+		return models.PastFileResponse{Error: models.SimpleError{Status: true}}
 	}
 
 	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
 	pastedFile.Preview = srcFile.Preview
 
-	fmt.Println("Seems no errors")
 	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB

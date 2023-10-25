@@ -7,21 +7,23 @@ type LeftBarElement struct {
 }
 
 type SysFile struct {
-	Name             string `json:"name"`
-	Extension        string `json:"extension"`
-	Filename         string `json:"filename"`
-	Permissions      string `json:"permissions"`
-	Path             string `json:"path"`
-	PathFull         string `json:"pathfull"`
-	PathRelative     string `json:"pathrelative"`
-	PathRelativeFull string `json:"pathrelativefull"`
-	Size             int    `json:"size"`
-	IconClass        string `json:"iconClass"`
-	IsFolder         bool   `json:"isFolder"`
-	IsHidden         bool   `json:"isHidden"`
-	ModifiedAt       int    `json:"modifiedAt"`
-	Preview          string `json:"preview"`
-	Selected         bool   `json:"selected"`
+	Name             string    `json:"name"`
+	Extension        string    `json:"extension"`
+	Filename         string    `json:"filename"`
+	Permissions      string    `json:"permissions"`
+	Path             string    `json:"path"`
+	PathFull         string    `json:"pathfull"`
+	PathRelative     string    `json:"pathrelative"`
+	PathRelativeFull string    `json:"pathrelativefull"`
+	Size             int       `json:"size"`
+	IconClass        string    `json:"iconClass"`
+	IsFolder         bool      `json:"isFolder"`
+	IsHidden         bool      `json:"isHidden"`
+	ModifiedAt       int       `json:"modifiedAt"`
+	Preview          string    `json:"preview"`
+	Selected         bool      `json:"selected"`
+	ChildrenFiles    []SysFile `json:"childrenFiles"`
+	ChildrenFolders  []SysFile `json:"childrenFolders"`
 }
 
 type ActionResponse struct {
