@@ -44,7 +44,7 @@ wails dev
 - [x] ~~ℹ️ Properties of a file~~
 
 #### 🧑‍💻 User configuration related:
-- [ ] 🎨 Choose color theme
+- [ ] 🎨 Choose a color theme
 - [ ] 📊 Multiple UX options:
   - [ ] Enable/disable file deletion confirmation modal
   - [ ] Change language

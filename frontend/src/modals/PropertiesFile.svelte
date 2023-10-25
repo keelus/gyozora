@@ -6,6 +6,8 @@ import { get } from "svelte/store";
 import { onMount } from "svelte";
 import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
+import FiCopy from "svelte-icons-pack/fi/FiCopy";
+import { GenerateToast } from "../../src/toasts";
 
 let cancelButton : HTMLButtonElement;
 
@@ -35,6 +37,21 @@ function renderBytes(bytes : number) : string {
 	return bytes.toString()
 }
 
+function renderDate(dateUnix : number) : string {
+	const modifTime = new Date(dateUnix * 1000)
+
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
+	const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+
+	return `${days[modifTime.getDay()]}, ${months[modifTime.getMonth()]} ${modifTime.getDate().toString().padStart(2, '0')}, ${modifTime.getFullYear()}, ${modifTime.getHours().toString().padStart(2, '0')}:${modifTime.getMinutes().toString().padStart(2, '0')}:${modifTime.getSeconds().toString().padStart(2, '0')}`
+}
+
+function copyToClipboard(text : string) {
+	navigator.clipboard.writeText(text)
+	GenerateToast("success", "Copied to clipboard", "📋")
+}
+
 </script>
 <div class="modal properties">
 	{#if fileData !== undefined}
@@ -51,27 +68,42 @@ function renderBytes(bytes : number) : string {
 							<Icon src={GetIconByType(fileData.iconClass)} className="icon {fileData.iconClass} {$USER_OS}"/>
 						{/if}
 					</div>
-					<div class="text" title={fileData.filename}>{fileData.filename}</div>
+					<button class="value" on:click={() => copyToClipboard(fileData.filename)}>
+						<div class="text" title={fileData.filename}>{fileData.filename}</div>
+						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+					</button>
 				</div>
 				<div class="divider"></div>
 				<div class="doubleField">
 					<div class="key">Type</div>
-					<div class="text">{fileData.iconClass}</div>
+					<button class="value" on:click={() => copyToClipboard(fileData.iconClass)}>
+						<div class="text" title={fileData.iconClass}>{fileData.iconClass}</div>
+						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+					</button>
 				</div>
 				<div class="doubleField">
 					<div class="key">Location</div>
-					<div class="text" title={fileData.path}>{fileData.path}</div>
+					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
+						<div class="text" title={fileData.path}>{fileData.path}</div>
+						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+					</button>
 				</div>
 				{#if !fileData.isFolder}
 					<div class="doubleField">
 						<div class="key">Size</div>
-						<div class="text">{renderBytes(fileData.size)}</div>
+						<button class="value" on:click={() => copyToClipboard(renderBytes(fileData.size))}>
+							<div class="text" title={renderBytes(fileData.size)}>{renderBytes(fileData.size)}</div>
+							<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						</button>
 					</div>
 				{/if}
 				<div class="divider"></div>
 				<div class="doubleField">
 					<div class="key">Modification</div>
-					<div class="text">{fileData.modifiedAt}</div>
+					<button class="value" on:click={() => copyToClipboard(renderDate(fileData.modifiedAt))}>
+						<div class="text" style="font-size:13px;" title={renderDate(fileData.modifiedAt)}>{renderDate(fileData.modifiedAt)}</div>
+						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+					</button>
 				</div>
 			</div>
 		</div>
