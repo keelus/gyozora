@@ -8,6 +8,7 @@ import { GenerateToast } from "./toasts";
 import { LoadFolder } from "./pathManager";
 import { CopyToClipboard, PastableFromClipboard, PasteFromClipboard } from "./clipboard";
 import { Plural } from "./utils";
+import { AddJob, JobType, RemoveJob, UpdateJob } from "./activeJobsLogin";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -175,22 +176,46 @@ export async function doAction(action : string) {
 			if(modalResponseDelete?.cancelled) return;
 			
 			const selFiles = get(selectedFiles)
-			const actionResponseDel : models.ActionResponse = await DeleteFile_s(selFiles)
-			if(actionResponseDel.error.status) {
-				console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
-				GenerateToast("error", `Error deleting the ${Plural(selFiles.length, "file")}: ` + actionResponseDel.error.reason || "", "🗑️")
-			} else {
-				contents.update(cts => {
-					let newCts : models.SysFile[] = []
-					for(let i = 0; i < cts.length; i++){
-						if(!get(selectedFiles).includes(cts[i]))
-							newCts.push(cts[i])
+
+			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
+
+			
+			let actionResponseDel : models.ActionResponse;
+			await toast.promise(
+				new Promise(async (resolve, reject) => {
+					actionResponseDel = await DeleteFile_s(selFiles)
+
+					if(actionResponseDel.error.status) {
+						console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
+						GenerateToast("error", `Error deleting the ${Plural(selFiles.length, "file")}: ` + actionResponseDel.error.reason || "", "🗑️")
+						RemoveJob(JOB_ID)
+						reject(true)
+					} else {
+						contents.update(cts => {
+							let newCts : models.SysFile[] = []
+							for(let i = 0; i < cts.length; i++){
+								if(!get(selectedFiles).includes(cts[i]))
+									newCts.push(cts[i])
+							}
+							return newCts
+						})
+						selectedFiles.set([])
+						GenerateToast("success", `${Plural(selFiles.length, "File")} deleted.`, "🗑️")
+						RemoveJob(JOB_ID)
 					}
-					return newCts
-				})
-				selectedFiles.set([])
-				GenerateToast("success", `${Plural(selFiles.length, "File")} deleted.`, "🗑️")
-			}
+					resolve(true)
+				}),
+				{
+					loading:"Pasting files 📋",
+					success:"All Copied.",
+					error:"Some files could not be pasted.",
+				},
+				{
+					position:'bottom-left'
+				}
+			).catch(error => {})
+			
+			
 			break;
 		case "properties":
 			const modalResponseProperties = await OpenModal("properties")

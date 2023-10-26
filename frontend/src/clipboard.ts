@@ -62,7 +62,12 @@ export async function PasteFromClipboard() {
 				failedPastes.push(file)
 				console.error(response.error.reason)
 			} else {
-				// console.warn("Update visual content if in current path.")
+				if(get(CURRENT_PATH) == response.file.path) {
+					contents.update(cts => {
+						cts.push(response.file)
+						return cts;
+					})
+				}
 			}
 			donePastes++;
 		}
@@ -80,6 +85,12 @@ export async function PasteFromClipboard() {
 			console.error(response.error.reason)
 			failed = true;
 		} else {
+			if(get(CURRENT_PATH) == response.file.path) {
+				contents.update(cts => {
+					cts.push(response.file)
+					return cts;
+				})
+			}
 			// console.log("Update visual content if in current path.")
 			// console.warn("Pasted '" + folder.pathfull + "'.")
 		}

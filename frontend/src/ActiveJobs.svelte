@@ -41,13 +41,15 @@ export let opened : boolean = false;
 					<div class="title">{value.title}</div>
 					<div class="additional">{value.additional}</div>
 				</div>
-				<div class="right">
-					<div class="progress" style="--progress:{value.progress}%;">
-						<div class="progressCircle">
-							<div class="text">{Math.round(value.progress)}%</div>
+				{#if value.progress !== -1}
+					<div class="right">
+						<div class="progress" style="--progress:{value.progress}%;">
+							<div class="progressCircle">
+								<div class="text">{Math.round(value.progress)}%</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				{/if}
 			</div>
 		{/each}
 	</div>
