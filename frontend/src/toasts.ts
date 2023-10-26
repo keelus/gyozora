@@ -1,7 +1,7 @@
 import toast from 'svelte-french-toast';
 
 export function GenerateToast(type : string, text : string, emoji : string) {
-	const modalPosition = "bottom-right"
+	const modalPosition = "bottom-left"
 
 	let backgroundColor = "rgba(97, 170, 207, 1)"
 	let borderColor = "rgba(97, 170, 207, 1)"

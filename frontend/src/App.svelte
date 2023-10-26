@@ -12,7 +12,7 @@ import Icon from 'svelte-icons-pack/Icon.svelte';
 import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
 
 // Gyozora browser, icons & logic
-import { contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
+import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
@@ -32,6 +32,10 @@ let newFileActiveType : string = "file";
 
 import TestModal from './modals/NewFile.svelte'
 import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
+
+import ActiveJobs from './ActiveJobs.svelte'
+  import { get } from 'svelte/store';
+  import { Plural } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 // document.addEventListener('contextmenu', e => e.preventDefault());
@@ -111,6 +115,7 @@ $: if (fileBrowser) {
 let temporalFilenameInputValue = "";
 let filenameRenameInputValue = "";
 
+let activeJobsOpened = false;
 
 </script>
 
@@ -235,10 +240,20 @@ let filenameRenameInputValue = "";
 		{/each}
 	</div>
 
-	{#if $previewProgress != "100" && $previewProgress != "100.00"}
+	<!-- {#if $previewProgress != "100" && $previewProgress != "100.00"}
 		<div class="percent">Loading preview: {$previewProgress}%</div>
-	{/if}
-
+	{/if} -->
+	<div class="vDivider"></div>
+	<div class="activeJobsAmount"><!-- Adapted from https://github.com/timolins/react-hot-toast -->
+		<button class="activeJobsButton" on:click={() => activeJobsOpened = !activeJobsOpened}>
+			{#if Object.keys($activeJobs).length > 0}<div class="loader"></div>{/if}
+			<div class="text">
+				{Object.keys($activeJobs).length + Plural(Object.keys($activeJobs).length, " job")}
+			</div>
+		</button>
+		<ActiveJobs opened={activeJobsOpened}/>
+	</div>
+	<div class="vDivider"></div>
 	<div class="right">
 		<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
 	</div>

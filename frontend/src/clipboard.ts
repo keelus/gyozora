@@ -1,6 +1,6 @@
 import { PasteFile, PasteFolder, ReadPath  } from "../wailsjs/go/main/App.js";
 import { LoadFolder } from "./pathManager.js";
-import { CURRENT_PATH, clipboardFiles, contents, currentJob, selectedFiles } from "./store"
+import { CURRENT_PATH, activeJobs, clipboardFiles, contents, currentJob, selectedFiles } from "./store"
 import { get } from "svelte/store"
 import { GenerateToast } from "./toasts.js";
 import toast from "svelte-french-toast";
@@ -9,10 +9,17 @@ export function CopyToClipboard() {
 	clipboardFiles.set(get(selectedFiles))
 }
 
+import { AddJob, type ActiveJob, UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
+import OpenModal from "./modals/manager.js";
+import { Plural } from "./utils.js";
+
 
 export async function PasteFromClipboard() {
 	let failedPastes : models.SysFile[] = []
 	const targetPath = get(CURRENT_PATH);
+	let donePastes = 0
+	let todoPastes = get(clipboardFiles).length;
+	const JOB_ID = AddJob("Pasting files", 0, "Discovering folders...", JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
 		console.warn("🌳 tree generation start.")
@@ -42,6 +49,8 @@ export async function PasteFromClipboard() {
 				baseChildrens.dirFolders[i].childrenFolders = childrens.dirFolders
 			}
 		}
+		todoPastes++;
+		todoPastes+=baseChildrens.dirFiles.length
 	
 		return baseChildrens;
 	}
@@ -55,6 +64,7 @@ export async function PasteFromClipboard() {
 			} else {
 				// console.warn("Update visual content if in current path.")
 			}
+			donePastes++;
 		}
 	}
 
@@ -73,7 +83,7 @@ export async function PasteFromClipboard() {
 			// console.log("Update visual content if in current path.")
 			// console.warn("Pasted '" + folder.pathfull + "'.")
 		}
-
+		donePastes++;
 		return failed;
 	}
 
@@ -106,22 +116,27 @@ export async function PasteFromClipboard() {
 	}
 
 	async function processTree(tree : models.SysFile[]) {
-		// console.warn("🌳 tree processing start")
-		let baseFolders = tree.filter(file => file.isFolder)
-		let baseFiles = tree.filter(file => !file.isFolder)
+		return new Promise(async (resolve, reject) => {
+			// console.warn("🌳 tree processing start")
+			let baseFolders = tree.filter(file => file.isFolder)
+			let baseFiles = tree.filter(file => !file.isFolder)
+		
+			let basePromises = []
 	
-		let basePromises = []
-
-		if(baseFolders.length > 0)
-			for(let baseFolder of baseFolders) {
-				basePromises.push(processNode(baseFolder))
-			}
-
-		if(baseFiles.length > 0)
-			basePromises.push(copyFiles(baseFiles, true))
-
-		await Promise.all(basePromises)
-		// console.warn("🌳 tree processing end")
+			if(baseFolders.length > 0)
+				for(let baseFolder of baseFolders) {
+					basePromises.push(processNode(baseFolder))
+				}
+	
+			if(baseFiles.length > 0)
+				basePromises.push(copyFiles(baseFiles, true))
+	
+			await Promise.all(basePromises)
+			// console.warn("🌳 tree processing end")
+			if(failedPastes.length == 0)
+				return resolve(true)
+			else reject(true)
+		})
 	}
 
 
@@ -129,62 +144,43 @@ export async function PasteFromClipboard() {
 		if(!PastableFromClipboard()) return;
 		console.log("Pasting from clibpoard!")
 
+
 		const pastingFiles = get(clipboardFiles)
 
-		
 		const beginning = new Date()
-		let fileTree : models.SysFile[];
-		await toast.promise(
-			new Promise(async (resolve, reject) => {
-				fileTree = await getTree(pastingFiles);
-				return resolve(0)
-			}),
-			{
-				loading:"Generating 🌳...",
-				success:"Generated.",
-				error:"Error generating the tree."
-			},
-			{
-				position:'bottom-right'
-			}
-		).catch(error => {})
+		let fileTree : models.SysFile[] = [];
+		fileTree = await getTree(pastingFiles);
 		
+
+		function updateJobVisual() {
+			console.log("Done pastes:", donePastes)
+			UpdateJob(JOB_ID, "Pasting. " + failedPastes.length + Plural(failedPastes.length, "file") + " failed.", (donePastes * 100 / todoPastes))
+		}
+		updateJobVisual()
+		let progressInterval = setInterval(updateJobVisual, 1000)
+
 		await toast.promise(
 			processTree(fileTree),
 			{
-				loading:"Copying files 📋...",
+				loading:"Pasting files 📋",
 				success:"All Copied.",
-				error:"Error copying files."
+				error:"Some files could not be pasted.",
 			},
 			{
-				position:'bottom-right'
+				position:'bottom-left'
 			}
 		).catch(error => {})
+		clearInterval(progressInterval)
+		RemoveJob(JOB_ID)
 		const end = new Date()
 
 		const diffSeconds = Math.floor((end - beginning) / 1000);
 		console.log("Difference in seconds: ", diffSeconds)
 		console.log("Difference in minutes and seconds: ", Math.floor(diffSeconds / 60) + ":" + diffSeconds % 60)
 		
-		
-		// await toast.promise(
-		// 	new Promise(async (resolve, reject) => {
-		// 		const fileTree = await getTree(pastingFiles);
-		// 		await processTree(fileTree)
-
-		// 		if(failedPastes.length > 0)
-		// 			return reject()
-		// 		return resolve(0)
-		// 	}),
-		// 	{
-		// 		loading:"Pasting...",
-		// 		success:"Pasted all!",
-		// 		error:"Some not pasted!"
-		// 	},
-		// 	{
-		// 		position:'bottom-right'
-		// 	}
-		// ).catch(error => {})
+		if(failedPastes.length > 0) {
+			OpenModal("pasteErrorLog", failedPastes)
+		}
 
 		console.log("PASTE ENDED")
 		LoadFolder(targetPath, false, false, true) // TODO: Remove this
@@ -200,7 +196,7 @@ export async function PasteFromClipboard() {
 			error:"Some not pasted!"
 		},
 		{
-			position:'bottom-right'
+			position:'bottom-left'
 		}
 	).catch(error => {})
 

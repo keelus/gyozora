@@ -39,6 +39,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			&models.LeftBarElement{},
+			&models.Job{},
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: true,

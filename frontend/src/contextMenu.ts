@@ -7,6 +7,7 @@ import toast from "svelte-french-toast";
 import { GenerateToast } from "./toasts";
 import { LoadFolder } from "./pathManager";
 import { CopyToClipboard, PastableFromClipboard, PasteFromClipboard } from "./clipboard";
+import { Plural } from "./utils";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -173,11 +174,11 @@ export async function doAction(action : string) {
 			const modalResponseDelete = await OpenModal("delete")
 			if(modalResponseDelete?.cancelled) return;
 			
-			const amountS = get(selectedFiles).length > 1 ? "s" : ""
-			const actionResponseDel : models.ActionResponse = await DeleteFile_s(get(selectedFiles))
+			const selFiles = get(selectedFiles)
+			const actionResponseDel : models.ActionResponse = await DeleteFile_s(selFiles)
 			if(actionResponseDel.error.status) {
 				console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
-				GenerateToast("error", `Error deleting the file${amountS}: ` + actionResponseDel.error.reason || "", "🗑️")
+				GenerateToast("error", `Error deleting the ${Plural(selFiles.length, "file")}: ` + actionResponseDel.error.reason || "", "🗑️")
 			} else {
 				contents.update(cts => {
 					let newCts : models.SysFile[] = []
@@ -188,7 +189,7 @@ export async function doAction(action : string) {
 					return newCts
 				})
 				selectedFiles.set([])
-				GenerateToast("success", `File${amountS} deleted.`, "🗑️")
+				GenerateToast("success", `${Plural(selFiles.length, "File")} deleted.`, "🗑️")
 			}
 			break;
 		case "properties":

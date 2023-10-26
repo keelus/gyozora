@@ -47,3 +47,9 @@ type PastFileResponse struct {
 	File  SysFile     `json:"file"`
 	Error SimpleError `json:"error"`
 }
+
+type Job struct {
+	Title      string `json:"title"`
+	Progress   int    `json:"progress"`
+	Additional string `json:"aditional"`
+}
