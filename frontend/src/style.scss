@@ -205,7 +205,7 @@ input[type=text]::selection {
 
 			& > .title {
 				position: relative;
-				z-index:100;
+				z-index:1;
 
 				& > .text {
 					color:white;
@@ -1138,6 +1138,142 @@ input[type=text]::selection {
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
+			}
+		}
+	}
+}
+
+.openSettingsButton {
+	background:none;
+	border:none;
+	outline:none;
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	height:100%;
+	transition:all .1s linear;
+
+	& > .icon {
+		fill:White;
+		font-size:16px;
+	}
+
+	&:hover {
+		cursor:pointer;
+		background-color:$background-6;
+		& > .icon {
+			color:$font-1;
+		}
+	}
+}
+
+.settingsOuter {
+	width:100%;
+	height:100%;
+	position:fixed;
+	background:rgba($background-1, .9);
+	color:white;
+	justify-content: center;
+	align-items: center;
+	z-index:1;
+	display:flex;
+
+	visibility: hidden;
+	opacity: 0;
+
+	transition:all .1s linear;
+
+	&.opened {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	& > .settingsWindow {
+		background:$background-1;
+		width:calc(100% - 100px);
+		height:calc(100% - 100px);
+		border-radius:6px;
+		border:1px solid $background-5;
+		display:flex;
+		flex-direction: column;
+
+		& > .top {
+			display:flex;
+			padding:10px 30px;
+			align-items: center;
+			& > .title {
+				color:$font-1;
+				font-size:20px;
+				font-weight: bold;
+				flex:1;
+			}
+
+			& > .closeButton {
+				height:25px;
+				width:25px;
+				display:grid;
+				place-items:center;
+				opacity:.8;
+				transition: all .1s linear;
+				background:none;
+				border:none;
+				outline:none;
+				padding:0;
+				margin:0;
+
+				& > .icon {
+					font-size:25px;
+					fill:$font-1;
+				}
+				&:hover {
+					cursor:pointer;
+					opacity:1;
+				}
+			}
+			border-bottom:1px solid $background-5;
+		}
+		& > .bottom {
+			padding:10px 30px;
+			box-sizing: border-box;
+			flex:1;
+			& > .categories {
+				min-width:200px;
+				display:flex;
+				flex-direction: column;
+				gap:10px;
+
+				& > .category {
+					& > .title {
+						color:$font-1;
+						font-weight: 500;
+					}
+
+					& > .elements {
+						padding-left:20px;
+						box-sizing: border-box;
+						& > .element {
+							font-size:13px;
+							padding:3px 0;
+							color:$font-2;
+							font-weight: 300;
+							transition:all .1s linear;
+							&.active {
+								color:$font-1;
+								font-weight: 600;
+							}
+							&:not(.active):hover {
+								cursor:pointer;
+								color:$font-1;
+							}
+						}
+					}
+				}
+	
+			}
+	
+			& > .content {
+				flex:1;
+
 			}
 		}
 	}

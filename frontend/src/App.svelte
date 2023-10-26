@@ -10,7 +10,8 @@ import appicon from './assets/icons/gyozora.svg'
 // UI Icons
 import Icon from 'svelte-icons-pack/Icon.svelte';
 import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
-
+import RiSystemSettings4Fill from "svelte-icons-pack/ri/RiSystemSettings4Fill";
+import VscChromeClose from "svelte-icons-pack/vsc/VscChromeClose";
 // Gyozora browser, icons & logic
 import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
@@ -116,6 +117,7 @@ let temporalFilenameInputValue = "";
 let filenameRenameInputValue = "";
 
 let activeJobsOpened = false;
+let settingsWindowOpened = false;
 
 </script>
 
@@ -256,6 +258,45 @@ let activeJobsOpened = false;
 	<div class="vDivider"></div>
 	<div class="right">
 		<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
+	</div>
+	<div class="vDivider"></div>
+	<button class="openSettingsButton" on:click={() => settingsWindowOpened = true}>
+		<Icon src={RiSystemSettings4Fill} className="icon {$USER_OS}"/>
+	</button>
+</div>
+<div class="settingsOuter {settingsWindowOpened ? "opened" : ""}">
+	<div class="settingsWindow">
+		<div class="top">
+			<div class="title">Gyozora settings</div>
+			<button class="closeButton" on:click={() => settingsWindowOpened = false}>
+				<Icon src={VscChromeClose} className="icon {$USER_OS}"/>
+			</button>
+			
+		</div>
+		<div class="bottom">
+			<div class="categories">
+				<div class="category">
+					<div class="title">category 1</div>
+					<div class="elements">
+						<div class="element">element 1</div>
+						<div class="element">element 2</div>
+						<div class="element">element 3</div>
+					</div>
+				</div>
+				<div class="category">
+					<div class="title">category 2</div>
+					<div class="elements">
+						<div class="element">element 1</div>
+						<div class="element">element 2</div>
+						<div class="element active">element 3</div>
+						<div class="element">element 4</div>
+						<div class="element">element 5</div>
+						<div class="element">element 6</div>
+					</div>
+				</div>
+			</div>
+			<div class="content">Hi</div>
+		</div>
 	</div>
 </div>
 <div class="modalParent" data-activeModal="" bind:this={modalParent}>
