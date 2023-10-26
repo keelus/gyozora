@@ -162,7 +162,6 @@ export async function PasteFromClipboard() {
 		let fileTree : models.SysFile[] = [];
 		fileTree = await getTree(pastingFiles);
 
-		console.log("fileTree no sorted:", fileTree)
 		fileTree.sort((a, b) => {
 			if(a.isFolder && b.isFolder) { // TODO: Get real folder file sizes
 				let aLength = ((a.childrenFiles?.length ?? 0) + (a.childrenFolders?.length ?? 0))
@@ -180,8 +179,6 @@ export async function PasteFromClipboard() {
 			}
 		})
 
-		console.log("fileTree sorted:", fileTree)
-		return
 		
 
 		function updateJobVisual() {

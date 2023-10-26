@@ -179,7 +179,7 @@ export async function doAction(action : string) {
 
 			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
 
-			
+			// TODO: Delete files one by one
 			let actionResponseDel : models.ActionResponse;
 			await toast.promise(
 				new Promise(async (resolve, reject) => {
