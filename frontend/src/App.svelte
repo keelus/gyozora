@@ -36,7 +36,7 @@ import ActiveJobs from './ActiveJobs.svelte'
   import { Plural } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
-// document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener("keyup", e => e.key == "PageUp" && FirstStart()) // For debug
 document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) || (e.button === 4 && buttonGoForward()));
 document.addEventListener("keyup", e => e.key == "Delete" && doAction("delete"));
@@ -216,9 +216,6 @@ let settingsWindowOpened = false;
 						<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
 						<div class="iconOuter">
-							{#if content.iconClass.startsWith("codeLang")}
-								<Icon icon={GetIconByType("fileCode")} class="icon fileCode {$USER_OS}"/>
-							{/if}
 							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("codeLang") ? "codeLang" : ""} {$USER_OS}"/>
 						</div>
 					{/if}

@@ -208,33 +208,13 @@ export async function PasteFromClipboard() {
 		console.log("Difference in minutes and seconds: ", Math.floor(diffSeconds / 60) + ":" + diffSeconds % 60)
 		
 		if(failedPastes.length > 0) {
-			OpenModal("pasteErrorLog", failedPastes)
+			OpenModal({modalName:"pasteErrorLog", files:failedPastes})
 		}
 
 		console.log("PASTE ENDED")
-		LoadFolder(targetPath, false, false, true) // TODO: Remove this
 	})()
 
 	return;
-
-	await toast.promise(
-		PastePerLayer(pastingFiles, targetLocation),
-		{
-			loading:"Pasting...",
-			success:"Pasted all!",
-			error:"Some not pasted!"
-		},
-		{
-			position:'bottom-left'
-		}
-	).catch(error => {})
-
-	// console.log("Hello!")
-
-	// if(get(CURRENT_PATH) == targetLocation) { // If we are in a different folder, no need to reload current. Else, yes
-	// 	LoadFolder(targetLocation, false, false, true)
-	// }
-
 }
 
 

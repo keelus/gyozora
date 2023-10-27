@@ -320,15 +320,15 @@ input[type=text]::selection {
 					left:50%;
 					top:50%;
 					transform:translate(-50%, -50%);
-					width:90px;
-					height:90px;
+					width:80px;
+					height:80px;
 
-					&.codeLang {
-						top:67.5%;
-						transform:translate(-50%, -67.5%);
-						width:45px;
-						height:45px;
-					}
+					// &.codeLang {
+					// 	top:67.5%;
+					// 	transform:translate(-50%, -67.5%);
+					// 	width:45px;
+					// 	height:45px;
+					// }
 				}
 			}
 

@@ -11,6 +11,11 @@ import { GenerateToast } from "../../src/toasts";
 let cancelButton : HTMLButtonElement;
 
 export async function WaitForModalResponse() {
+	if(propertiesFile === undefined) // Right clicked current folder
+		fileData = await PropertiesFile(get(CURRENT_PATH))
+	else 
+		fileData = propertiesFile
+
 	return new Promise(resolve => {
 		cancelButton.addEventListener("click", () => {
 			console.log("Modal cancel button")
@@ -19,13 +24,7 @@ export async function WaitForModalResponse() {
 	})
 }
 
-let fileData : models.SysFile;
-onMount(async () => {
-	if(get(selectedFiles).length === 0) // Right clicked current folder
-		fileData = await PropertiesFile(get(CURRENT_PATH))
-	else 
-		fileData = get(selectedFiles)[0]
-})
+
 
 function renderBytes(bytes : number) : string {
 	if(bytes <= 1_000) return bytes + " B";
@@ -51,6 +50,8 @@ function copyToClipboard(text : string) {
 	GenerateToast("success", "Copied to clipboard", "📋")
 }
 
+let fileData : models.SysFile;
+export let propertiesFile : models.SysFile | undefined;
 </script>
 <div class="modal properties">
 	{#if fileData !== undefined}

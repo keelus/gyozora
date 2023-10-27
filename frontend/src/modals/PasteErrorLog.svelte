@@ -13,7 +13,7 @@
 		})
 	}
 
-	export let failed : models.SysFile[] = [];
+	export let failedFiles : models.SysFile[];
 </script>
 	<div class="modal pasteErrorLog">
 		<div class="top">
@@ -23,7 +23,7 @@
 			<div class="flexContent">
 				<div class="note">The following files could not be pasted:</div>
 				<div class="files">
-					{#each failed as fail}
+					{#each failedFiles as fail}
 					<div class="file">
 						<div class="filename" title={fail.filename}>{fail.filename}</div>
 						<div class="path" title={fail.filename}>{fail.path}</div>

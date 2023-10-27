@@ -117,7 +117,7 @@ export async function doAction(action : string) {
 			if(selFile.isFolder)
 				return LoadFolder(selFile.pathfull, false, false, false) // TODO: Error handling
 
-			const actionResponseOpen : models.ActionResponse = await OpenFile(selFiles[0].pathfull)
+			const actionResponseOpen : models.ActionResponse = await OpenFile(selFile.pathfull)
 			if(actionResponseOpen.error.status) {
 				GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
 			} else {
@@ -125,7 +125,7 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "add":
-			const modalResponse = await OpenModal("newFile")
+			const modalResponse = await OpenModal({modalName:"newFile"})
 			if(modalResponse?.cancelled) return;
 
 			// Dialog...
@@ -150,7 +150,7 @@ export async function doAction(action : string) {
 			PasteFromClipboard()
 			break;
 		case "rename":
-			const modalResponseRename = await OpenModal("rename")
+			const modalResponseRename = await OpenModal({modalName:"rename", file:get(selectedFiles)[0]})
 			if(modalResponseRename?.cancelled) return
 
 			// Dialog...
@@ -172,10 +172,10 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "delete":
-			const modalResponseDelete = await OpenModal("delete")
+			const modalResponseDelete = await OpenModal({modalName:"delete"})
 			if(modalResponseDelete?.cancelled) return;
 			
-			const selFiles = get(selectedFiles)
+			const deletingFiles = get(selectedFiles)
 
 			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
 
@@ -183,7 +183,7 @@ export async function doAction(action : string) {
 			let actionResponseDel : models.ActionResponse;
 			await toast.promise(
 				new Promise(async (resolve, reject) => {
-					actionResponseDel = await DeleteFile_s(selFiles)
+					actionResponseDel = await DeleteFile_s(deletingFiles)
 
 					if(actionResponseDel.error.status) {
 						console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
@@ -193,7 +193,7 @@ export async function doAction(action : string) {
 						contents.update(cts => {
 							let newCts : models.SysFile[] = []
 							for(let i = 0; i < cts.length; i++){
-								if(!get(selectedFiles).includes(cts[i]))
+								if(!deletingFiles.includes(cts[i]))
 									newCts.push(cts[i])
 							}
 							return newCts
@@ -216,7 +216,7 @@ export async function doAction(action : string) {
 			
 			break;
 		case "properties":
-			const modalResponseProperties = await OpenModal("properties")
+			const modalResponseProperties = await OpenModal({modalName:"properties", file:get(selectedFiles)[0]})
 			if(modalResponseProperties?.cancelled) return;
 			break;
 		default:

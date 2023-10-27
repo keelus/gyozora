@@ -7,10 +7,14 @@ import { get } from "svelte/store";
 let filename = "";
 let activeFileType = "file";
 
+let filenameInput : HTMLInputElement;
+
 let cancelButton : HTMLButtonElement;
 let confirmButton : HTMLButtonElement;
 
 export async function WaitForModalResponse() {
+	filenameInput.focus()
+
 	return new Promise(resolve => {
 		cancelButton.addEventListener("click", () => {
 			console.log("Modal cancel button")
@@ -42,7 +46,7 @@ export async function WaitForModalResponse() {
 				</button>
 			</div>
 			<div class="categoryTitle" style="margin-top:10px;">Filename</div>
-			<input type="text" placeholder="Filename and extension..." bind:value={filename}>
+			<input type="text" spellcheck="false" placeholder="Filename and extension..." bind:this={filenameInput} bind:value={filename}>
 		</div>
 	</div>
 	<div class="bottom">

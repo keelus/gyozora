@@ -4,7 +4,7 @@ import DeleteFileModal from './DeleteFile.svelte'
 import PropertiesFileModal from './PropertiesFile.svelte'
 import PasteErrorLog from './PasteErrorLog.svelte'
 import { models } from '../../wailsjs/go/models'
-export default async function OpenModal(modalName : string, faila : models.SysFile[] = []) : (Promise<{[key:string] : any}>) {
+export default async function OpenModal({ modalName, file, files = [] }: { modalName: string, file: models.SysFile | undefined, files?: models.SysFile[] }): Promise<{ [key: string]: any }> {
 	const parentModal = document.querySelector(".modalParent")
 	if(!parentModal) return {error: true};
 	
@@ -17,7 +17,7 @@ export default async function OpenModal(modalName : string, faila : models.SysFi
 		result = await newFileModal.WaitForModalResponse();
 		newFileModal.$destroy()
 	} else if(modalName == "rename") {
-		const renameFileModal = new RenameFileModal({target: parentModal});
+		const renameFileModal = new RenameFileModal({target: parentModal, props: {renamingFile: file,}});
 		result = await renameFileModal.WaitForModalResponse();
 		renameFileModal.$destroy()
 	} else if(modalName == "delete") {
@@ -25,16 +25,11 @@ export default async function OpenModal(modalName : string, faila : models.SysFi
 		result = await deleteFileModal.WaitForModalResponse();
 		deleteFileModal.$destroy()
 	} else if(modalName == "properties") {
-		const propertiesFileModal = new PropertiesFileModal({target: parentModal});
+		const propertiesFileModal = new PropertiesFileModal({target: parentModal, props: {propertiesFile: file,}});
 		result = await propertiesFileModal.WaitForModalResponse();
 		propertiesFileModal.$destroy()
 	} else if(modalName == "pasteErrorLog") {
-		const pasteErrorLog = new PasteErrorLog({
-			target: parentModal,
-			props: {
-				failed: faila,
-			},
-			});
+		const pasteErrorLog = new PasteErrorLog({target: parentModal, props: {failedFiles: files,}});
 		result = await pasteErrorLog.WaitForModalResponse();
 		pasteErrorLog.$destroy()
 	}
