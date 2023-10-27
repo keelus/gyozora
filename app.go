@@ -324,7 +324,6 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
 		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
 	}
-	fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
 
 	_, err := os.Stat(srcPath)
 	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
@@ -337,8 +336,39 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 	}
 
 	//Check if pasting location exist a file with that filename
+	fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
+	fileExists := false
 	_, err = os.Stat(fullFinalPath)
 	if err == nil { // Exists with that name, ignore and return not completed
+		fileExists = true
+	}
+
+	fmt.Println("##########################")
+	fmt.Println(fileExists)
+	fmt.Printf("%s==%s\n", tgtPath, srcFile.Path)
+	if fileExists && tgtPath == srcFile.Path { // If we are in the same path, allow, for file duplicate creation
+		fmt.Println("we entered")
+		index := 0
+
+		fileExists = true
+		for fileExists {
+			fmt.Println("loop exec")
+			fmt.Println(index)
+			if index == 0 {
+				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy%s", srcFile.Name, srcFile.Extension))
+			} else {
+				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy (%d)%s", srcFile.Name, index, srcFile.Extension))
+			}
+
+			_, err = os.Stat(fullFinalPath)
+			if err == nil {
+				fileExists = true
+				index++
+			} else {
+				fileExists = false
+			}
+		}
+	} else if fileExists {
 		fmt.Println("File with that filename already exists")
 		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
