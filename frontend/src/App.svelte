@@ -8,10 +8,7 @@ import favicon from "./assets/icons/favicon.ico"
 import appicon from './assets/icons/gyozora.svg'
 
 // UI Icons
-import Icon from 'svelte-icons-pack/Icon.svelte';
-import { Home, File, HardDrive, ArrowLeft, ArrowRight, Folder, ChevronRight } from 'lucide-svelte';
-import RiSystemSettings4Fill from "svelte-icons-pack/ri/RiSystemSettings4Fill";
-import VscChromeClose from "svelte-icons-pack/vsc/VscChromeClose";
+import Icon from '@iconify/svelte';
 // Gyozora browser, icons & logic
 import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
@@ -127,8 +124,8 @@ let settingsWindowOpened = false;
 	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>
 	<div class="pathbar">
-		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><ArrowLeft class="icon"/></button>
-		<button class="forwardButton" disabled={!$goForwardEnabled} on:click={buttonGoForward}><ArrowRight class="icon" /></button>
+		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><Icon icon={IconDictionary["uiArrowLeft"]} class="icon"/></button>
+		<button class="forwardButton" disabled={!$goForwardEnabled} on:click={buttonGoForward}><Icon icon={IconDictionary["uiArrowRight"]} class="icon"/></button>
 		<input class="path" placeholder="Current path..." value={$CURRENT_PATH} disabled/>
 		<input class="search" placeholder="Search here" type="text"/>
 	</div>
@@ -136,7 +133,7 @@ let settingsWindowOpened = false;
 		<div class="navPane"><div class="section">
 			<div class="elements">
 				<div class="element">
-					<Home class="icon home"/>
+					<Icon icon={IconDictionary["uiHome"]} class="icon home"/>
 					<div class="text">Home</div>
 				</div>
 			</div>
@@ -149,7 +146,7 @@ let settingsWindowOpened = false;
 				{/if}
 					{#each pinnedFolders as content}
 						<button class="element {$CURRENT_PATH == content.path ? "active" : ""}" on:click={() => elementClicked(content.path, true)}>
-							<Icon src={IconDictionary[content.type]} className="icon {content.type} {$USER_OS}"/>
+							<Icon icon={IconDictionary[content.type]} class="icon {content.type} {$USER_OS}"/>
 							<div class="text">{content.name}</div>
 						</button>
 					{/each}
@@ -163,7 +160,7 @@ let settingsWindowOpened = false;
 				{/if}
 				{#each yourComputer as content}
 					<button class="element" on:click={() => elementClicked(content.path, true)}>
-						<Icon src={IconDictionary[content.type]} className="icon {content.type} {$USER_OS}"/>
+						<Icon icon={IconDictionary[content.type]} class="icon {content.type} {$USER_OS}"/>
 						<div class="text">{content.name}</div>
 					</button>
 				{/each}
@@ -174,38 +171,38 @@ let settingsWindowOpened = false;
 	<div class="fileBrowser" bind:this={fileBrowser}>
 		<div class="fileContextMenu" bind:this={fileContextMenu}>
 			<button class:disabled={$fileContextMenuOptions.add.disabled} class:hide={!$fileContextMenuOptions.add.show} class="element" on:click={() => doAction("add")}>
-				<Icon src={IconDictionary.ctxMenuAdd} className="icon add" />
+				<Icon icon={IconDictionary.ctxMenuAdd} class="icon add" />
 				<span class="text">Add</span>
 			</button>
 			<button class:disabled={$fileContextMenuOptions.open.disabled} class:hide={!$fileContextMenuOptions.open.show} class="element"on:click={() => doAction("open")}>
-				<Icon src={IconDictionary.ctxMenuOpen} className="icon open" />
+				<Icon icon={IconDictionary.ctxMenuOpen} class="icon open" />
 				<span class="text">Open</span>
 			</button>
 			<div class:hide={!$fileContextMenuOptions.add.show && !$fileContextMenuOptions.open.show} class="divider"></div>
 			<button class:disabled={$fileContextMenuOptions.cut.disabled} class:hide={!$fileContextMenuOptions.cut.show} class="element"on:click={() => doAction("cut")}>
-				<Icon src={IconDictionary.ctxMenuCut} className="icon cut" />
+				<Icon icon={IconDictionary.ctxMenuCut} class="icon cut" />
 				<span class="text">Cut</span>
 			</button>
 			<button class:disabled={$fileContextMenuOptions.copy.disabled} class:hide={!$fileContextMenuOptions.copy.show} class="element"on:click={() => doAction("copy")}>
-				<Icon src={IconDictionary.ctxMenuCopy} className="icon copy" />
+				<Icon icon={IconDictionary.ctxMenuCopy} class="icon copy" />
 				<span class="text">Copy</span>
 			</button>
 			<button class:disabled={$fileContextMenuOptions.paste.disabled} class:hide={!$fileContextMenuOptions.paste.show} class="element"on:click={() => doAction("paste")}> <!-- Allow only if clicked on body, not on file -->
-				<Icon src={IconDictionary.ctxMenuPaste} className="icon paste" />
+				<Icon icon={IconDictionary.ctxMenuPaste} class="icon paste" />
 				<span class="text">Paste</span> 
 			</button>
 			<div class:hide={!$fileContextMenuOptions.rename.show && !$fileContextMenuOptions.delete.show} class="divider"></div>
 			<button class:disabled={$fileContextMenuOptions.rename.disabled} class:hide={!$fileContextMenuOptions.rename.show} class="element"on:click={() => doAction("rename")}>
-				<Icon src={IconDictionary.ctxMenuRename} className="icon rename" />
+				<Icon icon={IconDictionary.ctxMenuRename} class="icon rename" />
 				<span class="text">Rename</span>
 			</button>
 			<button class:disabled={$fileContextMenuOptions.delete.disabled} class:hide={!$fileContextMenuOptions.delete.show} class="element"on:click={() => doAction("delete")}>
-				<Icon src={IconDictionary.ctxMenuDelete} className="icon delete" />
+				<Icon icon={IconDictionary.ctxMenuDelete} class="icon delete" />
 				<span class="text">Delete</span>
 			</button>
 			<div class:hide={!$fileContextMenuOptions.properties.show} class="divider"></div>
 			<button class:disabled={$fileContextMenuOptions.properties.disabled} class:hide={!$fileContextMenuOptions.properties.show} class="element"on:click={() => doAction("properties")}>
-				<Icon src={IconDictionary.ctxMenuProperties} className="icon properties" />
+				<Icon icon={IconDictionary.ctxMenuProperties} class="icon properties" />
 				<span class="text">Properties</span>
 			</button>
 		</div>
@@ -218,7 +215,12 @@ let settingsWindowOpened = false;
 					{#if content.iconClass == "fileImage" && content.preview != ""}
 						<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
-						<Icon src={GetIconByType(content.iconClass)} className="icon {content.iconClass} {$USER_OS}"/>
+						<div class="iconOuter">
+							{#if content.iconClass.startsWith("codeLang")}
+								<Icon icon={GetIconByType("fileCode")} class="icon fileCode {$USER_OS}"/>
+							{/if}
+							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("codeLang") ? "codeLang" : ""} {$USER_OS}"/>
+						</div>
 					{/if}
 					<div class="text">{content ? content.filename : "Error"}</div>
 				</button>
@@ -233,11 +235,11 @@ let settingsWindowOpened = false;
 	<div class="breadcrumbs">
 		{#each $CURRENT_PATH_BREADCRUMB_ELEMENTS as breadcrumb}
 			<button class="breadcrumb" on:click={() => elementClicked(breadcrumb.pathfull, breadcrumb.isFolder)}>
-				<Icon src={GetIconByType(breadcrumb.iconClass)} className="icon {breadcrumb.iconClass} {$USER_OS}"/>
+				<Icon icon={GetIconByType(breadcrumb.iconClass)} class="icon {breadcrumb.iconClass} {$USER_OS}"/>
 				<div class="text">{breadcrumb.filename}</div>
 			</button>
 			{#if $CURRENT_PATH_BREADCRUMB_ELEMENTS[$CURRENT_PATH_BREADCRUMB_ELEMENTS.length - 1] !== breadcrumb}
-				<ChevronRight class="icon"/>
+				<Icon icon={IconDictionary["uiArrowRightS"]} class="icon "/>
 			{/if}
 		{/each}
 	</div>
@@ -261,7 +263,7 @@ let settingsWindowOpened = false;
 	</div>
 	<div class="vDivider"></div>
 	<button class="openSettingsButton" on:click={() => settingsWindowOpened = true}>
-		<Icon src={RiSystemSettings4Fill} className="icon {$USER_OS}"/>
+		<Icon icon={IconDictionary["uiSettingsGear"]} class="icon "/>
 	</button>
 </div>
 <div class="settingsOuter {settingsWindowOpened ? "opened" : ""}">
@@ -269,7 +271,7 @@ let settingsWindowOpened = false;
 		<div class="top">
 			<div class="title">Gyozora settings</div>
 			<button class="closeButton" on:click={() => settingsWindowOpened = false}>
-				<Icon src={VscChromeClose} className="icon {$USER_OS}"/>
+				<Icon icon={IconDictionary["uiClose"]} class="icon "/>
 			</button>
 			
 		</div>

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { USER_OS, selectedFiles } from "../store";
-import Icon from 'svelte-icons-pack/Icon.svelte';
 import { IconDictionary } from "../icons";
 import { get } from "svelte/store";
   import { onMount } from "svelte";

@@ -1,12 +1,11 @@
 <script lang="ts">
 import { CURRENT_PATH, USER_OS, selectedFiles } from "../store";
-import Icon from 'svelte-icons-pack/Icon.svelte';
+import Icon from "@iconify/svelte";
 import { GetIconByType, IconDictionary } from "../icons";
 import { get } from "svelte/store";
 import { onMount } from "svelte";
 import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
-import FiCopy from "svelte-icons-pack/fi/FiCopy";
 import { GenerateToast } from "../../src/toasts";
 
 let cancelButton : HTMLButtonElement;
@@ -65,12 +64,13 @@ function copyToClipboard(text : string) {
 						{#if fileData.iconClass == "fileImage" && fileData.preview != ""}
 							<div class="imagePreview" style="background-image:url(data:image/png;base64,{fileData.preview});{fileData.extension == ".svg" ? "background-color:white;" : ""}"></div>
 						{:else}
-							<Icon src={GetIconByType(fileData.iconClass)} className="icon {fileData.iconClass} {$USER_OS}"/>
+						
+							<Icon icon={GetIconByType(fileData.iconClass)} class="icon {fileData.iconClass} {$USER_OS}"/>
 						{/if}
 					</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.filename)}>
 						<div class="text" title={fileData.filename}>{fileData.filename}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				<div class="divider"></div>
@@ -78,28 +78,28 @@ function copyToClipboard(text : string) {
 					<div class="key">Type</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.iconClass)}>
 						<div class="text" title={fileData.iconClass}>{fileData.iconClass}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				<div class="doubleField">
 					<div class="key">Location</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
 						<div class="text" title={fileData.path}>{fileData.path}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				<div class="doubleField">
 					<div class="key">full location</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
 						<div class="text" title={fileData.pathfull}>{fileData.pathfull}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				<div class="doubleField">
 					<div class="key">Rel location</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
 						<div class="text" title={fileData.pathrelativefull}>{fileData.pathrelativefull}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				{#if !fileData.isFolder}
@@ -107,7 +107,7 @@ function copyToClipboard(text : string) {
 						<div class="key">Size</div>
 						<button class="value" on:click={() => copyToClipboard(renderBytes(fileData.size))}>
 							<div class="text" title={renderBytes(fileData.size)}>{renderBytes(fileData.size)}</div>
-							<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 						</button>
 					</div>
 				{/if}
@@ -116,7 +116,7 @@ function copyToClipboard(text : string) {
 					<div class="key">Modification</div>
 					<button class="value" on:click={() => copyToClipboard(renderDate(fileData.modifiedAt))}>
 						<div class="text" style="font-size:13px;" title={renderDate(fileData.modifiedAt)}>{renderDate(fileData.modifiedAt)}</div>
-						<Icon src={FiCopy} className="icon {$USER_OS}"/>
+						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 			</div>

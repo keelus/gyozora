@@ -1,7 +1,7 @@
 <script lang="ts">
 import { USER_OS } from "../store";
-import Icon from 'svelte-icons-pack/Icon.svelte';
-import { IconDictionary } from "../icons";
+import Icon from "@iconify/svelte";
+import { GetIconByType } from "../icons";
 import { get } from "svelte/store";
 
 let filename = "";
@@ -33,11 +33,11 @@ export async function WaitForModalResponse() {
 			<!-- <div class="message"></div> -->
 			<div class="typeOptions">
 				<button class="option {activeFileType == "file" ? "active" : "" }" on:click={() => activeFileType="file"}>
-					<Icon src={IconDictionary["file"]} className="icon file {get(USER_OS)}"/>
+					<Icon icon={GetIconByType("file")} class="icon file {$USER_OS}"/>
 					<div class="text">File</div>
 				</button>
 				<button class="option {activeFileType == "folder" ? "active" : "" }" on:click={() => activeFileType="folder"}>
-					<Icon src={IconDictionary["folder"]} className="icon folder {get(USER_OS)}"/>
+					<Icon icon={GetIconByType("folder")} class="icon folder {$USER_OS}"/>
 					<div class="text">Folder</div>
 				</button>
 			</div>

@@ -42,6 +42,10 @@ func GetFileType(filename string, extension string, isFolder bool) string {
 		return "folderPictures"
 	case "music":
 		return "folderMusic"
+	case "movies":
+		return "folderMovies"
+	case "applications":
+		return "folderApplications"
 	}
 	if isFolder {
 		return "folder"

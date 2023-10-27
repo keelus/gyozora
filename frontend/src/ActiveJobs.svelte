@@ -2,11 +2,8 @@
 import { get } from "svelte/store";
 import { activeJobs } from "./store";
 import { JobType, type ActiveJob, AddJob } from "./activeJobsLogin";
-import Icon from 'svelte-icons-pack/Icon.svelte';
-
-import VscPreview from "svelte-icons-pack/vsc/VscPreview";
-import FiTrash from "svelte-icons-pack/fi/FiTrash";
-import FaSolidPaste from "svelte-icons-pack/fa/FaSolidPaste"
+import Icon from "@iconify/svelte";
+  import { GetIconByType } from "./icons";
 
 let _activeJobs : {[key:string]:ActiveJob} = {}
 let _activeJobsAmount = 0;
@@ -18,7 +15,6 @@ let sub = activeJobs.subscribe((val) => {
 	_activeJobs = val;
 	_activeJobsAmount = Object.keys(val).length;
 })
-
 export let opened : boolean = false;
 </script>
 
@@ -33,7 +29,7 @@ export let opened : boolean = false;
 		{#each Object.entries(_activeJobs) as [key, value]}
 			<div class="job">
 				<div class="left">
-					<Icon src={value.jType === JobType.PASTE ? FaSolidPaste : (value.jType === JobType.DELETE ? FiTrash : VscPreview )} className="icon add" />
+					<Icon icon={GetIconByType(value.jType === JobType.PASTE ? "filePaste" : (value.jType === JobType.DELETE ? "fileDelete" : "fileRender" ))} class="icon"/>
 				</div>
 				<div class="middle">
 					<div class="title">{value.title}</div>

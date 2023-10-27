@@ -310,11 +310,28 @@ input[type=text]::selection {
 			outline:none;
 			border:1px solid transparent;
 
-			& > .icon {
+			& > .iconOuter {
 				width:90px;
 				height:90px;
-				stroke-width: .5px;
+				position:relative;
+
+				& > .icon {
+					position:absolute;
+					left:50%;
+					top:50%;
+					transform:translate(-50%, -50%);
+					width:90px;
+					height:90px;
+
+					&.codeLang {
+						top:67.5%;
+						transform:translate(-50%, -67.5%);
+						width:45px;
+						height:45px;
+					}
+				}
 			}
+
 
 			& > .imagePreview {
 				width:90px;
@@ -512,9 +529,9 @@ input[type=text]::selection {
 // File custom icons:
 .icon {
 	stroke-width: 2.5px;
-	fill:$background-3;
+	color:$background-3;
 	
-	&.home {fill:$font-1;}
+	&.home {color:$font-1;}
 
 
 	&.windows {
@@ -525,7 +542,7 @@ input[type=text]::selection {
 		--folderMusic:deeppink;
 		--folderVideo:rgb(183, 0, 255);
 		--folderDisk:white; // ! $font-1
-		--folder: #ffd768;
+		--folder: #FFCA28; //#ffd768;
 	}
 	
 	&.darwin {
@@ -535,56 +552,56 @@ input[type=text]::selection {
 		--folderPictures	:#00a5ff;
 		--folderMusic		:#00a5ff;
 		--folderVideo		:#00a5ff;
-		--folderApplications:#00a5ff;
-		--folderMovies		:#00a5ff;
 		--folderDisk		:#00a5ff;
 		--folder			:#78cff2;
 	}
+	--folderApplications:#00a5ff;
+	--folderMovies		:#00a5ff;
 
 	&.folderDesktop {
-		fill:var(--folderDesktop, white);
+		color:var(--folderDesktop, white);
 	}
 	&.folderDownloads {
-		fill:var(--folderDownloads, white);
-		stroke-width: 3px;
+		color:var(--folderDownloads, white);
 	}
 	&.folderDocuments {
-		fill:var(--folderDocuments, white);
+		color:var(--folderDocuments, white);
 	}
 	&.folderPictures {
-		fill:var(--folderPictures, white);
+		color:var(--folderPictures, white);
 	}
 	&.folderMusic {
-		fill:var(--folderMusic, white);
+		color:var(--folderMusic, white);
 	}
 	&.folderVideo {
-		fill:var(--folderVideo, white);
+		color:var(--folderVideo, white);
 	}
 	&.folderDisk {
-		fill:var(--foldfolderDisker, white);
+		color:var(--foldfolderDisker, white);
 	}
 	&.folderApplications {
-		fill:var(--folderApplications, white);
+		color:var(--folderApplications, white);
 	}
 	&.folderMovies {
-		fill:var(--folderMovies, white);
+		color:var(--folderMovies, white);
 	}
 	&.folder {
-		fill:var(--folder, white);
+		color:var(--folder, white);
 	}
 
 
-	&.fileImage {fill:lightgreen;}
-	&.fileAudio {fill:deeppink;}
-	&.fileVideo {fill:rgb(183, 0, 255);}
-	&.fileCompressed {fill:$font-1;}
-	&.fileExecutable {fill:$font-1;}
-	&.fileExecutableScript {fill:$font-1;}
-	&.fileFont {fill:$font-1;}
-	&.filePdf {fill:rgb(196, 20, 20);}
-	&.fileCode {fill:$font-1;}
-	&.fileJson {fill:$font-1;width:70px !important;}
-	&.file {fill:$font-1;}
+	&.fileImage {color:lightgreen;}
+	&.fileAudio {color:deeppink;}
+	&.fileVideo {color:rgb(183, 0, 255);}
+	&.fileCompressed {color:$font-1;}
+	&.fileExecutable {color:$font-1;}
+	&.fileExecutableScript {color:$font-1;}
+	&.fileCode {color:$font-1;}
+	&.filePdf {color:rgb(196, 20, 20);}
+	&.fileDoc {color:#0369A3;}
+	&.fileCalc {color:#18A303;}
+	&.fileSlides {color:#BC4D04;}
+	&.file {color:$font-1;}
 }
 
 
@@ -646,14 +663,9 @@ input[type=text]::selection {
 
 		& > .icon {
 			--color:white;
-			fill:var(--color, $font-4);
+			color:var(--color, $font-4);
 			width:16px;
 			height:16px;
-
-			&.open, &.delete {
-				stroke:var(--color, $font-4);
-				fill:none;
-			}
 		}
 
 		& > .text {
@@ -832,7 +844,6 @@ input[type=text]::selection {
 						width:16px;
 						height:16px;
 						stroke-width: 3px;
-						color:$font-1;
 					}
 					& > .text {
 						color:$font-1;
@@ -900,7 +911,7 @@ input[type=text]::selection {
 					}
 
 					& > .icon {
-						fill:$font-1;
+						color:$font-1;
 						opacity:.8;
 						width:15px;
 						height:15px;
@@ -1012,7 +1023,6 @@ input[type=text]::selection {
 
 				& > .icon {
 					color:$font-1;
-					fill:$font-1;
 				}
 			}
 			
@@ -1138,7 +1148,7 @@ input[type=text]::selection {
 	transition:all .1s linear;
 
 	& > .icon {
-		fill:White;
+		color:White;
 		font-size:16px;
 	}
 
@@ -1207,7 +1217,7 @@ input[type=text]::selection {
 
 				& > .icon {
 					font-size:25px;
-					fill:$font-1;
+					color:$font-1;
 				}
 				&:hover {
 					cursor:pointer;
