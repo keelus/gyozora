@@ -13,11 +13,13 @@ import HiSolidFolderDownload from "svelte-icons-pack/hi/HiSolidFolderDownload";
 import RiMediaMusic2Fill from "svelte-icons-pack/ri/RiMediaMusic2Fill";
 import RiMediaFilmFill from "svelte-icons-pack/ri/RiMediaFilmFill";
 import RiBusinessWindowFill from "svelte-icons-pack/ri/RiBusinessWindowFill";
+import RiDocumentFolder3Fill from "svelte-icons-pack/ri/RiDocumentFolder3Fill";
 
 import BsFileEarmarkMusicFill from "svelte-icons-pack/bs/BsFileEarmarkMusicFill";
 import BsTerminalFill from "svelte-icons-pack/bs/BsTerminalFill";
 import BsFileEarmarkFontFill from "svelte-icons-pack/bs/BsFileEarmarkFontFill";
 import BsFileEarmarkCodeFill from "svelte-icons-pack/bs/BsFileEarmarkCodeFill";
+
 
 import FiHardDrive from "svelte-icons-pack/fi/FiHardDrive";
 
@@ -36,14 +38,18 @@ import FiTrash from "svelte-icons-pack/fi/FiTrash";
 import RiDocumentFileSearchLine from "svelte-icons-pack/ri/RiDocumentFileSearchLine";
 import SiAppstore from "svelte-icons-pack/si/SiAppstore";
 import FaSolidPhotoVideo from "svelte-icons-pack/fa/FaSolidPhotoVideo";
+import RiDocumentFolderDownloadFill from "svelte-icons-pack/ri/RiDocumentFolderDownloadFill";
+import RiDocumentFile2Fill from "svelte-icons-pack/ri/RiDocumentFile2Fill";
+import RiMediaImageFill from "svelte-icons-pack/ri/RiMediaImageFill";
+import RiDocumentFolderMusicFill from "svelte-icons-pack/ri/RiDocumentFolderMusicFill";
 
 export const IconDictionary : {[key:string]:any} = {
-	"folder":  AiFillFolder ,
+	"folder":  RiDocumentFolder3Fill ,
 	"folderDesktop": AiOutlineDesktop,
-	"folderDownloads": HiSolidFolderDownload,
-	"folderDocuments": HiOutlineDocument,
-	"folderPictures": AiFillFileImage,
-	"folderMusic": RiMediaMusic2Fill,
+	"folderDownloads": RiDocumentFolderDownloadFill,
+	"folderDocuments": RiDocumentFile2Fill,
+	"folderPictures": RiMediaImageFill,
+	"folderMusic": RiDocumentFolderMusicFill,
 	"folderDisk": FiHardDrive,
 	"folderApplications": SiAppstore,
 	"folderMovies": FaSolidPhotoVideo,

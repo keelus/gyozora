@@ -544,13 +544,12 @@ input[type=text]::selection {
 	&.folderDesktop {
 		fill:var(--folderDesktop, white);
 	}
-	&.folderDownloads, &.folderDownloads * {
+	&.folderDownloads {
 		fill:var(--folderDownloads, white);
 		stroke-width: 3px;
 	}
-	&.folderDocuments, &.folderDocuments > * {
+	&.folderDocuments {
 		fill:var(--folderDocuments, white);
-		stroke:var(--folderDocuments, white);
 	}
 	&.folderPictures {
 		fill:var(--folderPictures, white);
