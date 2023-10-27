@@ -183,7 +183,7 @@ export async function PasteFromClipboard() {
 
 		function updateJobVisual() {
 			console.log("Done pastes:", donePastes)
-			UpdateJob(JOB_ID, "Pasting. " + failedPastes.length + Plural(failedPastes.length, "file") + " failed.", (donePastes * 100 / todoPastes))
+			UpdateJob(JOB_ID, "Pasting. " + failedPastes.length + Plural(failedPastes.length, " file") + " failed.", (donePastes * 100 / todoPastes))
 		}
 		updateJobVisual()
 		let progressInterval = setInterval(updateJobVisual, 1000)

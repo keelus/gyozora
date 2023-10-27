@@ -187,7 +187,6 @@ export async function doAction(action : string) {
 
 					if(actionResponseDel.error.status) {
 						console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
-						GenerateToast("error", `Error deleting the ${Plural(selFiles.length, "file")}: ` + actionResponseDel.error.reason || "", "🗑️")
 						RemoveJob(JOB_ID)
 						reject(true)
 					} else {
@@ -200,21 +199,20 @@ export async function doAction(action : string) {
 							return newCts
 						})
 						selectedFiles.set([])
-						GenerateToast("success", `${Plural(selFiles.length, "File")} deleted.`, "🗑️")
 						RemoveJob(JOB_ID)
 					}
 					resolve(true)
 				}),
 				{
-					loading:"Pasting files 📋",
-					success:"All Copied.",
-					error:"Some files could not be pasted.",
+					loading:"Deleting files 🗑️",
+					success:"Files deleted.",
+					error:"Some files could not be deleted.",
 				},
 				{
 					position:'bottom-left'
 				}
 			).catch(error => {})
-			
+			// TODO: show what file sdidnt delete
 			
 			break;
 		case "properties":
