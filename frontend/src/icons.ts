@@ -86,13 +86,13 @@ export const IconDictionary : {[key:string]:any} = {
 	"folderMovies": 		folderVideoFill,
 
 	"file": 				file3Fill,
+	"file_":				fileFilled,
 	"fileImage": 			fileImageFill,
 	"fileAudio": 			fileMusicFill,
 	"fileVideo": 			fileVideoFill,
 	"fileCompressed": 		fileZipFill,
 	"fileExecutable":		windowFill,
 	"fileExecutableScript":	filePaper2Fill,
-	"fileCode":				fileFilled,
 	"filePdf":				filePdf2Fill,
 	"fileDoc":				fileWord2Fill,
 	"fileCalc":				fileExcel2Fill,
@@ -138,7 +138,6 @@ export const IconDictionary : {[key:string]:any} = {
 	"codeLangJson":			fileTypeLightJson,
 	"codeLangXml": 			fileTypeXml,
 	"codeLangMd":			fileTypeMarkdown,
-	"codeLangFont":			fileTypeLightFont,
 
 
 	"uiArrowLeft":			arrowLeftLine,
@@ -149,6 +148,8 @@ export const IconDictionary : {[key:string]:any} = {
 	"uiSettingsGear":		settings3Fill,
 	"uiClose":				closeFill,
 	"uiCopy":				fileCopy2Fill,
+	
+	"file_font":			fileTypeLightFont,
 }
 
 export function GetIconByType(ftype : string) {

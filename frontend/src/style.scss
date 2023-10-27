@@ -323,12 +323,12 @@ input[type=text]::selection {
 					width:80px;
 					height:80px;
 
-					// &.codeLang {
-					// 	top:67.5%;
-					// 	transform:translate(-50%, -67.5%);
-					// 	width:45px;
-					// 	height:45px;
-					// }
+					&.file_icon {
+						top:67.5%;
+						transform:translate(-50%, -67.5%);
+						width:45px;
+						height:45px;
+					}
 				}
 			}
 
@@ -596,11 +596,11 @@ input[type=text]::selection {
 	&.fileCompressed {color:$font-1;}
 	&.fileExecutable {color:$font-1;}
 	&.fileExecutableScript {color:$font-1;}
-	&.fileCode {color:$font-1;}
 	&.filePdf {color:rgb(196, 20, 20);}
 	&.fileDoc {color:#0369A3;}
 	&.fileCalc {color:#18A303;}
 	&.fileSlides {color:#BC4D04;}
+	&.file_ {color:$font-1;}
 	&.file {color:$font-1;}
 }
 

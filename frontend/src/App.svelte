@@ -216,7 +216,10 @@ let settingsWindowOpened = false;
 						<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 					{:else}
 						<div class="iconOuter">
-							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("codeLang") ? "codeLang" : ""} {$USER_OS}"/>
+							{#if content.iconClass.startsWith("file_")}
+								<Icon icon={GetIconByType("file_")} class="icon file_ {$USER_OS}"/>
+							{/if}
+							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
 						</div>
 					{/if}
 					<div class="text">{content ? content.filename : "Error"}</div>

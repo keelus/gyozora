@@ -99,5 +99,6 @@
 	".json": "codeLangJson",
 	".xml": "codeLangXml",
 	".md": "codeLangMd",
-	".ttf": "codeLangFont"
+
+	".ttf": "file_font"
 }
