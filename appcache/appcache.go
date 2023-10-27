@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gyozora/models"
 	"os"
+	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
 	_ "modernc.org/sqlite"
@@ -18,18 +19,21 @@ type CachePreview struct {
 }
 
 func ConnectDB() {
-	AbsPath, err := os.Getwd() // TODO: This
+	appDataDir, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Println("Error getting absolute path for DB connection.")
-		os.Exit(-1)
+		panic(err)
 	}
 
-	DBPath := AbsPath + "/appcache.db" // TODO: Cache location
+	appdataRoaming := filepath.Join(appDataDir, "gyozora")
+	targetDBPath := filepath.Join(appdataRoaming, "appcache.db")
 
-	DBCache, err = sqlx.Open("sqlite", DBPath)
+	if _, err := os.Stat(appdataRoaming); os.IsNotExist(err) {
+		os.Mkdir(appdataRoaming, 0700)
+	}
+
+	DBCache, err = sqlx.Open("sqlite", targetDBPath)
 	if err != nil {
 		fmt.Printf("Error starting appcache database. Error: %s\n", err)
-		os.Exit(-1)
 	}
 
 	cacheTable := `CREATE TABLE IF NOT EXISTS "cache" (
@@ -42,7 +46,6 @@ func ConnectDB() {
 	_, err = DBCache.Exec(cacheTable)
 	if err != nil {
 		fmt.Printf("Error creating the cache table. Error: %s\n", err)
-		os.Exit(-1)
 	}
 }
 

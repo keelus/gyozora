@@ -49,9 +49,12 @@ OutFile "..\..\bin\${INFO_PROJECTNAME}-${ARCH}-installer.exe" # Name of the inst
 InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 
+
+
 Function .onInit
    !insertmacro wails.checkArchitecture
 FunctionEnd
+
 
 Section
     !insertmacro wails.setShellContext
@@ -68,12 +71,6 @@ Section
     !insertmacro wails.writeUninstaller
 SectionEnd
 
-Section
-SetOutPath "$INSTDIR\data\"
-File "/oname=appcache.db" "..\..\..\data\appcache_empty.db"
-File "..\..\..\data\extensionData.json"
-SectionEnd
-
 Section "uninstall" 
     !insertmacro wails.setShellContext
 
@@ -85,4 +82,8 @@ Section "uninstall"
     Delete "$DESKTOP\${INFO_PRODUCTNAME}.lnk"
 
     !insertmacro wails.deleteUninstaller
+SectionEnd
+
+Section
+  AccessControl::GrantOnFile "$INSTDIR\appcache.db" "(BU)" "FullAccess"
 SectionEnd
