@@ -19,7 +19,7 @@ export async function PasteFromClipboard() {
 	const targetPath = get(CURRENT_PATH);
 	let donePastes = 0
 	let todoPastes = get(clipboardFiles).length;
-	const JOB_ID = AddJob("Pasting files", 0, "Discovering folders...", JobType.PASTE)
+	const JOB_ID = AddJob("Pasting files", -1, "Discovering folders...", JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
 		console.warn("🌳 tree generation start.")
@@ -160,7 +160,7 @@ export async function PasteFromClipboard() {
 
 		const beginning = new Date()
 		let fileTree : models.SysFile[] = [];
-		fileTree = await getTree(pastingFiles);
+		fileTree = await getTree(pastingFiles); // TODO: Check first if base folders exists, instead of also treeing them.
 
 		fileTree.sort((a, b) => {
 			if(a.isFolder && b.isFolder) { // TODO: Get real folder file sizes

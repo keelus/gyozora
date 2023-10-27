@@ -227,8 +227,8 @@ let settingsWindowOpened = false;
 		</div>
 	</div>
 	<div class="loader">
-	<div class="progress" style="--loadProgress:{$previewProgress == "100" || $previewProgress == "100.00" ? "0" : $previewProgress}%;"></div>
-</div>
+		<div class="progress" style="--loadProgress:{$previewProgress == "100" || $previewProgress == "100.00" ? "0" : $previewProgress}%;"></div>
+	</div>
 <div class="bottom">
 	<div class="breadcrumbs">
 		{#each $CURRENT_PATH_BREADCRUMB_ELEMENTS as breadcrumb}
@@ -248,7 +248,7 @@ let settingsWindowOpened = false;
 	<div class="vDivider"></div>
 	<div class="activeJobsAmount"><!-- Adapted from https://github.com/timolins/react-hot-toast -->
 		<button class="activeJobsButton" on:click={() => activeJobsOpened = !activeJobsOpened}>
-			{#if Object.keys($activeJobs).length > 0}<div class="loader"></div>{/if}
+			{#if Object.keys($activeJobs).length > 0}<div class="endlessLoader"></div>{/if}
 			<div class="text">
 				{Object.keys($activeJobs).length + Plural(Object.keys($activeJobs).length, " job")}
 			</div>

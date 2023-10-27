@@ -13,9 +13,7 @@ let _activeJobsAmount = 0;
 // activeJobs.update(aJobs => {
 // 	return {}
 // })
-// const job1 = AddJob("Pasting files", 30, "8 files failed", JobType.PASTE)
-// const job2 = AddJob("Deleting files", 60, "...", JobType.DELETE)
-// const job3 = AddJob("Rendering", 90, "...", JobType.RENDER)
+// const job2 = AddJob("Deleting files", -1, "", JobType.DELETE)
 let sub = activeJobs.subscribe((val) => {
 	_activeJobs = val;
 	_activeJobsAmount = Object.keys(val).length;
@@ -41,15 +39,17 @@ export let opened : boolean = false;
 					<div class="title">{value.title}</div>
 					<div class="additional">{value.additional}</div>
 				</div>
-				{#if value.progress !== -1}
-					<div class="right">
+				<div class="right">
+					{#if value.progress === -1}
+						<div class="endlessLoader"></div>
+					{:else}
 						<div class="progress" style="--progress:{value.progress}%;">
 							<div class="progressCircle">
 								<div class="text">{Math.round(value.progress)}%</div>
 							</div>
 						</div>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 		{/each}
 	</div>

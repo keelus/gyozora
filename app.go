@@ -33,11 +33,6 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet() {
-	fmt.Println("Hello world ✌️")
-}
-
 func (a *App) GetUserOS() string {
 	return runtime.GOOS
 }
@@ -264,6 +259,7 @@ func (a *App) CopyFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
 
+// TODO: Duplicating folders
 func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PastFileResponse {
 	srcPath := srcFolder.PathFull
 	tgtPathFinal := filepath.Join(tgtPath, srcFolder.Filename)
@@ -343,17 +339,11 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		fileExists = true
 	}
 
-	fmt.Println("##########################")
-	fmt.Println(fileExists)
-	fmt.Printf("%s==%s\n", tgtPath, srcFile.Path)
 	if fileExists && tgtPath == srcFile.Path { // If we are in the same path, allow, for file duplicate creation
-		fmt.Println("we entered")
 		index := 0
 
 		fileExists = true
 		for fileExists {
-			fmt.Println("loop exec")
-			fmt.Println(index)
 			if index == 0 {
 				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy%s", srcFile.Name, srcFile.Extension))
 			} else {
