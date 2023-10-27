@@ -88,20 +88,6 @@ function copyToClipboard(text : string) {
 						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
-				<div class="doubleField">
-					<div class="key">full location</div>
-					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
-						<div class="text" title={fileData.pathfull}>{fileData.pathfull}</div>
-						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
-					</button>
-				</div>
-				<div class="doubleField">
-					<div class="key">Rel location</div>
-					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
-						<div class="text" title={fileData.pathrelativefull}>{fileData.pathrelativefull}</div>
-						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
-					</button>
-				</div>
 				{#if !fileData.isFolder}
 					<div class="doubleField">
 						<div class="key">Size</div>
