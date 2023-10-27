@@ -83,7 +83,3 @@ Section "uninstall"
 
     !insertmacro wails.deleteUninstaller
 SectionEnd
-
-Section
-  AccessControl::GrantOnFile "$INSTDIR\appcache.db" "(BU)" "FullAccess"
-SectionEnd
