@@ -1,15 +1,13 @@
-import { PasteFile, PasteFolder, ReadPath, FileExists  } from "../wailsjs/go/main/App.js";
-import { LoadFolder } from "./pathManager.js";
-import { CURRENT_PATH, activeJobs, clipboardFiles, contents, currentJob, selectedFiles } from "./store"
+import { PasteFile, PasteFolder, ReadPath, FileExists } from "../wailsjs/go/main/App.js";
+import { CURRENT_PATH, clipboardFiles, contents, selectedFiles } from "./store"
 import { get } from "svelte/store"
-import { GenerateToast } from "./toasts.js";
 import toast from "svelte-french-toast";
 import { models } from "../wailsjs/go/models.js";
 export function CopyToClipboard() {
 	clipboardFiles.set(get(selectedFiles))
 }
 
-import { AddJob, type ActiveJob, UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
+import { AddJob, type  UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
 import OpenModal from "./modals/manager.js";
 import { Plural } from "./utils.js";
 
@@ -158,7 +156,7 @@ export async function PasteFromClipboard() {
 
 		const beginning = new Date()
 		let fileTree : models.SysFile[] = [];
-		fileTree = await getTree(pastingFiles); // TODO: Check first if base folders exists, instead of also treeing them.
+		fileTree = await getTree(pastingFiles);
 
 		fileTree.sort((a, b) => {
 			if(a.isFolder && b.isFolder) { // TODO: Get real folder file sizes
@@ -214,82 +212,4 @@ export async function PasteFromClipboard() {
 
 export function PastableFromClipboard() {
 	return get(clipboardFiles).length > 0
-}
-
-export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath : string) {
-	return new Promise(async(resolve, reject) => {
-		let errors = false;
-
-		//In the first call, one or multiple files could be selected. 
-
-		// Algorythm to get the contents of a path (& subpath) by layers, to copy and paste
-		// TODO: Forget about layers, and instead copy-paste layer 0 completly. When finished, analyze layer 1 and then copy-paste it, etc
-		let hasFolders = false
-		let curCall : models.ReadPathResponse;
-		let currentLayer : models.SysFile[] = []
-		let layerIndex = 0
-		for(let file of pastingFiles) {
-			if(file.isFolder) hasFolders = true
-			currentLayer.push(file)
-		}
-
-		let failedPastes = []
-		
-		// Copy paste current layer. Then keep going
-		failedPastes = await layerPaste(currentLayer, targetPath, layerIndex)
-		
-
-		while(hasFolders) {
-			layerIndex++;
-			let newLayer : models.SysFile[] = []
-			hasFolders = false
-			for(let elem of currentLayer){
-				if(!elem.isFolder) continue;
-				
-				curCall = await ReadPath(targetPath, elem.pathfull, layerIndex)
-
-				let curSemiLayer = curCall.dirFiles.concat(curCall.dirFolders);
-				curSemiLayer.forEach(elem => newLayer.push(elem))
-
-				if(curCall.dirFolders.length > 0) hasFolders = true
-			}
-
-			currentLayer = newLayer
-
-			// Copy paste current layer. Then keep going
-			failedPastes = failedPastes.concat(await layerPaste(currentLayer, targetPath, layerIndex))
-		}
-
-		if(errors) {
-			reject("Error pasting some files.")
-		} else {
-			resolve("All files pasted successfully.")
-		}
-	})
-
-	
-}
-
-async function layerPaste(layerElements : models.SysFile[], targetPath : string, layerIndex : number) : Promise<models.SysFile[]> {
-	let failedPastes : models.SysFile[] = []
-
-	for(let elem of layerElements) {
-		const response = await PasteFile(elem, targetPath, layerIndex)
-		// Here we get the new pasted/created file path and fullpath
-		// let pastedPath = ...
-		if(response.error.status) {
-			console.error(response.error.reason)
-			failedPastes.push(elem)
-		}else {
-			if(get(CURRENT_PATH) == response.file.path){ // If user is currently on the pasting path (of the newly file created)
-
-				contents.update(cts => {
-					cts.push(response.file)
-					return cts
-				})
-			}
-		}
-	}
-
-	return failedPastes
 }

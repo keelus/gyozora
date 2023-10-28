@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
-import { OpenFile, AddFile, RenameFile, DeleteFile, PropertiesFile } from '../wailsjs/go/main/App.js'
+import { OpenFile, AddFile, RenameFile, DeleteFile, } from '../wailsjs/go/main/App.js'
 import OpenModal from "./modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
