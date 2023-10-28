@@ -11,10 +11,15 @@ import { GenerateToast } from "../../src/toasts";
 let cancelButton : HTMLButtonElement;
 
 export async function WaitForModalResponse() {
-	if(propertiesFile === undefined) // Right clicked current folder
-		fileData = await PropertiesFile(get(CURRENT_PATH))
-	else 
-		fileData = propertiesFile
+	if(propertiesFile === undefined){ // Right clicked current folder
+		let fileDataResponse = await PropertiesFile(get(CURRENT_PATH))
+		if(fileDataResponse.error.status) {
+			GenerateToast("error", "Error getting file properties", "📄")
+			return new Promise(resolve => resolve(-1))
+		} else {
+			fileData = fileDataResponse.file
+		}
+	} else fileData = propertiesFile
 
 	return new Promise(resolve => {
 		cancelButton.addEventListener("click", () => {
