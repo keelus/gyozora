@@ -278,16 +278,15 @@ func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool)
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse { // TODO: Add previews to cache. Return error details
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse { // TODO: Add previews to cache.
 	srcPath := srcFile.PathFull
 
-	finalPath := ""
-	fullFinalPath := ""
-	finalPath = filepath.Dir(filepath.Join(tgtPath, srcFile.Filename)) // TODO: Revise this
+	tgtPathParentFolder := filepath.Join(tgtPath)
 	if !isBase {
 		relPath := strings.Replace(srcFile.PathRelativeFull, "..", "", 1)
 		relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
-		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
+
+		tgtPathParentFolder = filepath.Dir(filepath.Join(tgtPath, relPath))
 	}
 
 	if err := fileUtils.Exists(srcPath); err != nil {
@@ -299,10 +298,10 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 	}
 
 	//Check if pasting location exist a file with that filename
-	fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
+	tgtPathFile := filepath.Join(tgtPathParentFolder, srcFile.Filename)
 	fileExists := false
 
-	if err := fileUtils.Exists(fullFinalPath); err == nil {
+	if err := fileUtils.Exists(tgtPathFile); err == nil {
 		fileExists = true
 	}
 
@@ -312,12 +311,12 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		fileExists = true
 		for fileExists {
 			if index == 0 {
-				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy%s", srcFile.Name, srcFile.Extension))
+				tgtPathFile = filepath.Join(tgtPathParentFolder, fmt.Sprintf("%s - Copy%s", srcFile.Name, srcFile.Extension))
 			} else {
-				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy (%d)%s", srcFile.Name, index, srcFile.Extension))
+				tgtPathFile = filepath.Join(tgtPathParentFolder, fmt.Sprintf("%s - Copy (%d)%s", srcFile.Name, index, srcFile.Extension))
 			}
 
-			if err := fileUtils.Exists(fullFinalPath); err == nil {
+			if err := fileUtils.Exists(tgtPathFile); err == nil {
 				fileExists = true
 				index++
 			} else {
@@ -328,18 +327,16 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
 
-	// Final path? Where the folder/file would be:
-
 	content, err := os.ReadFile(srcPath)
 	if err != nil {
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Could not read file."}}
 	}
 
-	if err := os.WriteFile(fullFinalPath, content, 0755); err != nil {
+	if err := os.WriteFile(tgtPathFile, content, 0755); err != nil {
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Error writing the file."}}
 	}
 
-	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
+	pastedFile := fileUtils.GenerateSysFile(tgtPathParentFolder, tgtPathFile)
 	pastedFile.Preview = srcFile.Preview
 
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
