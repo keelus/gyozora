@@ -115,7 +115,7 @@ export async function doAction(action : string) {
 			const selFile = get(selectedFiles)[0]
 			if(selFile === undefined) return
 			if(selFile.isFolder)
-				return LoadFolder(selFile.pathfull, false, false, false) // TODO: Error handling
+				return LoadFolder(selFile.pathfull, false, false, false)
 
 			const actionResponseOpen : models.ActionResponse = await OpenFile(selFile.pathfull)
 			if(actionResponseOpen.error.status) {

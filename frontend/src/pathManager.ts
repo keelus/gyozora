@@ -116,7 +116,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 }
 export async function elementClicked(fpath : string, isfolder : boolean) {
 	if(isfolder){
-		return LoadFolder(fpath, false, false, false) // TODO: Error handling
+		return LoadFolder(fpath, false, false, false)
 	}
 
 	const actionResponseOpen : models.ActionResponse = await OpenFile(fpath)

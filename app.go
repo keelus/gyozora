@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gyozora/appcache"
 	"gyozora/fileUtils"
 	"gyozora/models"
 	"gyozora/sysUtils"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -38,15 +38,19 @@ func (a *App) GetUserOS() string {
 }
 
 func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse {
-	// fmt.Println("########## FOLDER READ ##########")
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
 	dirFolders := make([]models.SysFile, 0)
 	breadcrumbs := make([]models.SysFile, 0)
 
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
-		return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
+		if errors.Is(err, os.ErrNotExist) {
+			return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Folder not found."}}
+		} else if errors.Is(err, os.ErrPermission) {
+			return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Access denied."}}
+		}
+		return models.ReadPathResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
 
 	// Load path content
@@ -101,6 +105,7 @@ func (a *App) LoadPinnedFolders() []models.LeftBarElement {
 
 	return pinnedFolders
 }
+
 func (a *App) LoadYourComputer() []models.LeftBarElement {
 	userRoots := sysUtils.UserRoots()
 	pinnedFolders := make([]models.LeftBarElement, 0)
@@ -110,6 +115,7 @@ func (a *App) LoadYourComputer() []models.LeftBarElement {
 
 	return pinnedFolders
 }
+
 func (a *App) GetStartingPath() string {
 	CURRENT_PATH = sysUtils.UserHomedir()
 	return filepath.Join(CURRENT_PATH, "Desktop")
@@ -120,12 +126,12 @@ func (a *App) GetStartingPath() string {
 var ACTIVE_JOBS = -1
 
 func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining int) models.SysFile {
-	fmt.Printf("Received remainings: %d\n", remaining)
+	// fmt.Printf("Received remainings: %d\n", remaining)
 
 	if ACTIVE_JOBS != -1 { // There is a currently active JOB
-		fmt.Println("There is one job in progress")
+		// fmt.Println("There is one job in progress")
 		if ACTIVE_JOBS != unixBeginning { // If it's not our job, cancel the other job
-			fmt.Println("it's not ours")
+			// fmt.Println("it's not ours")
 			ACTIVE_JOBS = unixBeginning
 		}
 	}
@@ -133,7 +139,7 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	ACTIVE_JOBS = unixBeginning
 
 	if ACTIVE_JOBS != unixBeginning { // We were cancelled
-		fmt.Println("✅🛑 render was canceled. 1")
+		// fmt.Println("✅🛑 render was canceled. 1")
 		return file
 	}
 
@@ -154,37 +160,37 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	}
 
 	if imageIsCached && imageIsLatest {
-		fmt.Printf("👁️ '%s' is cached & updated, ignoring.\n", file.Filename)
+		// fmt.Printf("👁️ '%s' is cached & updated, ignoring.\n", file.Filename)
 		file.Preview = b64img
 		return file
 	}
 	// Image is not cached, or is not the latest version
 
-	fmt.Printf("📸 creating preview of '%s'\n", file.Filename)
+	// fmt.Printf("📸 creating preview of '%s'\n", file.Filename)
 
 	generatedPreview := fileUtils.GetImagePreview(file.PathFull, file.Extension)
 	file.Preview = generatedPreview
 
 	if ACTIVE_JOBS != unixBeginning {
-		fmt.Println("✅🛑 render was canceled. 2")
+		// fmt.Println("✅🛑 render was canceled. 2")
 		return file
 	}
 
 	// Create or update preview in cache
 	if imageIsCached {
 		_, err = appcache.DBCache.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
-		if err != nil {
-			fmt.Printf("👁️❌ DB error updating cache preview of '%s', error: %s\n", file.Filename, err)
-		}
+		// if err != nil {
+		// fmt.Printf("👁️❌ DB error updating cache preview of '%s', error: %s\n", file.Filename, err)
+		// }
 	} else {
 		_, err = appcache.DBCache.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
-		if err != nil {
-			fmt.Printf("👁️❌ DB error creating cache preview of '%s', error: %s\n", file.Filename, err)
-		}
+		// if err != nil {
+		// fmt.Printf("👁️❌ DB error creating cache preview of '%s', error: %s\n", file.Filename, err)
+		// }
 	}
 
 	if ACTIVE_JOBS != unixBeginning {
-		fmt.Println("✅🛑 render was canceled. 3")
+		// fmt.Println("✅🛑 render was canceled. 3")
 		return file
 	}
 
@@ -193,7 +199,7 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 		ACTIVE_JOBS = -1
 	}
 
-	fmt.Println("✅ render batch ended.")
+	// fmt.Println("✅ render batch ended.")
 
 	return file
 }
@@ -215,7 +221,7 @@ func (a *App) OpenFile(fpath string) models.ActionResponse {
 	fmt.Printf("Trying to execute the file with '%s'\n", cmd)
 	err := cmd.Run()
 	if err != nil {
-		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Check permissions."}}
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Access denied."}}
 	}
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}}
@@ -227,15 +233,15 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 	if _, err := os.Stat(finalPath); err == nil {
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
 	}
-	fmt.Println("Type inputed:")
-	fmt.Println(fileType)
+
 	var file *os.File
 	var err error
 	if fileType == "folder" {
-		err = os.Mkdir(finalPath, 0755) // TODO: perms
+		err = os.Mkdir(finalPath, 0755)
 	} else {
 		file, err = os.Create(finalPath)
 	}
+
 	if err != nil {
 		valid := sysUtils.IsFilenameValid(filename)
 
@@ -297,8 +303,7 @@ func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool)
 	//Check exists folder
 	//Then if not:
 	fullFinalPath = filepath.Join(finalPath, srcFolder.Filename)
-	// fmt.Printf("Execute os.Mkdir(%s, 0644)\n", fullFinalPath)
-	err = os.Mkdir(fullFinalPath, 0644)
+	err = os.Mkdir(fullFinalPath, 0755)
 	if err != nil {
 		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
@@ -370,7 +375,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
-	err = os.WriteFile(fullFinalPath, content, 0644) // TODO: Perms
+	err = os.WriteFile(fullFinalPath, content, 0755)
 	if err != nil {
 		return models.PastFileResponse{Error: models.SimpleError{Status: true}}
 	}
@@ -380,6 +385,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 
 	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
+
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
 	newPath := filepath.Join(file.Path, newFilename)
 
@@ -389,7 +395,11 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 
 	err := os.Rename(file.PathFull, newPath)
 	if err != nil {
-		fmt.Println(err)
+		if errors.Is(err, os.ErrNotExist) {
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Folder not found."}}
+		} else if errors.Is(err, os.ErrPermission) {
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Access denied."}}
+		}
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
 

@@ -34,6 +34,8 @@ func ConnectDB() {
 	DBCache, err = sqlx.Open("sqlite", targetDBPath)
 	if err != nil {
 		fmt.Printf("Error starting appcache database. Error: %s\n", err)
+		fmt.Println("❌ cache not connected.")
+		return
 	}
 
 	cacheTable := `CREATE TABLE IF NOT EXISTS "cache" (
@@ -47,6 +49,8 @@ func ConnectDB() {
 	if err != nil {
 		fmt.Printf("Error creating the cache table. Error: %s\n", err)
 	}
+
+	fmt.Println("✅ cache connected.")
 }
 
 func GetCachedPreview(file models.SysFile) (string, bool, error) {
