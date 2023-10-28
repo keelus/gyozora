@@ -121,17 +121,12 @@ func (a *App) GetStartingPath() string {
 	return filepath.Join(CURRENT_PATH, "Desktop")
 }
 
-// TODO: Save running batch jobs by unix in a map, so each job is independent, but can force other previous jobs
-// to be cancelled.
 var ACTIVE_JOBS = -1
 
 func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining int) models.SysFile {
-	// fmt.Printf("Received remainings: %d\n", remaining)
 
 	if ACTIVE_JOBS != -1 { // There is a currently active JOB
-		// fmt.Println("There is one job in progress")
 		if ACTIVE_JOBS != unixBeginning { // If it's not our job, cancel the other job
-			// fmt.Println("it's not ours")
 			ACTIVE_JOBS = unixBeginning
 		}
 	}
@@ -139,7 +134,6 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	ACTIVE_JOBS = unixBeginning
 
 	if ACTIVE_JOBS != unixBeginning { // We were cancelled
-		// fmt.Println("✅🛑 render was canceled. 1")
 		return file
 	}
 
@@ -160,13 +154,11 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	}
 
 	if imageIsCached && imageIsLatest {
-		// fmt.Printf("👁️ '%s' is cached & updated, ignoring.\n", file.Filename)
 		file.Preview = b64img
 		return file
 	}
-	// Image is not cached, or is not the latest version
 
-	// fmt.Printf("📸 creating preview of '%s'\n", file.Filename)
+	// Image is not cached, or is not the latest version
 
 	generatedPreview := fileUtils.GetImagePreview(file.PathFull, file.Extension)
 	file.Preview = generatedPreview
@@ -179,18 +171,11 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	// Create or update preview in cache
 	if imageIsCached {
 		_, err = appcache.DBCache.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
-		// if err != nil {
-		// fmt.Printf("👁️❌ DB error updating cache preview of '%s', error: %s\n", file.Filename, err)
-		// }
 	} else {
 		_, err = appcache.DBCache.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
-		// if err != nil {
-		// fmt.Printf("👁️❌ DB error creating cache preview of '%s', error: %s\n", file.Filename, err)
-		// }
 	}
 
 	if ACTIVE_JOBS != unixBeginning {
-		// fmt.Println("✅🛑 render was canceled. 3")
 		return file
 	}
 
@@ -198,8 +183,6 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	if remaining == 0 {
 		ACTIVE_JOBS = -1
 	}
-
-	// fmt.Println("✅ render batch ended.")
 
 	return file
 }
@@ -213,7 +196,7 @@ func (a *App) OpenFile(fpath string) models.ActionResponse {
 	case "darwin":
 		cmd = exec.Command("open", fpath)
 	case "linux":
-		cmd = exec.Command("xdg-open", fpath) // Test
+		cmd = exec.Command("xdg-open", fpath) // TODO: Test
 	default:
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unsupported operating system."}}
 	}
@@ -266,27 +249,27 @@ func (a *App) CopyFile_s(fpaths []string) {
 }
 
 // TODO: Duplicating folders
-func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PastFileResponse {
+func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse {
 	srcPath := srcFolder.PathFull
 	tgtPathFinal := filepath.Join(tgtPath, srcFolder.Filename)
 
 	_, err := os.Stat(srcPath)
 	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
 		fmt.Println(err)
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	_, err = os.Stat(tgtPath)
 	if err != nil { // If target path doesn't exist, ignore and return not completed
 		fmt.Println(err)
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	//Check if pasting location exist a file with that filename
 	_, err = os.Stat(tgtPathFinal)
 	if err == nil { // Exists with that name, ignore and return not completed
 		fmt.Println("File with that filename already exists")
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
 
 	// Final path? Where the folder/file would be:
@@ -305,16 +288,16 @@ func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool)
 	fullFinalPath = filepath.Join(finalPath, srcFolder.Filename)
 	err = os.Mkdir(fullFinalPath, 0755)
 	if err != nil {
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
 	pastedFile.Preview = srcFolder.Preview
 
-	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
+	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PastFileResponse { // TODO: Add previews to cache. Return error details
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse { // TODO: Add previews to cache. Return error details
 	srcPath := srcFile.PathFull
 
 	finalPath := ""
@@ -328,12 +311,12 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 
 	_, err := os.Stat(srcPath)
 	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	_, err = os.Stat(tgtPath)
 	if err != nil { // If target path doesn't exist, ignore and return not completed
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	//Check if pasting location exist a file with that filename
@@ -365,25 +348,25 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		}
 	} else if fileExists {
 		fmt.Println("File with that filename already exists")
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
 
 	// Final path? Where the folder/file would be:
 
 	content, err := os.ReadFile(srcPath)
 	if err != nil {
-		return models.PastFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
 	err = os.WriteFile(fullFinalPath, content, 0755)
 	if err != nil {
-		return models.PastFileResponse{Error: models.SimpleError{Status: true}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true}}
 	}
 
 	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
 	pastedFile.Preview = srcFile.Preview
 
-	return models.PastFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
+	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
@@ -411,21 +394,19 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: renamedFile}
 }
-func (a *App) DeleteFile_s(files []models.SysFile) models.ActionResponse {
-	allDeleted := true // TODO: Return what files haven't been deleted.
-	for _, file := range files {
-		err := os.RemoveAll(file.PathFull)
-		if err != nil {
-			fmt.Printf("Error deleting the file '%s'\n", file.PathFull)
-			allDeleted = false
+
+func (a *App) DeleteFile(file models.SysFile) models.SimpleError {
+	err := os.RemoveAll(file.PathFull)
+	if err != nil {
+		if errors.Is(err, os.ErrPermission) {
+			return models.SimpleError{Status: true, Reason: "Access denied."}
 		}
-	}
-	if !allDeleted {
-		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Some files could not be deleted."}}
+		return models.SimpleError{Status: true, Reason: "Unexpected error."}
 	}
 
-	return models.ActionResponse{Error: models.SimpleError{Status: false}}
+	return models.SimpleError{Status: false}
 }
+
 func (a *App) PropertiesFile(fpath string) models.SysFile {
 	return fileUtils.GenerateSysFile(fpath, fpath)
 }

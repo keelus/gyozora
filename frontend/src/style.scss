@@ -948,7 +948,7 @@ input[type=text]::selection {
 	&[data-activemodal="delete"] > .modal.delete {display:flex;}
 	&[data-activemodal="properties"] > .modal.properties {display:flex;}
 	&[data-activemodal="pasteErrorLog"] > .modal.pasteErrorLog {display:flex;}
-
+	&[data-activemodal="deleteErrorLog"] > .modal.deleteErrorLog {display:flex;}
 	
 
 }

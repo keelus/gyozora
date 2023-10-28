@@ -61,6 +61,7 @@ func GetFileType(filename string, extension string, isFolder bool) string {
 func IsHidden(fpath string) bool {
 	return false
 }
+
 func ModifiedAt(fpath string) int {
 	fileInfo, err := os.Stat(fpath)
 	if err != nil {
@@ -70,20 +71,19 @@ func ModifiedAt(fpath string) int {
 	return int(fileInfo.ModTime().Unix())
 }
 
+func Exists(fpath string) error {
+	if _, err := os.Stat(fpath); err != nil {
+		return err
+	}
+	return nil
+}
+
 var fileTypeMap map[string]string
 
 //go:embed extensionData.json
 var jsonContent []byte
 
 func LoadJSON() {
-	// jsonUbi := "./data/extensionData.json"
-
-	// jsonContent, err := ioutil.ReadFile(jsonUbi)
-	// if err != nil {
-	// 	fmt.Printf("Error reading file type json:%s\n", err)
-	// 	os.Exit(1)
-	// }
-
 	err := json.Unmarshal([]byte(jsonContent), &fileTypeMap)
 	if err != nil {
 		fmt.Printf("Error reading file type json:%s\n", err)

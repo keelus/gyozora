@@ -1,0 +1,38 @@
+<script lang="ts">
+  import type { models } from "../../wailsjs/go/models";
+
+	
+	let cancelButton : HTMLButtonElement;
+	
+	export async function WaitForModalResponse() {
+		return new Promise(resolve => {
+			cancelButton.addEventListener("click", () => {
+				console.log("Modal cancel button")
+				resolve(-1)
+			})
+		})
+	}
+
+	export let failedFiles : models.SysFile[];
+</script>
+	<div class="modal deleteErrorLog">
+		<div class="top">
+			<div class="title">Delete error log</div>
+		</div>
+		<div class="middle" style="padding:0 !important;">
+			<div class="flexContent">
+				<div class="note">The following files could not be deleted:</div>
+				<div class="files">
+					{#each failedFiles as fail}
+					<div class="file">
+						<div class="filename" title={fail.filename}>{fail.filename}</div>
+						<div class="path" title={fail.filename}>{fail.path}</div>
+					</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<button class="cancel" style="margin-left:auto;" bind:this={cancelButton}>Close</button>
+		</div>
+	</div>

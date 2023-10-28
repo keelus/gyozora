@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
-import { OpenFile, AddFile, CutFile_s, CopyFile_s, RenameFile, DeleteFile_s, PropertiesFile } from '../wailsjs/go/main/App.js'
+import { OpenFile, AddFile, CutFile_s, CopyFile_s, RenameFile, DeleteFile, PropertiesFile } from '../wailsjs/go/main/App.js'
 import OpenModal from "./modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
@@ -176,30 +176,60 @@ export async function doAction(action : string) {
 			if(modalResponseDelete?.cancelled) return;
 			
 			const deletingFiles = get(selectedFiles)
+			let failedDeletes : models.SysFile[] = []
+			let doneDeletes = 0
+			let todoDeletes = deletingFiles.length
 
 			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
+			function updateJobVisual() {
+				UpdateJob(JOB_ID, "Deleting. " + failedDeletes.length + Plural(failedDeletes.length, " file") + " failed.", (doneDeletes * 100 / todoDeletes))
+			}
+			updateJobVisual()
+			let progressInterval = setInterval(updateJobVisual, 1000)
 
-			// TODO: Delete files one by one
-			let actionResponseDel : models.ActionResponse;
 			await toast.promise(
 				new Promise(async (resolve, reject) => {
-					actionResponseDel = await DeleteFile_s(deletingFiles)
+					for(let file of deletingFiles) {
+						let fileDeleteErr = await DeleteFile(file)
+						if(fileDeleteErr.status){
+							console.log(file.filename + " cannot be deleted. Reason:", fileDeleteErr.reason)
+							failedDeletes.push(file)
+							continue
+						}
 
-					if(actionResponseDel.error.status) {
-						console.error("File deleting err:", actionResponseDel.error.reason || "Unknown")
-						RemoveJob(JOB_ID)
+						console.log(file.filename + " deleted successfully.")
+						
+						doneDeletes++;
+						if(get(CURRENT_PATH) === file.path) {
+							contents.update(cts => {
+								let newCts : models.SysFile[] = []
+								for(let i = 0; i < cts.length; i++){
+									if(cts[i] !== file)
+										newCts.push(cts[i])
+								}
+								return newCts
+							})
+						}
+						
+						selectedFiles.update(selFiles => {
+							let newSelFiles : models.SysFile[] = []
+							for(let i = 0; i < selFiles.length; i++){
+								if(selFiles[i] !== file)
+									newSelFiles.push(selFiles[i])
+							}
+							return newSelFiles
+						})
+
+					}
+			
+
+					clearInterval(progressInterval)
+					RemoveJob(JOB_ID)
+					if(failedDeletes.length > 0) {
+						OpenModal({modalName:"deleteErrorLog", files:failedDeletes})
 						reject(true)
 					} else {
-						contents.update(cts => {
-							let newCts : models.SysFile[] = []
-							for(let i = 0; i < cts.length; i++){
-								if(!deletingFiles.includes(cts[i]))
-									newCts.push(cts[i])
-							}
-							return newCts
-						})
 						selectedFiles.set([])
-						RemoveJob(JOB_ID)
 					}
 					resolve(true)
 				}),
@@ -212,7 +242,6 @@ export async function doAction(action : string) {
 					position:'bottom-left'
 				}
 			).catch(error => {})
-			// TODO: show what file sdidnt delete
 			
 			break;
 		case "properties":

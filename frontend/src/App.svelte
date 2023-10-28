@@ -36,7 +36,7 @@ import ActiveJobs from './ActiveJobs.svelte'
   import { Plural } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
-document.addEventListener('contextmenu', e => e.preventDefault());
+// document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener("keyup", e => e.key == "PageUp" && FirstStart()) // For debug
 document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) || (e.button === 4 && buttonGoForward()));
 document.addEventListener("keyup", e => e.key == "Delete" && doAction("delete"));

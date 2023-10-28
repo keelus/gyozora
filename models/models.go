@@ -43,7 +43,7 @@ type ReadPathResponse struct {
 	Error       SimpleError `json:"error"`
 }
 
-type PastFileResponse struct {
+type PasteFileResponse struct {
 	File  SysFile     `json:"file"`
 	Error SimpleError `json:"error"`
 }

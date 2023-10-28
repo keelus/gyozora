@@ -4,6 +4,7 @@ import DeleteFileModal from './DeleteFile.svelte'
 import PropertiesFileModal from './PropertiesFile.svelte'
 import PasteErrorLog from './PasteErrorLog.svelte'
 import { models } from '../../wailsjs/go/models'
+import DeleteErrorLog from './DeleteErrorLog.svelte'
 export default async function OpenModal({ modalName, file, files = [] }: { modalName: string, file: models.SysFile | undefined, files?: models.SysFile[] }): Promise<{ [key: string]: any }> {
 	const parentModal = document.querySelector(".modalParent")
 	if(!parentModal) return {error: true};
@@ -32,6 +33,10 @@ export default async function OpenModal({ modalName, file, files = [] }: { modal
 		const pasteErrorLog = new PasteErrorLog({target: parentModal, props: {failedFiles: files,}});
 		result = await pasteErrorLog.WaitForModalResponse();
 		pasteErrorLog.$destroy()
+	} else if(modalName == "deleteErrorLog") {
+		const deleteErrorLog = new DeleteErrorLog({target: parentModal, props: {failedFiles: files,}});
+		result = await deleteErrorLog.WaitForModalResponse();
+		deleteErrorLog.$destroy()
 	}
 
 
