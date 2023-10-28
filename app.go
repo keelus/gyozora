@@ -393,3 +393,10 @@ func (a *App) PropertiesFile(fpath string) models.ActionResponse {
 	}
 	return models.ActionResponse{File: fileUtils.GenerateSysFile(fpath, fpath), Error: models.SimpleError{Status: false}}
 }
+
+func (a *App) FileExists(fpath string) bool {
+	if err := fileUtils.Exists(fpath); err == nil {
+		return true
+	}
+	return false
+}

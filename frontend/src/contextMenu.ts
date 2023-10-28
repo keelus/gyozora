@@ -196,13 +196,10 @@ export async function doAction(action : string) {
 					for(let file of deletingFiles) {
 						let fileDeleteErr = await DeleteFile(file)
 						if(fileDeleteErr.status){
-							console.log(file.filename + " cannot be deleted. Reason:", fileDeleteErr.reason)
 							failedDeletes.push(file)
 							continue
 						}
 
-						console.log(file.filename + " deleted successfully.")
-						
 						doneDeletes++;
 						if(get(CURRENT_PATH) === file.path) {
 							contents.update(cts => {

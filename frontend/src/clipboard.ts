@@ -1,4 +1,4 @@
-import { PasteFile, PasteFolder, ReadPath  } from "../wailsjs/go/main/App.js";
+import { PasteFile, PasteFolder, ReadPath, FileExists  } from "../wailsjs/go/main/App.js";
 import { LoadFolder } from "./pathManager.js";
 import { CURRENT_PATH, activeJobs, clipboardFiles, contents, currentJob, selectedFiles } from "./store"
 import { get } from "svelte/store"
@@ -22,19 +22,22 @@ export async function PasteFromClipboard() {
 	const JOB_ID = AddJob("Pasting files", -1, "Discovering folders...", JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
-		console.warn("🌳 tree generation start.")
 		let baseFiles = files
 		for(let i = 0; i < baseFiles.length; i++) {
 			if(!baseFiles[i].isFolder) continue;
+
+			let folderExists = await FileExists(baseFiles[i].pathfull)
+			if(folderExists) {
+				failedPastes.push(baseFiles[i])
+				continue
+			}
 	
 			let childrens = await getChildrens(files[i])
 	
 			files[i].childrenFiles = childrens.dirFiles;
 			files[i].childrenFolders = childrens.dirFolders;
-	
 		}
 	
-		console.warn("🌳 tree generation end.")
 		return files;
 	}
 	
@@ -91,8 +94,6 @@ export async function PasteFromClipboard() {
 					return cts;
 				})
 			}
-			// console.log("Update visual content if in current path.")
-			// console.warn("Pasted '" + folder.pathfull + "'.")
 		}
 		donePastes++;
 		return failed;
@@ -128,7 +129,6 @@ export async function PasteFromClipboard() {
 
 	async function processTree(tree : models.SysFile[]) {
 		return new Promise(async (resolve, reject) => {
-			// console.warn("🌳 tree processing start")
 			let baseFolders = tree.filter(file => file.isFolder)
 			let baseFiles = tree.filter(file => !file.isFolder)
 		
@@ -136,6 +136,7 @@ export async function PasteFromClipboard() {
 	
 			if(baseFolders.length > 0)
 				for(let baseFolder of baseFolders) {
+					if(failedPastes.includes(baseFolder)) continue;
 					basePromises.push(processNode(baseFolder))
 				}
 	
@@ -143,7 +144,6 @@ export async function PasteFromClipboard() {
 				basePromises.push(copyFiles(baseFiles, true))
 	
 			await Promise.all(basePromises)
-			// console.warn("🌳 tree processing end")
 			if(failedPastes.length == 0)
 				return resolve(true)
 			else reject(true)
@@ -153,8 +153,6 @@ export async function PasteFromClipboard() {
 
 	(async function main() {
 		if(!PastableFromClipboard()) return;
-		console.log("Pasting from clibpoard!")
-
 
 		const pastingFiles = get(clipboardFiles)
 
@@ -182,7 +180,6 @@ export async function PasteFromClipboard() {
 		
 
 		function updateJobVisual() {
-			console.log("Done pastes:", donePastes)
 			UpdateJob(JOB_ID, "Pasting. " + failedPastes.length + Plural(failedPastes.length, " file") + " failed.", (donePastes * 100 / todoPastes))
 		}
 		updateJobVisual()
@@ -204,14 +201,11 @@ export async function PasteFromClipboard() {
 		const end = new Date()
 
 		const diffSeconds = Math.floor((end - beginning) / 1000);
-		console.log("Difference in seconds: ", diffSeconds)
-		console.log("Difference in minutes and seconds: ", Math.floor(diffSeconds / 60) + ":" + diffSeconds % 60)
+		console.log("Duration:", Math.floor(diffSeconds / 60) + ":" + diffSeconds % 60)
 		
 		if(failedPastes.length > 0) {
 			OpenModal({modalName:"pasteErrorLog", files:failedPastes})
 		}
-
-		console.log("PASTE ENDED")
 	})()
 
 	return;
@@ -265,7 +259,6 @@ export async function PastePerLayer (pastingFiles : models.SysFile[], targetPath
 			// Copy paste current layer. Then keep going
 			failedPastes = failedPastes.concat(await layerPaste(currentLayer, targetPath, layerIndex))
 		}
-		console.log("Algorythim ended")
 
 		if(errors) {
 			reject("Error pasting some files.")
