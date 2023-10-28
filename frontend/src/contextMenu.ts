@@ -181,11 +181,15 @@ export async function doAction(action : string) {
 			let todoDeletes = deletingFiles.length
 
 			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
-			function updateJobVisual() {
-				UpdateJob(JOB_ID, "Deleting. " + failedDeletes.length + Plural(failedDeletes.length, " file") + " failed.", (doneDeletes * 100 / todoDeletes))
+
+			let progressInterval : number;
+			if(todoDeletes > 1){
+				function updateJobVisual() {
+					UpdateJob(JOB_ID, "Deleting. " + failedDeletes.length + Plural(failedDeletes.length, " file") + " failed.", (doneDeletes * 100 / todoDeletes))
+				}
+				updateJobVisual()
+				progressInterval = setInterval(updateJobVisual, 1000)
 			}
-			updateJobVisual()
-			let progressInterval = setInterval(updateJobVisual, 1000)
 
 			await toast.promise(
 				new Promise(async (resolve, reject) => {
@@ -223,7 +227,7 @@ export async function doAction(action : string) {
 					}
 			
 
-					clearInterval(progressInterval)
+					if(todoDeletes>1) clearInterval(progressInterval)
 					RemoveJob(JOB_ID)
 					if(failedDeletes.length > 0) {
 						OpenModal({modalName:"deleteErrorLog", files:failedDeletes})
