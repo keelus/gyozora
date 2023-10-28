@@ -164,7 +164,6 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	file.Preview = generatedPreview
 
 	if ACTIVE_JOBS != unixBeginning {
-		// fmt.Println("✅🛑 render was canceled. 2")
 		return file
 	}
 
@@ -213,7 +212,7 @@ func (a *App) OpenFile(fpath string) models.ActionResponse {
 func (a *App) AddFile(path string, filename string, fileType string) models.ActionResponse {
 	finalPath := filepath.Join(path, filename)
 
-	if _, err := os.Stat(finalPath); err == nil {
+	if err := fileUtils.Exists(finalPath); err == nil {
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
 	}
 
@@ -244,54 +243,36 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 func (a *App) CutFile_s(fpaths []string) {
 	fmt.Println("TBD -1")
 }
-func (a *App) CopyFile_s(fpaths []string) {
-	fmt.Println("TBD -1")
-}
 
 // TODO: Duplicating folders
 func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse {
 	srcPath := srcFolder.PathFull
-	tgtPathFinal := filepath.Join(tgtPath, srcFolder.Filename)
 
-	_, err := os.Stat(srcPath)
-	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
-		fmt.Println(err)
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
-	}
-
-	_, err = os.Stat(tgtPath)
-	if err != nil { // If target path doesn't exist, ignore and return not completed
-		fmt.Println(err)
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
-	}
-
-	//Check if pasting location exist a file with that filename
-	_, err = os.Stat(tgtPathFinal)
-	if err == nil { // Exists with that name, ignore and return not completed
-		fmt.Println("File with that filename already exists")
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
-	}
-
-	// Final path? Where the folder/file would be:
-	finalPath := ""
-	fullFinalPath := ""
-	finalPath = filepath.Dir(filepath.Join(tgtPath, srcFolder.Filename)) // TODO: Revise this
-
+	tgtPathFolder := filepath.Join(tgtPath, srcFolder.Filename)
 	if !isBase {
 		relPath := strings.Replace(srcFolder.PathRelativeFull, "..", "", 1)
 		relPath = strings.Replace(relPath, string(filepath.Separator), "", 1)
-		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
+
+		tgtPathFolder = filepath.Dir(filepath.Join(tgtPath, relPath, srcFolder.Filename))
 	}
 
-	//Check exists folder
-	//Then if not:
-	fullFinalPath = filepath.Join(finalPath, srcFolder.Filename)
-	err = os.Mkdir(fullFinalPath, 0755)
-	if err != nil {
+	if err := fileUtils.Exists(srcPath); err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File not found."}}
+	}
+
+	if err := fileUtils.Exists(tgtPath); err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Target path not found."}}
+	}
+
+	if err := fileUtils.Exists(tgtPathFolder); err == nil { // Folder exists on paste location
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Folder already exists"}} // TODO: Check if same dir, allow - Copy
+	}
+
+	if err := os.Mkdir(tgtPathFolder, 0755); err != nil {
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
-	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
+	pastedFile := fileUtils.GenerateSysFile(filepath.Dir(tgtPathFolder), tgtPathFolder)
 	pastedFile.Preview = srcFolder.Preview
 
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
@@ -309,21 +290,19 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		finalPath = filepath.Dir(filepath.Join(tgtPath, relPath))
 	}
 
-	_, err := os.Stat(srcPath)
-	if err != nil { // If source file or folder doesn't exists, ignore and return not completed
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	if err := fileUtils.Exists(srcPath); err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File not found."}}
 	}
 
-	_, err = os.Stat(tgtPath)
-	if err != nil { // If target path doesn't exist, ignore and return not completed
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+	if err := fileUtils.Exists(tgtPath); err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Target path not found."}}
 	}
 
 	//Check if pasting location exist a file with that filename
 	fullFinalPath = filepath.Join(finalPath, srcFile.Filename)
 	fileExists := false
-	_, err = os.Stat(fullFinalPath)
-	if err == nil { // Exists with that name, ignore and return not completed
+
+	if err := fileUtils.Exists(fullFinalPath); err == nil {
 		fileExists = true
 	}
 
@@ -338,8 +317,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 				fullFinalPath = filepath.Join(finalPath, fmt.Sprintf("%s - Copy (%d)%s", srcFile.Name, index, srcFile.Extension))
 			}
 
-			_, err = os.Stat(fullFinalPath)
-			if err == nil {
+			if err := fileUtils.Exists(fullFinalPath); err == nil {
 				fileExists = true
 				index++
 			} else {
@@ -347,7 +325,6 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 			}
 		}
 	} else if fileExists {
-		fmt.Println("File with that filename already exists")
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "File already exists"}}
 	}
 
@@ -355,12 +332,11 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 
 	content, err := os.ReadFile(srcPath)
 	if err != nil {
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Could not read file."}}
 	}
 
-	err = os.WriteFile(fullFinalPath, content, 0755)
-	if err != nil {
-		return models.PasteFileResponse{Error: models.SimpleError{Status: true}}
+	if err := os.WriteFile(fullFinalPath, content, 0755); err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Error writing the file."}}
 	}
 
 	pastedFile := fileUtils.GenerateSysFile(finalPath, fullFinalPath)
@@ -372,7 +348,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
 	newPath := filepath.Join(file.Path, newFilename)
 
-	if _, err := os.Stat(newPath); err == nil {
+	if err := fileUtils.Exists(newPath); err == nil {
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File already exists."}}
 	}
 
@@ -396,8 +372,7 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 }
 
 func (a *App) DeleteFile(file models.SysFile) models.SimpleError {
-	err := os.RemoveAll(file.PathFull)
-	if err != nil {
+	if err := os.RemoveAll(file.PathFull); err != nil {
 		if errors.Is(err, os.ErrPermission) {
 			return models.SimpleError{Status: true, Reason: "Access denied."}
 		}
@@ -407,6 +382,14 @@ func (a *App) DeleteFile(file models.SysFile) models.SimpleError {
 	return models.SimpleError{Status: false}
 }
 
-func (a *App) PropertiesFile(fpath string) models.SysFile {
-	return fileUtils.GenerateSysFile(fpath, fpath)
+func (a *App) PropertiesFile(fpath string) models.ActionResponse {
+	if err := fileUtils.Exists(fpath); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "File not found."}}
+		} else if errors.Is(err, os.ErrPermission) {
+			return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Access denied."}}
+		}
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
+	}
+	return models.ActionResponse{File: fileUtils.GenerateSysFile(fpath, fpath), Error: models.SimpleError{Status: false}}
 }
