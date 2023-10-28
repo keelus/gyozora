@@ -10,7 +10,7 @@
 
 	
 	export async function WaitForModalResponse() {
-		if(!renamingFile) return new Promise(resolve => resolve(-1)) // TODO: Add error toast
+		if(!renamingFile) return new Promise(resolve => resolve(-1))
 		
 		filenameInput.value = renamingFile.filename
 		filenameInput.focus()

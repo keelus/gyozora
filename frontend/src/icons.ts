@@ -1,5 +1,5 @@
 import folderFill from '@iconify/icons-ri/folder-fill';
-import computerFill from '@iconify/icons-ri/computer-fill'; //ri:computer-line
+import computerLine from '@iconify/icons-ri/computer-line';
 import folderDownloadFill from '@iconify/icons-ri/folder-download-fill';
 import foldersFill from '@iconify/icons-ri/folders-fill';// TODO: Different
 import folderImageFill from '@iconify/icons-ri/folder-image-fill';
@@ -76,7 +76,7 @@ import closeFill from '@iconify/icons-ri/close-fill';
 
 export const IconDictionary : {[key:string]:any} = {
 	"folder": 				folderFill,
-	"folderDesktop":		computerFill,
+	"folderDesktop":		computerLine,
 	"folderDownloads": 		folderDownloadFill,
 	"folderDocuments": 		foldersFill,
 	"folderPictures":		folderImageFill,
