@@ -3,7 +3,7 @@ import { get } from "svelte/store";
 import { activeJobs } from "./store";
 import { JobType, type ActiveJob, AddJob } from "./activeJobsLogin";
 import Icon from "@iconify/svelte";
-  import { GetIconByType } from "./icons";
+import { GetIconByType } from "./icons";
 
 let _activeJobs : {[key:string]:ActiveJob} = {}
 let _activeJobsAmount = 0;
@@ -29,7 +29,7 @@ export let opened : boolean = false;
 		{#each Object.entries(_activeJobs) as [key, value]}
 			<div class="job">
 				<div class="left">
-					<Icon icon={GetIconByType(value.jType === JobType.PASTE ? "filePaste" : (value.jType === JobType.DELETE ? "fileDelete" : "fileRender" ))} class="icon"/>
+					<Icon icon={GetIconByType(value.jType === JobType.PASTE ? "jobPaste" : (value.jType === JobType.DELETE ? "jobDelete" : "jobRender" ))} class="icon"/>
 				</div>
 				<div class="middle">
 					<div class="title">{value.title}</div>

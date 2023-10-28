@@ -154,8 +154,8 @@ export const IconDictionary : {[key:string]:any} = {
 
 export function GetIconByType(ftype : string) {
 	let icon = IconDictionary[ftype]
-	if (ftype === undefined)
-		return "file";
+	if (ftype === undefined || icon === undefined)
+		return IconDictionary["file"];
 
 	return icon
 }
