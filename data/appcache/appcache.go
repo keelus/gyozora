@@ -7,14 +7,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type CachePreview struct {
-	PathFull         string `db:"pathfull"`
-	DateModification int    `db:"dateModification"`
-	Preview          string `db:"preview"`
-}
-
 func GetCachedPreview(file models.SysFile) (string, bool, error) {
-	var cachedPreview CachePreview
+	var cachedPreview models.CachePreview
 	var isLatest bool
 
 	isLatest = true

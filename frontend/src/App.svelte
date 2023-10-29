@@ -31,7 +31,7 @@ import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
 import ActiveJobs from './ActiveJobs.svelte'
 import { Plural } from './utils.js';
 
-import { GetSetting, LoadSettings } from './settings.js';
+import { GetSetting, LoadSettings, SetSetting } from './settings.js';
 import Settings from './Settings.svelte';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
@@ -62,6 +62,26 @@ document.addEventListener("keydown", e => {
 		}
 	}
 });
+document.addEventListener("mousewheel", e => {
+	if(!e.ctrlKey) return;
+	const goingUp = e.deltaY === -100;
+	
+	const zoomIncrement = 5;
+	const maxZoom = 150;
+	const minZoom = 50;
+	const curZoom = parseInt(GetSetting("zoomLevel"))
+
+	let tgtZoom = 100;
+	if(goingUp){
+		if(curZoom + zoomIncrement > maxZoom) tgtZoom = maxZoom
+		else tgtZoom = curZoom + zoomIncrement
+	} else {
+		if(curZoom - zoomIncrement < minZoom) tgtZoom = minZoom
+		else tgtZoom = curZoom - zoomIncrement
+	}
+
+	SetSetting("zoomLevel", tgtZoom.toString())
+})
 document.addEventListener("copy", e => {
 	if(e.target != document.body) return;
 	CopyToClipboard();
@@ -217,20 +237,22 @@ let settingsWindow : Settings;
 		{/if}
 		{#each $contents as content}
 			{#if content != undefined}
-				<button class="file {$selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
-					{#if content.iconClass == "fileImage" && content.preview != ""}
-						<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
-					{:else}
-						<div class="iconOuter">
-							{#if content.iconClass.startsWith("file_")}
-								<Icon icon={GetIconByType("file_")} class="icon file_ {$USER_OS}"/>
-							{/if}
-							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
+				{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
+					<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
+						{#if content.iconClass == "fileImage" && content.preview != ""}
+							<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
+						{:else}
+							<div class="iconOuter">
+								{#if content.iconClass.startsWith("file_")}
+									<Icon icon={GetIconByType("file_")} class="icon file_ {$USER_OS}"/>
+								{/if}
+								<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
+							</div>
+						{/if}
+						<div class="text">{content.name}{$settings && GetSetting("showExtensions") === "true" ? content.extension : ""}
 						</div>
-					{/if}
-					<div class="text">{content.name}{$settings && GetSetting("showExtensions") === "true" ? content.extension : ""}
-					</div>
-				</button>
+					</button>
+				{/if}
 			{/if}
 		{/each}
 		</div>

@@ -58,10 +58,6 @@ func GetFileType(filename string, extension string, isFolder bool) string {
 	return "file"
 }
 
-func IsHidden(fpath string) bool {
-	return false
-}
-
 func ModifiedAt(fpath string) int {
 	fileInfo, err := os.Stat(fpath)
 	if err != nil {

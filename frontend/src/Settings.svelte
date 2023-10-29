@@ -1,20 +1,42 @@
 <script lang="ts">
+import { IconDictionary } from './icons';
+import Icon from '@iconify/svelte';
+import { GetSetting, SetSetting } from './settings';
+import { settings } from './store';
+import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
+
 import appicon from './assets/icons/gyozora.svg'
 import paintBrushLine from '@iconify/icons-ri/paint-brush-line';
 import gridFill from '@iconify/icons-ri/grid-fill';
 import accessibilityIcon from '@iconify/icons-material-symbols/accessibility';
 import imageFill from '@iconify/icons-ri/image-fill';
-import { IconDictionary } from './icons';
-import Icon from '@iconify/svelte';
-import { GetSetting, SetSetting } from './settings';
-import { settings } from './store';
+import githubLine from '@iconify/icons-ri/github-line';
+
+import { Switch } from '@svelteuidev/core';
+import type { models } from 'wailsjs/go/models';
+import { Go_CacheSize, Go_CacheClear } from '../wailsjs/go/main/App';
+
+let activeCategory = 0;
+let cacheSize = "0B"
+
 
 export async function OpenSettings() {
-	// Re-load settings ?
+	cacheSize = await Go_CacheSize()
+
+
 	opened = true;
+	activeCategory = 0;
 }
+
 export function CloseSettings() {
 	opened = false;
+}
+
+async function ClearCache() {
+	const error : models.SimpleError = await Go_CacheClear()
+	if(error.status) 
+		console.log("Error clearing cache")
+	else cacheSize = "0B"
 }
 
 let opened = false;
@@ -23,12 +45,12 @@ enum SettingCategories {
     APPEARANCE = 0,
     VIEW_SETTINGS,
     ACCESSIBILITY,
-	IMAGE_PREVIEWS
+	IMAGE_PREVIEWS,
+	ABOUT
 }
-let activeCategory = 0;
 
 </script>
-<div class="settingsOuter {opened ? "opened" : ""}">
+<div class="settingsOuter" class:opened={opened}>
 	<div class="settingsWindow">
 		<div class="top">
 			<div class="title"><img src={appicon} alt="Gyozora icon" class="appicon"/> Gyozora settings</div>
@@ -40,100 +62,162 @@ let activeCategory = 0;
 		
 		<div class="bottom">
 			<div class="categories">
-				<button class="category {activeCategory == SettingCategories.APPEARANCE ? "active" : ""}" on:click={() => activeCategory = 0}>
+				<button class="category" class:active={activeCategory == SettingCategories.APPEARANCE} on:click={() => activeCategory = SettingCategories.APPEARANCE}>
 					<div class="title"><Icon icon={paintBrushLine} class="icon" /> Appearance</div>
 				</button>
-				<button class="category {activeCategory == SettingCategories.VIEW_SETTINGS ? "active" : ""}" on:click={() => activeCategory = 1}>
+				<button class="category" class:active={activeCategory == SettingCategories.VIEW_SETTINGS} on:click={() => activeCategory = SettingCategories.VIEW_SETTINGS}>
 					<div class="title"><Icon icon={gridFill} class="icon" /> View settings</div>
 				</button>
-				<button class="category {activeCategory == SettingCategories.ACCESSIBILITY ? "active" : ""}" on:click={() => activeCategory = 2}>
+				<button class="category" class:active={activeCategory == SettingCategories.ACCESSIBILITY} on:click={() => activeCategory = SettingCategories.ACCESSIBILITY}>
 					<div class="title"><Icon icon={accessibilityIcon} class="icon" /> Accessibility</div>
 				</button>
-				<button class="category {activeCategory == SettingCategories.IMAGE_PREVIEWS ? "active" : ""}" on:click={() => activeCategory = 3}>
+				<button class="category" class:active={activeCategory == SettingCategories.IMAGE_PREVIEWS} on:click={() => activeCategory = SettingCategories.IMAGE_PREVIEWS}>
 					<div class="title"><Icon icon={imageFill} class="icon" /> Image previews</div>
+				</button>
+				<button class="category" class:active={activeCategory == SettingCategories.ABOUT} on:click={() => activeCategory = SettingCategories.ABOUT} style="margin-top:auto;" >
+					<div class="title"><Icon icon={githubLine} class="icon" /> About gyozora</div>
 				</button>
 			</div>
 			<div class="content">
 				{#if activeCategory == SettingCategories.APPEARANCE}
-					<div class="title">Appearance</div>
-
 					<div class="element">
-						<h3>Theme</h3>
-						<p>Choose the main theme for gyozora.</p>
+						<div class="title">Theme</div>
+						<div class="description">Choose the main theme for gyozora.</div>
 						<button class="option" class:active={$settings && GetSetting("theme") == "dark"} on:click={() => SetSetting("theme", "dark")}>Dark</button>
 						<button class="option" class:active={$settings && GetSetting("theme") == "light"} on:click={() => SetSetting("theme", "light")}>Light</button>
 					</div>
 
-					<div class="element">
-						<h3>Transparency</h3>
-						<p>Control how many transparency has the app window.</p>
-						<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span style="color:white;">{$settings && GetSetting("transparency")}</span>
-					</div>
+					<div class="dividerH"></div>
 
 					<div class="element">
-						<h3>Color theme</h3>
-						<p>Swap for a different color theme of icons, buttons, etc.</p>
+						<div class="title">Transparency</div>
+						<div class="double">
+							<div class="description">Control how many transparency has the app window.</div>
+							<div class="value">
+								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span style="color:white;">{$settings && GetSetting("transparency")}</span>
+							</div>
+						</div>
+					</div>
+					
+					<div class="dividerH"></div>
+
+					<div class="element inDevelopment">
+						<div class="title">Color theme</div>
+						<div class="description">Swap for a different color theme of icons, buttons, etc.</div>
 						<button class="option" class:active={$settings && GetSetting("colorTheme") == "default"} on:click={() => SetSetting("colorTheme", "default")}>Default</button>
 					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
-					<div class="title">View settings</div>
-
-					<div class="element">
-						<h3>Zoom level</h3>
-						<p>Change the explorer icon list zoom amount.</p>
-						<input type="range" min="50" max="150" value={$settings && GetSetting("zoomLevel")} on:change={(e) => SetSetting("zoomLevel", e.target.value)}><span style="color:white;">{$settings && GetSetting("zoomLevel")}</span>
+					<div class="element inDevelopment">
+						<div class="title">Zoom level</div>
+						<div class="double">
+							<div class="description">Change the explorer icon list zoom amount.</div>
+							<div class="value">
+								<input type="range" min="50" max="150" value={$settings && GetSetting("zoomLevel")} on:change={(e) => SetSetting("zoomLevel", e.target.value)}><span style="color:white;">{$settings && GetSetting("zoomLevel")}</span>
+							</div>
+						</div>
 					</div>
+					
+					<div class="dividerH"></div>
 
 					<div class="element">
-						<h3>Show file extensions</h3>
-						<input type="checkbox" checked={$settings && GetSetting("showExtensions") === "true"} on:change={(e) => SetSetting("showExtensions", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("showExtensions")}</span>
+						<div class="title">Show file extensions</div>
+						<div class="double">
+							<div class="description">Choose wether to show or hide the file extensions on the file explorer.</div>
+							<div class="value">
+								<Switch size="md" checked={$settings && GetSetting("showExtensions") === "true"} on:change={(e) => SetSetting("showExtensions", (e.target.checked).toString())} />
+							</div>
+						</div>
 					</div>
+					
+					<div class="dividerH"></div>
 
 					<div class="element">
-						<h3>Show hidden files</h3>
-						<input type="checkbox" checked={$settings && GetSetting("showHiddenFiles") === "true"} on:change={(e) => SetSetting("showHiddenFiles", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("showHiddenFiles")}</span>
+						<div class="title">Show hidden files</div>
+						<div class="double">
+							<div class="description">Choose wether to show or hide the system hidden files on the file explorer.</div>
+							<div class="value">
+								<Switch size="md" checked={$settings && GetSetting("showHiddenFiles") === "true"} on:change={(e) => SetSetting("showHiddenFiles", (e.target.checked).toString())} />
+							</div>
+						</div>
 					</div>
 				{:else if activeCategory == SettingCategories.ACCESSIBILITY}
-					<div class="title">Accessibility</div>
-
-					<div class="element">
-						<h3>Language</h3>
+					<div class="element inDevelopment">
+						<div class="title">Language</div>
+						<div class="description">Choose your preferred language in gyozora.</div>
 						<button class="option"  class:active={$settings && GetSetting("language") == "EN"} on:click={() => SetSetting("language", "EN")}>English</button>
 						<button class="option"  class:active={$settings && GetSetting("language") == "ES"} on:click={() => SetSetting("language", "ES")}>Spanish</button>
 					</div>
+					
+					<div class="dividerH"></div>
 
 					<div class="element">
-						<h3>Show breadcrumbs</h3>
-						<p>Choose wether to show or not the bottom left breadcrumbs.</p>
-						<input type="checkbox" checked={$settings && GetSetting("showBreadcrumbs") === "true"} on:change={(e) => SetSetting("showBreadcrumbs", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("showBreadcrumbs")}</span>
+						<div class="title">Show breadcrumbs</div>
+						<div class="double">
+							<div class="description">Choose wether to show or not the bottom left breadcrumbs.</div>
+							<div class="value">
+								<Switch size="md" checked={$settings && GetSetting("showBreadcrumbs") === "true"} on:change={(e) => SetSetting("showBreadcrumbs", (e.target.checked).toString())} />
+							</div>
+						</div>
 					</div>
+					
+					<div class="dividerH"></div>
 
 					<div class="element">
-						<h3>Show delete confirmation</h3>
-						<p>This confirmation dialog appears when trying to delete a file.</p>
-						<input type="checkbox" checked={$settings && GetSetting("showDeleteConfirmation") === "true"} on:change={(e) => SetSetting("showDeleteConfirmation", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("showDeleteConfirmation")}</span>
+						<div class="title">Show delete confirmation</div>
+						<div class="double">
+							<div class="description">This confirmation dialog appears when trying to delete a file.</div>
+							<div class="value">
+								<Switch size="md" checked={$settings && GetSetting("showDeleteConfirmation") === "true"} on:change={(e) => SetSetting("showDeleteConfirmation", (e.target.checked).toString())} />
+							</div>
+						</div>
 					</div>
+					
+					<div class="dividerH"></div>
 
-					<div class="element">
-						<h3>Fast access folders</h3>
-						<p>Add, edit or delete your fast access folders, which appears in the left sidebar.</p>
+					<div class="element inDevelopment">
+						<div class="title">Fast access folders</div>
+						<div class="description">Add, edit or delete your fast access folders, which appears in the left sidebar.</div>
 					</div>
 				{:else if activeCategory == SettingCategories.IMAGE_PREVIEWS}
-					<div class="title">Image previews</div>
-
-					<div class="element">
-						<h3>Use image thumbnails</h3>
-						<p>Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files).</p>
-						<input type="checkbox" checked={$settings && GetSetting("useThumbnails") === "true"} on:change={(e) => SetSetting("useThumbnails", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("useThumbnails")}</span>
+					<div class="element inDevelopment">
+						<div class="title">Use image thumbnails</div>
+						<div class="double">
+							<div class="description">Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files).</div>
+							<div class="value">
+								<Switch size="md" checked={$settings && GetSetting("useThumbnails") === "true"} on:change={(e) => SetSetting("useThumbnails", (e.target.checked).toString())} />
+							</div>
+						</div>
 					</div>
+
+					<div class="dividerH"></div>
+
 					{#if $settings && GetSetting("useThumbnails") === "true"}
-						<div class="element">
-							<h3>Use cache</h3>
-							<p>Save the rendered image previews into cache, to get blazingly fast previews!</p>
-							<input type="checkbox" checked={$settings && GetSetting("useCache") === "true"} on:change={(e) => SetSetting("useCache", (e.target.checked).toString())}><span style="color:white;">{$settings && GetSetting("useCache")}</span>
+						<div class="element inDevelopment">
+							<div class="title">Use cache</div>
+							<div class="double">
+								<div class="description">Save the rendered image previews into cache, to get blazingly fast previews!</div>
+								<div class="value">
+									<Switch size="md" checked={$settings && GetSetting("useCache") === "true"} on:change={(e) => SetSetting("useCache", (e.target.checked).toString())} />
+								</div>
+							</div>
 						</div>
 					{/if}
-				{/if}
+					<div class="element">
+						<div class="double">
+							<div class="description" style="flex:unset;margin-right:10px;">Cache in use: {cacheSize}</div>
+							<div class="value">
+								<button disabled={cacheSize === "0B"} on:click={() => ClearCache()} >Empty cache</button>
+							</div>
+						</div>
+					</div>
+
+					{:else if activeCategory == SettingCategories.ABOUT}
+						<div class="about">
+							Gyozora is an open-source file explorer created by <button on:click={() => BrowserOpenURL("https://github.com/keelus")}>keelus</button>, written in Golang & Svelte, currently in development.<br><br>
+							This project is under the GNU GLP v3.0 license. <br><br>
+							Check the GitHub repository <button on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}>here</button>.
+						</div>
+					{/if}
 			</div>
 		</div>
 	</div>

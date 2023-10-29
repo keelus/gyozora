@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"unsafe"
 )
 
 var CURRENT_PATH = ""
@@ -436,6 +437,34 @@ func (a *App) Go_SetSetting(name string, value string) models.SimpleError {
 
 func (a *App) Go_DeleteSetting(name string) models.SimpleError {
 	_, err := data.DataDB.Query("DELETE FROM config WHERE name=?", name)
+	if err != nil {
+		return models.SimpleError{Status: true}
+	}
+	return models.SimpleError{Status: false}
+}
+
+func (a *App) Go_CacheSize() string {
+	cache := make([]models.CachePreview, 0)
+	data.DataDB.Select(&cache, "SELECT * FROM cache")
+
+	sizeB := 0
+	for _, cacheElem := range cache {
+		sizeB += len(cacheElem.PathFull)
+		sizeB += int(unsafe.Sizeof(cacheElem.DateModification))
+		sizeB += len(cacheElem.Preview)
+	}
+
+	if sizeB == 0 {
+		return "0B"
+	}
+
+	sizeKB := float64(sizeB) / 1024.0
+
+	return fmt.Sprintf("%.2fKB", sizeKB)
+}
+
+func (a *App) Go_CacheClear() models.SimpleError {
+	_, err := data.DataDB.Query("DELETE FROM cache")
 	if err != nil {
 		return models.SimpleError{Status: true}
 	}

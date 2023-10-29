@@ -5,6 +5,7 @@ package fileUtils
 
 import (
 	"os"
+	"syscall"
 	"time"
 
 	"golang.org/x/sys/windows"
@@ -28,4 +29,16 @@ func CreatedAt(fpath string) int {
 	creationTime := time.Unix(0, fileInfo.CreationTime.Nanoseconds()).Unix()
 
 	return int(creationTime)
+}
+
+func IsHidden(fpath string) bool {
+	pointer, err := syscall.UTF16PtrFromString(fpath)
+	if err != nil {
+		return false
+	}
+	attributes, err := syscall.GetFileAttributes(pointer)
+	if err != nil {
+		return false
+	}
+	return attributes&syscall.FILE_ATTRIBUTE_HIDDEN != 0
 }

@@ -6,6 +6,12 @@ type LeftBarElement struct {
 	Path string `json:"path"`
 }
 
+type CachePreview struct {
+	PathFull         string `db:"pathfull"`
+	DateModification int    `db:"dateModification"`
+	Preview          string `db:"preview"`
+}
+
 type SysFile struct {
 	Name             string    `json:"name"`
 	Extension        string    `json:"extension"`

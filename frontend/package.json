@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.7.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,6 +16,7 @@
     "@iconify/icons-vscode-icons": "^1.2.29",
     "@iconify/svelte": "^3.1.4",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "@svelteuidev/core": "^0.15.3",
     "@tsconfig/svelte": "^5.0.2",
     "lucide-svelte": "^0.288.0",
     "sass": "^1.69.4",
