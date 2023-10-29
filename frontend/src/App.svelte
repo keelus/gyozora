@@ -239,7 +239,7 @@ let settingsWindow : Settings;
 			{#if content != undefined}
 				{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
 					<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
-						{#if content.iconClass == "fileImage" && content.preview != ""}
+						{#if content.iconClass == "fileImage" && content.preview != "" && $settings && GetSetting("useThumbnails") === "true"}
 							<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 						{:else}
 							<div class="iconOuter">

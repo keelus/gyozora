@@ -16,6 +16,10 @@ import { Switch } from '@svelteuidev/core';
 import type { models } from 'wailsjs/go/models';
 import { Go_CacheSize, Go_CacheClear } from '../wailsjs/go/main/App';
 
+import darkThemeIMG from './assets/images/darkTheme.png'
+import lightThemeIMG from './assets/images/lightTheme.png'
+
+
 let activeCategory = 0;
 let cacheSize = "0B"
 
@@ -83,8 +87,22 @@ enum SettingCategories {
 					<div class="element">
 						<div class="title">Theme</div>
 						<div class="description">Choose the main theme for gyozora.</div>
-						<button class="option" class:active={$settings && GetSetting("theme") == "dark"} on:click={() => SetSetting("theme", "dark")}>Dark</button>
-						<button class="option" class:active={$settings && GetSetting("theme") == "light"} on:click={() => SetSetting("theme", "light")}>Light</button>
+						<div class="themes">
+							<button class="theme" class:active={$settings && GetSetting("theme") == "dark"} on:click={() => SetSetting("theme", "dark")}>
+								<div class="top" style="background-image:url('{darkThemeIMG}');"></div>
+								<div class="bottom">
+									<div class="check"></div>
+									<div class="title">Dark theme</div>
+								</div>
+							</button>
+							<button class="theme" class:active={$settings && GetSetting("theme") == "light"} on:click={() => SetSetting("theme", "light")}>
+								<div class="top" style="background-image:url('{lightThemeIMG}');"></div>
+								<div class="bottom">
+									<div class="check"></div>
+									<div class="title">Light theme</div>
+								</div>
+							</button>
+						</div>
 					</div>
 
 					<div class="dividerH"></div>
@@ -97,14 +115,6 @@ enum SettingCategories {
 								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span style="color:white;">{$settings && GetSetting("transparency")}</span>
 							</div>
 						</div>
-					</div>
-					
-					<div class="dividerH"></div>
-
-					<div class="element inDevelopment">
-						<div class="title">Color theme</div>
-						<div class="description">Swap for a different color theme of icons, buttons, etc.</div>
-						<button class="option" class:active={$settings && GetSetting("colorTheme") == "default"} on:click={() => SetSetting("colorTheme", "default")}>Default</button>
 					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
 					<div class="element inDevelopment">
@@ -179,7 +189,7 @@ enum SettingCategories {
 						<div class="description">Add, edit or delete your fast access folders, which appears in the left sidebar.</div>
 					</div>
 				{:else if activeCategory == SettingCategories.IMAGE_PREVIEWS}
-					<div class="element inDevelopment">
+					<div class="element">
 						<div class="title">Use image thumbnails</div>
 						<div class="double">
 							<div class="description">Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files).</div>
@@ -192,7 +202,7 @@ enum SettingCategories {
 					<div class="dividerH"></div>
 
 					{#if $settings && GetSetting("useThumbnails") === "true"}
-						<div class="element inDevelopment">
+						<div class="element">
 							<div class="title">Use cache</div>
 							<div class="double">
 								<div class="description">Save the rendered image previews into cache, to get blazingly fast previews!</div>
@@ -206,7 +216,7 @@ enum SettingCategories {
 						<div class="double">
 							<div class="description" style="flex:unset;margin-right:10px;">Cache in use: {cacheSize}</div>
 							<div class="value">
-								<button disabled={cacheSize === "0B"} on:click={() => ClearCache()} >Empty cache</button>
+								<button class="cacheButton" disabled={cacheSize === "0B"} on:click={() => ClearCache()} >Empty cache</button>
 							</div>
 						</div>
 					</div>

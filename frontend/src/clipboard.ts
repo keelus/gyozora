@@ -7,7 +7,7 @@ export function CopyToClipboard() {
 	clipboardFiles.set(get(selectedFiles))
 }
 
-import { AddJob, type  UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
+import { AddJob, UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
 import OpenModal from "./modals/manager.js";
 import { Plural } from "./utils.js";
 
