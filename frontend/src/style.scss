@@ -1303,10 +1303,35 @@ input[type=text]::selection {
 				flex:1;
 				padding:10px 20px;
 				border-left:1px solid var(--background-5);
-
+				
 				& > .title {
 					font-size:26px;
 					font-weight: bold;
+				}
+
+				& > .element {
+
+					button.option {
+						outline:none;
+						border:none;
+						background:none;
+
+						font-size:16px;
+						padding:3px 10px;
+						border-radius:5px;
+						background:var(--background-4);
+						color:white;
+						border:1px solid var(--background-5);
+						transition:all .1s linear;
+
+						&.active {
+							background-color:var(--blue-1);
+							border-color:var(--blue-1);
+						}
+						&:not(.active):hover {
+							cursor:pointer;
+						}
+					}
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import { LoadFolder } from "./pathManager";
 import { CopyToClipboard, PastableFromClipboard, PasteFromClipboard } from "./clipboard";
 import { Plural } from "./utils";
 import { AddJob, JobType, RemoveJob, UpdateJob } from "./activeJobsLogin";
+import { GetSetting } from "./settings";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -172,8 +173,10 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "delete":
-			const modalResponseDelete = await OpenModal({modalName:"delete"})
-			if(modalResponseDelete?.cancelled) return;
+			if(GetSetting("showDeleteConfirmation") === "true") {
+				const modalResponseDelete = await OpenModal({modalName:"delete"})
+				if(modalResponseDelete?.cancelled) return;
+			}
 			
 			const deletingFiles = get(selectedFiles)
 			let failedDeletes : models.SysFile[] = []

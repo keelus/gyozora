@@ -228,7 +228,8 @@ let settingsWindow : Settings;
 							<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
 						</div>
 					{/if}
-					<div class="text">{content ? content.filename : "Error"}</div>
+					<div class="text">{content.name}{$settings && GetSetting("showExtensions") === "true" ? content.extension : ""}
+					</div>
 				</button>
 			{/if}
 		{/each}
@@ -239,15 +240,17 @@ let settingsWindow : Settings;
 	</div>
 <div class="bottom">
 	<div class="breadcrumbs">
-		{#each $CURRENT_PATH_BREADCRUMB_ELEMENTS as breadcrumb}
-			<button class="breadcrumb" on:click={() => elementClicked(breadcrumb.pathfull, breadcrumb.isFolder)}>
-				<Icon icon={GetIconByType(breadcrumb.iconClass)} class="icon {breadcrumb.iconClass} {$USER_OS}"/>
-				<div class="text">{breadcrumb.filename}</div>
-			</button>
-			{#if $CURRENT_PATH_BREADCRUMB_ELEMENTS[$CURRENT_PATH_BREADCRUMB_ELEMENTS.length - 1] !== breadcrumb}
-				<Icon icon={IconDictionary["uiArrowRightS"]} class="icon "/>
-			{/if}
-		{/each}
+		{#if $settings && GetSetting("showBreadcrumbs") === "true"}
+			{#each $CURRENT_PATH_BREADCRUMB_ELEMENTS as breadcrumb}
+				<button class="breadcrumb" on:click={() => elementClicked(breadcrumb.pathfull, breadcrumb.isFolder)}>
+					<Icon icon={GetIconByType(breadcrumb.iconClass)} class="icon {breadcrumb.iconClass} {$USER_OS}"/>
+					<div class="text">{breadcrumb.filename}</div>
+				</button>
+				{#if $CURRENT_PATH_BREADCRUMB_ELEMENTS[$CURRENT_PATH_BREADCRUMB_ELEMENTS.length - 1] !== breadcrumb}
+					<Icon icon={IconDictionary["uiArrowRightS"]} class="icon "/>
+				{/if}
+			{/each}
+		{/if}
 	</div>
 
 	<!-- {#if $previewProgress != "100" && $previewProgress != "100.00"}
