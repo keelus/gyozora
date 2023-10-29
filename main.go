@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-	"gyozora/appcache"
+	"gyozora/data"
 	"gyozora/fileUtils"
 	"gyozora/models"
 
@@ -19,7 +19,7 @@ var assets embed.FS
 func main() {
 	// Read JSON extension type data
 	fileUtils.LoadJSON()
-	appcache.ConnectDB()
+	data.ConnectDB()
 
 	// Create an instance of the app structure
 	app := NewApp()

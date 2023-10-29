@@ -15,6 +15,7 @@ export const activeJobs = writable<{[key:string]:ActiveJob}>({})
 export const contents = writable<models.SysFile[]>([])
 export const selectedFiles = writable<models.SysFile[]>([])
 export const clipboardFiles = writable<models.SysFile[]>([])
+export const settings = writable<{[key:string]:string}>({})
 export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boolean}}>({	
 	add:{show:true,disabled:false},
 	open:{show:true,disabled:false},

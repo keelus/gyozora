@@ -1,22 +1,58 @@
-$font-1:white;
-$font-2:rgba(255, 255, 255, 0.788);
-$font-3:rgb(168,168,168);
-$font-4:rgb(119, 119, 119);
-$background-1:#000000;
-$background-2:#121212;
-$background-3:#1a1a1a;
-$background-4:#262626;
-$background-5:#363636;
-$background-6:#585858;
+main {
+	--font-1:			white;
+	--font-2:			rgba(255, 255, 255, 0.788);
+	--font-3:			rgb(168,168,168);
+	--font-4:			rgb(119, 119, 119);
+	
+	--ft-r:255;
+	--ft-g:255;
+	--ft-b:255;
 
-$blue-1:rgb(55, 151, 240);
-$blue-select:rgba(55, 151, 240, .5);
-$green-1:#CED74D;
-$green-2:#a0b913;
-$green-3:#859916;
-$red-1:#F61C2C;
-$red-2:rgb(185, 28, 28);
-$red-3:rgb(73, 10, 10);
+	--background-1:		#000000;
+	--background-2:		#121212;
+	--background-3:		#1a1a1a;
+	--background-4:		#262626;
+	--background-5:		#363636;
+	--background-6:		#585858;
+
+	--bg-r:0;
+	--bg-g:0;
+	--bg-b:0;
+	
+
+	--blue-1:			rgb(55, 151, 240);
+	--blue-select:		rgba(55, 151, 240, .5);
+
+	&.light {
+		--font-1:		black;
+		--font-2:		rgba(0, 0, 0, 0.788);
+		--font-3:		rgb(168, 168, 168);
+		--font-4:		rgb(119, 119, 119);
+		
+		--ft-r:0;
+		--ft-g:0;
+		--ft-b:0;
+
+		--background-1:	#FFFFFF;
+		--background-2:	#F0F0F0;
+		--background-3:	#EAEAEA;
+		--background-4:	#DEDEDE;
+		--background-5:	#C8C8C8;
+		--background-6:	#A8A8A8;
+
+		--bg-r:255;
+		--bg-g:255;
+		--bg-b:255;
+	
+		--blue-1:		rgb(55, 151, 240);
+		--blue-select:	rgba(55, 151, 240, .5);
+	}
+}
+
+
+main {
+	.appTitleBar {display:none;}
+}
 
 @font-face {
     font-family: "Nunito";
@@ -64,18 +100,6 @@ html, body {
 #app {
     height: 100vh;
 }
-main {
-	&, & > *, * {
-		--baseBg:rgba(0,0,0, 1);
-	}
-
-	.appTitleBar {display:none;}
-}
-main[data-user-os="darwin"] {
-	&, & > *, * {
-		--baseBg:rgba(0,0,0, .2);
-	}
-}
 
 main {
 	height:100%;
@@ -98,28 +122,19 @@ main {
 	width:100%;
 	height:29px;
 	background: var(--baseBg);
-	border-bottom:1px solid $background-5;
+	border-bottom:1px solid var(--background-5);
 }
 
-pre {
-	font-family:'Courier New';padding: 5px;
-	margin: 0;
-	margin-top: 0px;
-	background: rgba(0, 0, 0, .3);
-	margin-top: 5px;
-	border-radius: 3px;
-	font-size: 13px;
-}
 
 input[type=text]::selection {
 	background:#f81ce5 !important;
-	color:black;
+	color:var(--background-1);
 }
 
 
 
 .toolbar {
-	background:$background-2;
+	background:var(--background-2);
 	width:100%;
 	height:50px;
 	display:none;
@@ -137,7 +152,7 @@ input[type=text]::selection {
 	& > .backButton, & > .forwardButton {
 		width:25px;
 		height:25px;
-		color:$font-1;
+		color:var(--font-1);
 		font-size:14px;
 		display:block;
 		display:flex;
@@ -152,16 +167,16 @@ input[type=text]::selection {
 			width:16px;
 			height:16px;
 			stroke-width: 3px;
-			color:$font-1;
+			color:var(--font-1);
 		}
 
 		&:not(:disabled):hover {
-			background:$background-5;
+			background:var(--background-5);
 		}
 
 		&:disabled {
 			& > .icon {
-				color:$font-3;
+				color:var(--font-3);
 			}
 		}
 	}
@@ -171,18 +186,18 @@ input[type=text]::selection {
 		padding:0;
 		margin:0;
 		border:0;
-		color:$font-1;
+		color:var(--font-1);
 		background:var(--baseBg); /*t*/
-		border:1px solid $background-5;
+		border:1px solid var(--background-5);
 		padding:0 5px;
 		box-sizing: border-box;
 		outline:none;
 
 		&:focus {
-			border-color:$background-6;
+			border-color:var(--background-6);
 		}
 		&.path {
-			color:$font-2;
+			color:var(--font-2);
 			flex:1;
 		}
 	}
@@ -194,7 +209,7 @@ input[type=text]::selection {
 		flex:1;
 		background:var(--baseBg); /*t*/
 		max-width:225px;
-		border-right:1px solid $background-5;
+		border-right:1px solid var(--background-5);
 		padding:5px;
 		box-sizing: border-box;
 
@@ -208,7 +223,7 @@ input[type=text]::selection {
 				z-index:1;
 
 				& > .text {
-					color:white;
+					color:var(--font-1);
 					font-size:13px;
 					font-weight: 400;
 					margin-left:10px;
@@ -221,7 +236,7 @@ input[type=text]::selection {
 					left:0;
 					width:100%;
 					height:1px;
-					background:$background-5;
+					background:var(--background-5);
 					position: absolute;
 					top:50%;
 					transform:translateY(-50%);
@@ -248,7 +263,7 @@ input[type=text]::selection {
 						height:16px;
 					}
 					& > .text {
-						color:$font-1;
+						color:var(--font-1);
 						font-size:14px;
 						flex:1;
 						overflow:hidden;
@@ -257,11 +272,11 @@ input[type=text]::selection {
 
 					&:hover {
 						cursor:pointer;
-						background:$background-4;
+						background:var(--background-4);
 					}
 
 					&.active {
-						background:$background-3;
+						background:var(--background-3);
 					}
 				}
 				
@@ -272,7 +287,7 @@ input[type=text]::selection {
 					justify-content: center;
 					align-items: center;
 
-					color:$font-1;
+					color:var(--font-1);
 					opacity:.4;
 					font-size:12px;
 					font-weight: 200;
@@ -343,7 +358,7 @@ input[type=text]::selection {
 			}
 
 			& > .text {
-				color:$font-1;
+				color:var(--font-1);
 				margin-top:5px;
 				font-weight: 300;
 				font-size:13px;
@@ -355,12 +370,12 @@ input[type=text]::selection {
 			}
 
 			&:hover, &:focus {
-				background:$background-3;
+				background:var(--background-3);
 			}
 
 			&.selected {
-				background:rgba($font-1, .2);
-				border-color: rgba($font-1, .2);
+				background:rgba(var(--ft-r), var(--ft-g), var(--ft-b), .2);
+				border-color: rgba(var(--ft-r), var(--ft-g), var(--ft-b), .2);
 			}
 		}
 
@@ -371,7 +386,7 @@ input[type=text]::selection {
 			justify-content: center;
 			align-items: center;
 
-			color:$font-1;
+			color:var(--font-1);
 			opacity:.4;
 			font-weight: 200;
 		}
@@ -385,7 +400,7 @@ input[type=text]::selection {
 	& > .progress {
 		width:var(--loadProgress, 0) !important;
 		height:2px;
-		background:$blue-1;
+		background:var(--blue-1);
 		border-top-right-radius: 2px;
 		border-bottom-left-radius: 2px;
 	}
@@ -398,7 +413,7 @@ input[type=text]::selection {
 	display:flex;
 	padding:0;
 	z-index:1;
-	border-top:1px solid $background-5;
+	border-top:1px solid var(--background-5);
 
 	& > .breadcrumbs {
 		display:flex;
@@ -409,7 +424,7 @@ input[type=text]::selection {
 		& > .icon {
 			width:16px;
 			height:16px;
-			color:$font-1;
+			color:var(--font-1);
 		}
 	
 		& > .breadcrumb {
@@ -430,20 +445,20 @@ input[type=text]::selection {
 			}
 	
 			& > .text {
-				color:$font-1;
+				color:var(--font-1);
 				font-size:14px;
 				line-height: 0;
 			}
 	
 			&:hover {
 				cursor:pointer;
-				background:$background-6;
+				background:var(--background-6);
 			}
 		}
 	}
 
 	& > .percent {
-		color:$font-3;
+		color:var(--font-3);
 		font-size:13px;
 		line-height: 20px;
 	}
@@ -451,7 +466,7 @@ input[type=text]::selection {
 	& > .vDivider {
 		height:100%;
 		width:1px;
-		background:$background-5;
+		background:var(--background-5);
 	}
 	& > .activeJobsAmount {
 		display:flex;
@@ -472,14 +487,14 @@ input[type=text]::selection {
 			justify-content: center;
 
 			& > .text {
-				color:$font-3;
+				color:var(--font-3);
 				font-size:13px;
 				white-space: nowrap;
 			}
 
 			&:hover {
 				cursor:pointer;
-				background:$background-4;
+				background:var(--background-4);
 			}
 		}
 
@@ -510,14 +525,14 @@ input[type=text]::selection {
 			}
 
 			& > span.appname {
-				color:$font-1;
+				color:var(--font-1);
 				font-weight: 600;
 				font-size:14px;
 			}
 
 			& > span.version {
 				margin-left:3px;
-				color:$font-3;
+				color:var(--font-3);
 				font-weight: 300;
 				font-size:13px;
 			}
@@ -529,9 +544,9 @@ input[type=text]::selection {
 // File custom icons:
 .icon {
 	stroke-width: 2.5px;
-	color:$background-3;
+	color:var(--background-3);
 	
-	&.home {color:$font-1;}
+	&.home {color:var(--font-1);}
 
 
 	&.windows {
@@ -541,7 +556,7 @@ input[type=text]::selection {
 		--folderPictures:lightgreen;
 		--folderMusic:deeppink;
 		--folderVideo:rgb(183, 0, 255);
-		--folderDisk:white; // ! $font-1
+		--folderDisk:var(--font-1); // ! var(--font-1)
 		--folder: #FFCA28; //#ffd768;
 	}
 	
@@ -559,49 +574,49 @@ input[type=text]::selection {
 	--folderMovies		:#00a5ff;
 
 	&.folderDesktop {
-		color:var(--folderDesktop, white);
+		color:var(--folderDesktop, var(--font-1));
 	}
 	&.folderDownloads {
-		color:var(--folderDownloads, white);
+		color:var(--folderDownloads, var(--font-1));
 	}
 	&.folderDocuments {
-		color:var(--folderDocuments, white);
+		color:var(--folderDocuments, var(--font-1));
 	}
 	&.folderPictures {
-		color:var(--folderPictures, white);
+		color:var(--folderPictures, var(--font-1));
 	}
 	&.folderMusic {
-		color:var(--folderMusic, white);
+		color:var(--folderMusic, var(--font-1));
 	}
 	&.folderVideo {
-		color:var(--folderVideo, white);
+		color:var(--folderVideo, var(--font-1));
 	}
 	&.folderDisk {
-		color:var(--foldfolderDisker, white);
+		color:var(--foldfolderDisker, var(--font-1));
 	}
 	&.folderApplications {
-		color:var(--folderApplications, white);
+		color:var(--folderApplications, var(--font-1));
 	}
 	&.folderMovies {
-		color:var(--folderMovies, white);
+		color:var(--folderMovies, var(--font-1));
 	}
 	&.folder {
-		color:var(--folder, white);
+		color:var(--folder, var(--font-1));
 	}
 
 
 	&.fileImage {color:lightgreen;}
 	&.fileAudio {color:deeppink;}
 	&.fileVideo {color:rgb(183, 0, 255);}
-	&.fileCompressed {color:$font-1;}
-	&.fileExecutable {color:$font-1;}
-	&.fileExecutableScript {color:$font-1;}
+	&.fileCompressed {color:var(--font-1);}
+	&.fileExecutable {color:var(--font-1);}
+	&.fileExecutableScript {color:var(--font-1);}
 	&.filePdf {color:rgb(196, 20, 20);}
 	&.fileDoc {color:#0369A3;}
 	&.fileCalc {color:#18A303;}
 	&.fileSlides {color:#BC4D04;}
-	&.file_ {color:$font-1;}
-	&.file {color:$font-1;}
+	&.file_ {color:var(--font-1);}
+	&.file {color:var(--font-1);}
 }
 
 
@@ -617,13 +632,13 @@ input[type=text]::selection {
    
   /* Handle */
   ::-webkit-scrollbar-thumb {
-	background: $background-4; 
+	background: var(--background-4); 
 	border-radius:4px;
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-	background: $background-5; 
+	background: var(--background-5); 
   }
 
 .fileContextMenu {
@@ -634,8 +649,8 @@ input[type=text]::selection {
 	height:auto;
 	flex-direction: column;
 	border-radius:6px;
-	border:1px solid rgba($font-1, .3);
-	background:rgba($background-1, 1);
+	border:1px solid var(--background-5);
+	background:var(--background-2);
 	z-index:999;
 	$extraPadding:4px;
 	padding:$extraPadding;
@@ -662,14 +677,14 @@ input[type=text]::selection {
 		border-radius: 3px;
 
 		& > .icon {
-			--color:white;
-			color:var(--color, $font-4);
+			--color:var(--font-1);
+			color:var(--color, var(--font-4));
 			width:16px;
 			height:16px;
 		}
 
 		& > .text {
-			color:white;
+			color:var(--font-1);
 			font-weight: 300;
 			font-size:13px;
 		}
@@ -679,7 +694,7 @@ input[type=text]::selection {
 				--color:unset;
 			}
 			& > .text {
-				color:$font-4;
+				color:var(--font-4);
 			}
 		}
 		&.hide {
@@ -687,7 +702,7 @@ input[type=text]::selection {
 		}
 
 		&:not(.disabled):hover {
-			background:$background-4;
+			background:var(--background-4);
 		}
 	}
 
@@ -696,7 +711,7 @@ input[type=text]::selection {
 		margin:$extraPadding 0;
 		margin-left:-$extraPadding;
 		height:1px;
-		background: rgba($font-1, .3);
+		background: rgba(var(--ft-r), var(--ft-g), var(--ft-b), .3);
 		
 		&.hide {
 			display:none;
@@ -711,7 +726,7 @@ input[type=text]::selection {
 	display:flex;
 	justify-content: center;
 	align-items: center;
-	background:rgba($background-1, .9);
+	background:rgba(var(--bg-r), var(--bg-g), var(--bg-b), .9);
 	z-index:999;
 	
 	.modal {
@@ -719,20 +734,20 @@ input[type=text]::selection {
 		box-sizing: border-box;
 		min-width:400px;
 
-		border:1px solid $background-5;
-		background:$background-1;
+		border:1px solid var(--background-5);
+		background:var(--background-1);
 		display:flex;
 		flex-direction: column;
 		border-radius:6px;
 
 		& > .top {
-			color:$font-1;
+			color:var(--font-1);
 			font-weight: 500;
 			font-size:20px;
 			height:45px;
 			display:flex;
 			align-items: center;
-			border-bottom:1px solid $background-5;
+			border-bottom:1px solid var(--background-5);
 			& > .title {
 				max-width:370px;
 				white-space: nowrap;
@@ -743,7 +758,7 @@ input[type=text]::selection {
 		& > .middle {
 			display:block;
 			padding:15px 5px;
-			color:$font-2;
+			color:var(--font-2);
 			font-size:14px;
 
 			& > .flexContent {
@@ -753,7 +768,7 @@ input[type=text]::selection {
 
 				& > .categoryTitle {
 					font-size:11px;
-					color:$font-3;
+					color:var(--font-3);
 					margin-bottom:3px;
 				}
 	
@@ -761,9 +776,9 @@ input[type=text]::selection {
 					background:none;
 					border:none;
 					outline:none;
-					color:white;
+					color:var(--font-1);
 					padding:10px;
-					border:1px solid $background-5;
+					border:1px solid var(--background-5);
 					width:100%;
 					box-sizing: border-box;
 				}
@@ -774,7 +789,7 @@ input[type=text]::selection {
 			height:45px;
 			display:flex;
 			align-items: center;
-			border-top:1px solid $background-5;
+			border-top:1px solid var(--background-5);
 			display:flex;
 			justify-content: space-between;
 			align-items: center;
@@ -782,32 +797,32 @@ input[type=text]::selection {
 			& > button {
 				border:none;
 				outline:none;
-				background:white;
-				color:white;
+				background:var(--font-1);
+				color:var(--font-1);
 				padding:5px 20px;
 				border-radius: 2px;
 				font-weight: 500;
 				transition: all .1s linear;
 
 				&.cancel {
-					background:$background-1;
-					border:1px solid $background-5;
-					color:$font-2;
+					background:var(--background-1);
+					border:1px solid var(--background-5);
+					color:var(--font-2);
 
 					&:hover {
 						cursor:pointer;
-						color:$font-1;
-						border-color:$background-6;
+						color:var(--font-1);
+						border-color:var(--background-6);
 					}
 				}
 
 				&.confirm {
-					background:$blue-select;
-					color:$font-3;
+					background:var(--blue-select);
+					color:var(--font-3);
 
 					&:not(:disabled) {
 						background:#00a5ff;
-						color:$font-1;
+						color:var(--font-1);
 						&:hover {
 							cursor:pointer;
 							opacity:.9;
@@ -833,7 +848,7 @@ input[type=text]::selection {
 					outline:none;
 					flex:1;
 					border-radius:3px;
-					border:1px solid $background-5;
+					border:1px solid var(--background-5);
 					display:flex;
 					justify-content: flex-start;
 					padding:10px 10px;
@@ -846,11 +861,11 @@ input[type=text]::selection {
 						stroke-width: 3px;
 					}
 					& > .text {
-						color:$font-1;
+						color:var(--font-1);
 					}
 
 					&.active {
-						background:$background-3;
+						background:var(--background-3);
 					}
 
 					&:not(.active) {
@@ -906,12 +921,12 @@ input[type=text]::selection {
 						overflow: hidden !important;
 						text-overflow: ellipsis;
 						font-family: 'Lekton';
-						color:$font-1;
+						color:var(--font-1);
 						font-size:14px;
 					}
 
 					& > .icon {
-						color:$font-1;
+						color:var(--font-1);
 						opacity:.8;
 						width:15px;
 						height:15px;
@@ -935,7 +950,7 @@ input[type=text]::selection {
 			& > .divider {
 				width:100%;
 				height:0;
-				border-top:1px solid $background-5;
+				border-top:1px solid var(--background-5);
 				margin:5px 0;
 			}
 		}
@@ -961,8 +976,8 @@ input[type=text]::selection {
 	right:-1px;
 	z-index:0;
 	flex-direction: column;
-	border:1px solid $background-5;
-	background:$background-1;
+	border:1px solid var(--background-5);
+	background:var(--background-1);
 	border-top-left-radius:6px;
 	border-top-right-radius:6px;
 	border-bottom:0;
@@ -980,10 +995,10 @@ input[type=text]::selection {
 	}
 
 	& > .top {
-		color:white;
+		color:var(--font-1);
 		font-size:20px;
 		font-weight: bold;
-		border-bottom:1px solid $background-5;
+		border-bottom:1px solid var(--background-5);
 		padding:10px 15px;
 
 	}
@@ -998,14 +1013,14 @@ input[type=text]::selection {
 		gap:5px;
 
 		& > .noJobs {
-			color:$font-3;
+			color:var(--font-3);
 			font-size:12px;
 			text-align: center;
 			padding:20px 0;
 		}
 
 		& > .job {
-			background:$background-3;
+			background:var(--background-3);
 			border-radius: 4px;
 			height:45px;
 			padding:0 5px;
@@ -1022,7 +1037,7 @@ input[type=text]::selection {
 				align-items: center;
 
 				& > .icon {
-					color:$font-1;
+					color:var(--font-1);
 					width:20px;
 					height:20px;
 				}
@@ -1034,12 +1049,12 @@ input[type=text]::selection {
 				padding:5px 10px;
 
 				& > .title {
-					color:$font-1;
+					color:var(--font-1);
 				}
 
 				& > .additional {
 					font-size:12px;
-					color:$font-3;
+					color:var(--font-3);
 
 				}
 			}
@@ -1067,11 +1082,11 @@ input[type=text]::selection {
 						border-radius: 50%;
 
 						background: 
-						radial-gradient(closest-side, $background-3 79%, transparent 95% 100%),
-						conic-gradient(white var(--progress, 0), transparent 0);    
+						radial-gradient(closest-side, var(--background-3) 79%, transparent 95% 100%),
+						conic-gradient(var(--font-1) var(--progress, 0), transparent 0);    
 
 						& > .text {
-							color:White;
+							color:var(--font-1);
 							font-size:10px;
 						}
 						// & > .innerCircle {
@@ -1086,7 +1101,7 @@ input[type=text]::selection {
 						// }
 					}
 					& > .text {
-						color:$font-1;
+						color:var(--font-1);
 					}
 				}
 	
@@ -1117,7 +1132,7 @@ input[type=text]::selection {
 			gap:10px;
 	
 			& > .filename {
-				color:$font-1;
+				color:var(--font-1);
 	
 				max-width:200px;
 				white-space: nowrap;
@@ -1128,7 +1143,7 @@ input[type=text]::selection {
 			}
 			& > .path {
 				font-size:12px;
-				color:$font-3;
+				color:var(--font-3);
 	
 				max-width:600px;
 				white-space: nowrap;
@@ -1150,15 +1165,15 @@ input[type=text]::selection {
 	transition:all .1s linear;
 
 	& > .icon {
-		color:White;
+		color:var(--font-1);
 		font-size:16px;
 	}
 
 	&:hover {
 		cursor:pointer;
-		background-color:$background-6;
+		background-color:var(--background-6);
 		& > .icon {
-			color:$font-1;
+			color:var(--font-1);
 		}
 	}
 }
@@ -1167,8 +1182,8 @@ input[type=text]::selection {
 	width:100%;
 	height:100%;
 	position:fixed;
-	background:rgba($background-1, .9);
-	color:white;
+	background:rgba(var(--bg-r), var(--bg-g), var(--bg-b), .9);
+	color:var(--font-1);
 	justify-content: center;
 	align-items: center;
 	z-index:1;
@@ -1185,23 +1200,30 @@ input[type=text]::selection {
 	}
 
 	& > .settingsWindow {
-		background:$background-1;
+		background:var(--background-1);
 		width:calc(100% - 100px);
 		height:calc(100% - 100px);
 		border-radius:6px;
-		border:1px solid $background-5;
+		border:1px solid var(--background-5);
 		display:flex;
 		flex-direction: column;
 
 		& > .top {
 			display:flex;
-			padding:10px 30px;
+			padding:10px 20px;
 			align-items: center;
 			& > .title {
-				color:$font-1;
-				font-size:20px;
+				display:flex;
+				align-items: center;
+				gap:10px;
+				color:var(--font-1);
+				font-size:25px;
 				font-weight: bold;
 				flex:1;
+
+				& > .appicon {
+					height:25px;
+				}
 			}
 
 			& > .closeButton {
@@ -1219,49 +1241,59 @@ input[type=text]::selection {
 
 				& > .icon {
 					font-size:25px;
-					color:$font-1;
+					color:var(--font-1);
 				}
 				&:hover {
 					cursor:pointer;
 					opacity:1;
 				}
 			}
-			border-bottom:1px solid $background-5;
+			border-bottom:1px solid var(--background-5);
 		}
 		& > .bottom {
-			padding:10px 30px;
+			padding:10px 20px;
 			box-sizing: border-box;
 			flex:1;
 			& > .categories {
 				min-width:200px;
 				display:flex;
 				flex-direction: column;
-				gap:10px;
+				gap:5px;
+				padding-right:20px;
+				padding-top:10px;
 
 				& > .category {
+					border-radius:5px;
+					padding:5px 10px;
+					transition: all .1s linear;
+					background:none;
+					border:none;
+					outline:none;
+					border:1px solid transparent;
+
 					& > .title {
-						color:$font-1;
+						display:flex;
+						align-items: center;
+						color:var(--font-1);
 						font-weight: 500;
+						font-size:16px;
+
+						& > .icon {
+							margin-right:5px;
+							width:16px;
+							height:16px;
+							color:var(--font-1);
+						}
 					}
 
-					& > .elements {
-						padding-left:20px;
-						box-sizing: border-box;
-						& > .element {
-							font-size:13px;
-							padding:3px 0;
-							color:$font-2;
-							font-weight: 300;
-							transition:all .1s linear;
-							&.active {
-								color:$font-1;
-								font-weight: 600;
-							}
-							&:not(.active):hover {
-								cursor:pointer;
-								color:$font-1;
-							}
-						}
+					&.active {
+						border-color: var(--font-3);
+						background:var(--background-4);
+					}
+					&:not(.active):hover {
+						cursor:pointer;
+						color:var(--font-1);
+						background:var(--background-3);
 					}
 				}
 	
@@ -1269,7 +1301,13 @@ input[type=text]::selection {
 	
 			& > .content {
 				flex:1;
+				padding:10px 20px;
+				border-left:1px solid var(--background-5);
 
+				& > .title {
+					font-size:26px;
+					font-weight: bold;
+				}
 			}
 		}
 	}

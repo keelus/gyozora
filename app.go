@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gyozora/appcache"
+	"gyozora/data"
+	"gyozora/data/appcache"
 	"gyozora/fileUtils"
 	"gyozora/models"
 	"gyozora/sysUtils"
@@ -169,9 +170,9 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 
 	// Create or update preview in cache
 	if imageIsCached {
-		_, err = appcache.DBCache.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
+		_, err = data.DataDB.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
 	} else {
-		_, err = appcache.DBCache.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
+		_, err = data.DataDB.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
 	}
 
 	if ACTIVE_JOBS != unixBeginning {
@@ -396,4 +397,47 @@ func (a *App) FileExists(fpath string) bool {
 		return true
 	}
 	return false
+}
+
+// Settings:
+type Config struct {
+	Name  string `db:"name"`
+	Value string `db:"value"`
+}
+
+func (a *App) Go_LoadSettings() map[string]string {
+	var configs []Config
+
+	data.DataDB.Select(&configs, "SELECT * FROM config")
+
+	fmt.Println("⚙️ Loaded settings:")
+	fmt.Println(configs)
+
+	settings := make(map[string]string)
+	for _, config := range configs {
+		settings[config.Name] = config.Value
+	}
+	return settings
+}
+
+func (a *App) Go_GetSetting(name string) string {
+	value := "null"
+	data.DataDB.QueryRowx("SELECT value FROM config WHERE name=?", name).Scan(&value)
+	return value
+}
+
+func (a *App) Go_SetSetting(name string, value string) models.SimpleError {
+	_, err := data.DataDB.Query("INSERT OR REPLACE INTO config(name, value) VALUES(?, ?)", name, value)
+	if err != nil {
+		return models.SimpleError{Status: true}
+	}
+	return models.SimpleError{Status: false}
+}
+
+func (a *App) Go_DeleteSetting(name string) models.SimpleError {
+	_, err := data.DataDB.Query("DELETE FROM config WHERE name=?", name)
+	if err != nil {
+		return models.SimpleError{Status: true}
+	}
+	return models.SimpleError{Status: false}
 }

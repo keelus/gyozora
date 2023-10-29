@@ -10,7 +10,7 @@ import appicon from './assets/icons/gyozora.svg'
 // UI Icons
 import Icon from '@iconify/svelte';
 // Gyozora browser, icons & logic
-import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS } from "./store";
+import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS, settings } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
@@ -26,14 +26,13 @@ let fileBrowser : HTMLDivElement;
 let fileContextMenu : HTMLDivElement;
 let modalParent : HTMLDivElement;
 
-let newFileActiveType : string = "file";
-
-import TestModal from './modals/NewFile.svelte'
 import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
 
 import ActiveJobs from './ActiveJobs.svelte'
-  import { get } from 'svelte/store';
-  import { Plural } from './utils.js';
+import { Plural } from './utils.js';
+
+import { GetSetting, LoadSettings } from './settings.js';
+import Settings from './Settings.svelte';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
 // document.addEventListener('contextmenu', e => e.preventDefault());
@@ -79,7 +78,11 @@ async function FirstStart() {
 	$CURRENT_PATH = await GetStartingPath()
 	pinnedFolders = await LoadPinnedFolders()
 	yourComputer = await LoadYourComputer()
+	LoadSettings()
 	LoadFolder($CURRENT_PATH, false, false, true)
+
+	console.log("Test:")
+	console.log(GetSetting("theme"))
 }
 
 
@@ -114,12 +117,15 @@ let temporalFilenameInputValue = "";
 let filenameRenameInputValue = "";
 
 let activeJobsOpened = false;
-let settingsWindowOpened = false;
+
+let settingsWindow : Settings;
 
 </script>
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
-<main data-user-os={$USER_OS}>
+<main data-user-os={$USER_OS} class="{$settings && GetSetting("theme")}" style="
+	--baseBg:rgba({$settings && GetSetting("theme") == "dark" ? "0, 0, 0" : "255, 255, 255"}, {$settings && 1-parseInt(GetSetting("transparency"))/100});
+">
 	<div class="appTitleBar" style="widows: 1;"></div>
 	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>
@@ -262,45 +268,11 @@ let settingsWindowOpened = false;
 		<button class="logo" on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}><img src={appicon} alt="Gyozora icon" class="appicon"/> <span class="appname">Gyozora</span> <span class="version">· {APP_VERSION}</span></button>
 	</div>
 	<div class="vDivider"></div>
-	<button class="openSettingsButton" on:click={() => settingsWindowOpened = true}>
+	<button class="openSettingsButton" on:click={() => settingsWindow.OpenSettings()}>
 		<Icon icon={IconDictionary["uiSettingsGear"]} class="icon "/>
 	</button>
 </div>
-<div class="settingsOuter {settingsWindowOpened ? "opened" : ""}">
-	<div class="settingsWindow">
-		<div class="top">
-			<div class="title">Gyozora settings</div>
-			<button class="closeButton" on:click={() => settingsWindowOpened = false}>
-				<Icon icon={IconDictionary["uiClose"]} class="icon "/>
-			</button>
-			
-		</div>
-		<div class="bottom">
-			<div class="categories">
-				<div class="category">
-					<div class="title">category 1</div>
-					<div class="elements">
-						<div class="element">element 1</div>
-						<div class="element">element 2</div>
-						<div class="element">element 3</div>
-					</div>
-				</div>
-				<div class="category">
-					<div class="title">category 2</div>
-					<div class="elements">
-						<div class="element">element 1</div>
-						<div class="element">element 2</div>
-						<div class="element active">element 3</div>
-						<div class="element">element 4</div>
-						<div class="element">element 5</div>
-						<div class="element">element 6</div>
-					</div>
-				</div>
-			</div>
-			<div class="content">Hi</div>
-		</div>
-	</div>
-</div>
+<Settings bind:this={settingsWindow}/>
 <div class="modalParent" data-activeModal="" bind:this={modalParent}>
 </div>
 </main>
