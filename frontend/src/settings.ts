@@ -2,6 +2,7 @@ import { get } from "svelte/store";
 import { settings } from "./store";
 import type { models } from "../wailsjs/go/models";
 import { Go_LoadSettings, Go_GetSetting, Go_SetSetting, Go_DeleteSetting } from '../wailsjs/go/main/App.js'
+import { GenerateToast } from "./toasts";
 
 export async function LoadSettings() {
 	const loadedSettings = await Go_LoadSettings()
@@ -22,7 +23,7 @@ export function GetSetting(name : string) {
 
 export async function SetSetting(name : string, value : string) {
 	if(!IsValidSetting(name, value)) {
-		console.error(`Setting ${name} cannot have the value ${value}`)
+		GenerateToast("error", "That setting cannot have that value.", "⚙️")
 		return
 	}
 
@@ -77,15 +78,16 @@ function GetDefaultSetting(name : string) : string {
 }
 
 function IsValidSetting(name : string, value : string) : boolean {
+	const valueInt = parseInt(value)
 	switch(name) {
 	// Appearance
 	case "theme":
 		return value == "dark" || value == "light"
 	case "transparency":
-		return true //TODO: Check
+		return valueInt >= 0 && valueInt <= 100
 	// View settings
 	case "zoomLevel":
-		return true //TODO: Check
+		return valueInt >= 50 && valueInt <= 150
 	case "showExtensions":
 		return value == "true" || value == "false"
 	case "showHiddenFiles":
