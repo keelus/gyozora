@@ -125,7 +125,7 @@ func (a *App) GetStartingPath() string {
 
 var ACTIVE_JOBS = -1
 
-func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining int) models.SysFile {
+func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining int, useCache bool) models.SysFile {
 
 	if ACTIVE_JOBS != -1 { // There is a currently active JOB
 		if ACTIVE_JOBS != unixBeginning { // If it's not our job, cancel the other job
@@ -147,17 +147,18 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	}
 
 	imageIsCached := true
-	imageIsLatest := false
+	if useCache {
+		imageIsLatest := false
+		//Check on DB if exists:
+		b64img, imageIsLatest, err := appcache.GetCachedPreview(file)
+		if err != nil {
+			imageIsCached = false
+		}
 
-	//Check on DB if exists:
-	b64img, imageIsLatest, err := appcache.GetCachedPreview(file)
-	if err != nil {
-		imageIsCached = false
-	}
-
-	if imageIsCached && imageIsLatest {
-		file.Preview = b64img
-		return file
+		if imageIsCached && imageIsLatest {
+			file.Preview = b64img
+			return file
+		}
 	}
 
 	// Image is not cached, or is not the latest version
@@ -170,10 +171,12 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 	}
 
 	// Create or update preview in cache
-	if imageIsCached {
-		_, err = data.DataDB.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
-	} else {
-		_, err = data.DataDB.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
+	if useCache {
+		if imageIsCached {
+			data.DataDB.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
+		} else {
+			data.DataDB.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
+		}
 	}
 
 	if ACTIVE_JOBS != unixBeginning {

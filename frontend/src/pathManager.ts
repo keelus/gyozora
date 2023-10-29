@@ -5,6 +5,7 @@ import { get } from "svelte/store";
 import { CURRENT_PATH, CURRENT_PATH_BREADCRUMB_ELEMENTS, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
 import { doAction } from './contextMenu.js';
 import { GenerateToast } from './toasts.js';
+import { GetSetting } from './settings.js';
 
 export async function LoadFolder(newPath : string, goingBack : boolean, goingForward : boolean, ignorePathHistory : boolean) {
 	console.log("Loading folder 📂 ...")
@@ -76,7 +77,10 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 
 	previewProgress.set("0")
 
-	if (previewTotalCount == 0) {
+	const useThumbnails = GetSetting("useThumbnails") === "true"
+	const useCache = GetSetting("useCache") === "true"
+
+	if (previewTotalCount == 0 || !useThumbnails) {
 		console.log("NO PREVIEW NEEDED")
 	} else {
 		let remaining = previewTotalCount
@@ -92,7 +96,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 			// console.log("Calling to render: '" + directoryElements[i].name + "'")
 			remaining -= 1 
 
-			let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining);
+			let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining, useCache);
 			previewProgress.set(((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2))
 
 			if(get(currentJob) != batchUnix) {
