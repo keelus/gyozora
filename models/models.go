@@ -59,3 +59,8 @@ type Job struct {
 	Progress   int    `json:"progress"`
 	Additional string `json:"aditional"`
 }
+
+type Config struct {
+	Name  string `db:"name"`
+	Value string `db:"value"`
+}

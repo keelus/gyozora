@@ -404,13 +404,9 @@ func (a *App) FileExists(fpath string) bool {
 }
 
 // Settings:
-type Config struct {
-	Name  string `db:"name"`
-	Value string `db:"value"`
-}
 
 func (a *App) Go_LoadSettings() map[string]string {
-	var configs []Config
+	var configs []models.Config
 
 	data.DataDB.Select(&configs, "SELECT * FROM config")
 

@@ -43,7 +43,6 @@ func ConnectDB() {
 							"value"	TEXT NOT NULL,
 							PRIMARY KEY("name")
 						);`
-	// TODO: Add required default
 
 	_, err = DataDB.Exec(cacheTable)
 	if err != nil {
