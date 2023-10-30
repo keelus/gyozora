@@ -53,7 +53,7 @@ main {
 
 main:not([data-user-os="darwin"]) {
 	.appTitleBar {display:none;}
-	--appTitleBarHeight:0;
+	--appTitleBarHeight:0px;
 }
 
 @font-face {
