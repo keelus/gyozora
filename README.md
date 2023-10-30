@@ -13,25 +13,60 @@
 <h2>About gyozora</h2>
 Gyozora is a fast and lightweight file explorer in early development. It currently supports Windows & macOS and will be fully compatible with Linux in future versions. <br /><br />
 
-```
-Note: Gyozora it's currently unstable and there are lots of important functionalities that
-haven't been developed yet.
-```
+***Note: Gyozora it's still in development. Some key features might not work as expected.***
+
+<h2>Key features</h2>
+
+- Lightweight.
+- Fast folder navigation.
+- Modern UI.
+- Highly customizable.
+- All the features you would expect in a standard file explorer.
+- User-friendly.
+- Enhanced performance.
+
 <br />
+
+### 📷 Screenshot
 
 <img src=".github/gyozora_screenshot.webp"  alt="Gyozora screenshot" />
 
-### To try it
-Just clone the repo and then, execute the following command in the root folder:
+### ⬇️ Install it
+You can install the latest release <a href="https://github.com/keelus/gyozora/releases/latest">here</a>.
+
+### 🛠️ Develop it
+To serve a development live build of gyozora, <a href="https://wails.io/">wails</a> and <a href="https://www.npmjs.com/">npm</a> must be installed on your system.
+1. Clone the repository
+```bash
+git clone https://github.com/keelus/gyozora.git
+cd gyozora
+```
+2. Install dependencies (you can skip to the next step, which also installs the dependencies)
+```bash
+npm install ./frontend
+```
+3. Build a live dev version
 ```bash
 wails dev
 ```
+### 🛠️ Build it
+Build gyozora yourself.
+
+***Note: Due to Wails limitations, cross-compiling is not supported.***
+```bash
+# for Windows
+wails build -nsis
+
+# for macOS & Linux
+wails build
+```
+The generated binaries will appear in `./build`
 
 ### 🥟📂 Important incoming features:
 
 #### 💻 OS compatibility:
 - [x] ~~🪟 Windows (10 & 11)~~
-- [ ] 🍎 macOS (arm64[m1, m2] & amd64[intel])
+- [x] ~~🍎 macOS (arm64[m1, m2] & amd64[intel])~~
 - [ ] 🐧 Linux (amd64, arm64 & arm)
 
 #### 📄 Context menu/file related:
@@ -44,7 +79,7 @@ wails dev
 - [x] ~~ℹ️ Properties of a file~~
 
 #### 🧑‍💻 User configuration related:
-- [ ] 🎨 Choose a color theme
+- [x] ~~🎨 Choose a color theme~~
 - [ ] 📊 Multiple UX options:
   - [ ] Enable/disable file deletion confirmation modal
   - [ ] Change language
