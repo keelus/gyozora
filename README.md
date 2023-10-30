@@ -49,7 +49,7 @@ npm install ./frontend
 ```bash
 wails dev
 ```
-### 🛠️ Build it
+### 🏗️ Build it
 Build gyozora yourself.
 
 ***Note: Due to Wails limitations, cross-compiling is not supported.***
@@ -90,6 +90,9 @@ The generated binaries will appear in `./build`
   - [x] ~~🇺🇸 English~~
   - [ ] 🇪🇸 Spanish
 - [x] ~~ℹ️ Error messages/toasts~~
+
+## ⚖️ License
+This project is open source under the terms of the [GNU GPL v3.0 license](./LICENSE)
 
 <br />
 Made by <a href="https://github.com/keelus">keelus</a> ✌️
