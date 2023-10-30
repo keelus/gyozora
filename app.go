@@ -40,7 +40,6 @@ func (a *App) GetUserOS() string {
 }
 
 func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse {
-	fmt.Printf("Want to read: '%s'\n", path)
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
 	dirFolders := make([]models.SysFile, 0)
