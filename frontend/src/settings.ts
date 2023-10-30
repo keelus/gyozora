@@ -4,6 +4,10 @@ import type { models } from "../wailsjs/go/models";
 import { Go_LoadSettings, Go_GetSetting, Go_SetSetting, Go_DeleteSetting } from '../wailsjs/go/main/App.js'
 import { GenerateToast } from "./toasts";
 
+export const MIN_ZOOM = 50;
+export const MAX_ZOOM = 150;
+export const INC_ZOOM = 5;
+
 export async function LoadSettings() {
 	const loadedSettings = await Go_LoadSettings()
 	
@@ -87,7 +91,7 @@ function IsValidSetting(name : string, value : string) : boolean {
 		return valueInt >= 0 && valueInt <= 100
 	// View settings
 	case "zoomLevel":
-		return valueInt >= 50 && valueInt <= 150
+		return valueInt >= MIN_ZOOM && valueInt <= MAX_ZOOM
 	case "showExtensions":
 		return value == "true" || value == "false"
 	case "showHiddenFiles":
@@ -110,4 +114,14 @@ function IsValidSetting(name : string, value : string) : boolean {
 	default:
 		return true
 	}
+}
+
+export function ZoomIn() {
+	const newZoom = parseInt(GetSetting("zoomLevel")) + INC_ZOOM
+	SetSetting("zoomLevel", newZoom.toString())
+}
+
+export function ZoomOut() {
+	const newZoom = parseInt(GetSetting("zoomLevel")) - INC_ZOOM
+	SetSetting("zoomLevel", newZoom.toString())
 }

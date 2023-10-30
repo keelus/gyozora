@@ -18,6 +18,8 @@ import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMe
 import toast, { Toaster } from 'svelte-french-toast';
 import { GenerateToast } from './toasts.js';
 
+import zoomOutLine from '@iconify/icons-ri/zoom-out-line';
+import zoomInLine from '@iconify/icons-ri/zoom-in-line';
 
 let pinnedFolders : models.LeftBarElement[] = []
 let yourComputer : models.LeftBarElement[] = []
@@ -29,9 +31,9 @@ let modalParent : HTMLDivElement;
 import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
 
 import ActiveJobs from './ActiveJobs.svelte'
-import { Plural } from './utils.js';
+import { Plural, renderBytes } from './utils.js';
 
-import { GetSetting, LoadSettings, SetSetting } from './settings.js';
+import { GetSetting, LoadSettings, MAX_ZOOM, MIN_ZOOM, SetSetting, ZoomIn, ZoomOut } from './settings.js';
 import Settings from './Settings.svelte';
 
 document.addEventListener("DOMContentLoaded", FirstStart)
@@ -238,7 +240,7 @@ let settingsWindow : Settings;
 		{#each $contents as content}
 			{#if content != undefined}
 				{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
-					<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{content.filename}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)}>
+					<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="Name:  {content.filename}&#013;Size:     {renderBytes(content.size)}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)} style="--zoom:{$settings && GetSetting("zoomLevel")}">
 						{#if content.iconClass == "fileImage" && content.preview != "" && $settings && GetSetting("useThumbnails") === "true"}
 							<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 						{:else}
@@ -278,6 +280,12 @@ let settingsWindow : Settings;
 	<!-- {#if $previewProgress != "100" && $previewProgress != "100.00"}
 		<div class="percent">Loading preview: {$previewProgress}%</div>
 	{/if} -->
+	<div class="vDivider"></div>
+	<div class="zoom">
+		<button class="zoomOut" on:click={ZoomOut} disabled={$settings && parseInt(GetSetting("zoomLevel")) == MIN_ZOOM}><Icon icon={zoomOutLine} /></button>
+		<div class="zoomLevel">{$settings && GetSetting("zoomLevel")}%</div>
+		<button class="zoomIn" on:click={ZoomIn} disabled={$settings && parseInt(GetSetting("zoomLevel")) == MAX_ZOOM}><Icon icon={zoomInLine} /></button>
+	</div>
 	<div class="vDivider"></div>
 	<div class="activeJobsAmount"><!-- Adapted from https://github.com/timolins/react-hot-toast -->
 		<button class="activeJobsButton" on:click={() => activeJobsOpened = !activeJobsOpened}>

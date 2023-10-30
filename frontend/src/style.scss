@@ -313,14 +313,8 @@ input[type=text]::selection {
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			padding:10px;
-			padding-bottom:5px;
 			justify-content: space-between;
 			float:left;
-			margin:5px;
-			border-radius:3px;
-			width:115px;
-			height:130px;
 			box-sizing: border-box;
 			background:none;
 			border:none;
@@ -328,13 +322,24 @@ input[type=text]::selection {
 			outline:none;
 			border:1px solid transparent;
 
+			padding:10px;
+			padding-bottom:5px;
+			margin:5px;
+			border-radius:3px;
+			width:calc(var(--zoom) * 115px / 100);
+			height:calc(var(--zoom) * 130px / 100);
+
+			&, & > *, & > ** {
+				transition: all .15s;
+			}
+
 			&.hidden {
 				opacity:.5;
 			}
 
 			& > .iconOuter {
-				width:90px;
-				height:90px;
+				width:calc(var(--zoom) * 90px / 100);
+				height:calc(var(--zoom) * 90px / 100);
 				position:relative;
 
 				& > .icon {
@@ -342,33 +347,32 @@ input[type=text]::selection {
 					left:50%;
 					top:50%;
 					transform:translate(-50%, -50%);
-					width:80px;
-					height:80px;
+					width:calc(var(--zoom) * 80px / 100);
+					height:calc(var(--zoom) * 80px / 100);
 
 					&.file_icon {
 						top:67.5%;
 						transform:translate(-50%, -67.5%);
-						width:45px;
-						height:45px;
+						width:calc(var(--zoom) * 45px / 100);
+						height:calc(var(--zoom) * 45px / 100);
 					}
 				}
 			}
 
 
 			& > .imagePreview {
-				width:90px;
-				height:90px;
+				width:calc(var(--zoom) * 90px / 100);
+				height:calc(var(--zoom) * 90px / 100);
 				background-size:contain;
 				background-repeat:no-repeat;
 				background-position:center;
-
 			}
 
 			& > .text {
 				color:var(--font-1);
-				margin-top:5px;
+				margin-top:calc(var(--zoom) * 10px / 100 - 5px);
 				font-weight: 300;
-				font-size:13px;
+				font-size:max(calc(var(--zoom) * 13px / 100), 11px);
 				text-align: center;
 				width:100%;
 				white-space: nowrap;
@@ -475,6 +479,41 @@ main > .bottom {
 		width:1px;
 		background:var(--background-5);
 	}
+
+	& > .zoom {
+		display:flex;
+		align-items: center;
+		gap:5px;
+
+		& > .zoomOut, & > .zoomIn {
+			display:grid;
+			place-items: center;
+			background:none;
+			border:none;
+			outline:none;
+
+			color:var(--font-1);
+			font-size:14px;
+			padding:0 4px;
+			height:100%;
+			transition:all .1s linear;
+
+			&:disabled {
+				color:var(--font-3);
+			}
+
+			&:not(:disabled):hover {
+				cursor:pointer;
+				background:var(--background-5);
+			}
+		}
+
+		& > .zoomLevel {
+			color:var(--font-3);
+			font-size:12px;
+		}
+	}
+
 	& > .activeJobsAmount {
 		display:flex;
 		justify-content: center;

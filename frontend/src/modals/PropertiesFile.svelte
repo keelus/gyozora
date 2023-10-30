@@ -7,6 +7,7 @@ import { onMount } from "svelte";
 import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
 import { GenerateToast } from "../../src/toasts";
+import { renderBytes } from "../utils";
 
 let cancelButton : HTMLButtonElement;
 
@@ -30,15 +31,6 @@ export async function WaitForModalResponse() {
 }
 
 
-
-function renderBytes(bytes : number) : string {
-	if(bytes <= 1_000) return bytes + " B";
-	if(bytes <= 1_000_000) return (bytes/1_000).toFixed(2) + " KB";
-	if(bytes <= 1_000_000_000) return (bytes/1_000_000).toFixed(2) + " MB";
-	if(bytes <= 1_000_000_000_000) return (bytes/1_000_000_000).toFixed(2) + " GB";
-	if(bytes <= 1_000_000_000_000_000) return (bytes/1_000_000_000_000).toFixed(2) + " TB";
-	return bytes.toString()
-}
 
 function renderDate(dateUnix : number) : string {
 	const modifTime = new Date(dateUnix * 1000)
