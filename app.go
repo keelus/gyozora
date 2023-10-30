@@ -161,7 +161,7 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 		}
 	}
 
-	// Image is not cached, or is not the latest version
+	// If we get here, image is not cached or is not cached to the latest version
 
 	generatedPreview := fileUtils.GetImagePreview(file.PathFull, file.Extension)
 	file.Preview = generatedPreview
@@ -172,11 +172,7 @@ func (a *App) RenderPreview(file models.SysFile, unixBeginning int, remaining in
 
 	// Create or update preview in cache
 	if useCache {
-		if imageIsCached {
-			data.DataDB.Query("UPDATE cache SET dateModification=?, preview=? WHERE pathfull=?", file.ModifiedAt, generatedPreview, file.PathFull)
-		} else {
-			data.DataDB.Query("INSERT INTO cache (pathfull, dateModification, preview) VALUES(?, ?, ?)", file.PathFull, file.ModifiedAt, generatedPreview)
-		}
+		appcache.AddOrUpdatePreview(file, generatedPreview)
 	}
 
 	if ACTIVE_JOBS != unixBeginning {
@@ -283,7 +279,7 @@ func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool)
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse { // TODO: Add previews to cache.
+func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse {
 	srcPath := srcFile.PathFull
 
 	tgtPathParentFolder := filepath.Join(tgtPath)
@@ -344,6 +340,10 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 	pastedFile := fileUtils.GenerateSysFile(tgtPathParentFolder, tgtPathFile)
 	pastedFile.Preview = srcFile.Preview
 
+	if pastedFile.Preview != "" {
+		appcache.AddOrUpdatePreview(pastedFile, pastedFile.Preview)
+	}
+
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
@@ -370,6 +370,8 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 		renamedFile.Preview = file.Preview
 	}
 
+	appcache.MovePreview(file, renamedFile)
+
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: renamedFile}
 }
 
@@ -379,6 +381,14 @@ func (a *App) DeleteFile(file models.SysFile) models.SimpleError {
 			return models.SimpleError{Status: true, Reason: "Access denied."}
 		}
 		return models.SimpleError{Status: true, Reason: "Unexpected error."}
+	}
+
+	if file.Preview != "" {
+		appcache.DeletePreview(file)
+	}
+
+	if file.IsFolder {
+		appcache.DeletePreviewsInside(file)
 	}
 
 	return models.SimpleError{Status: false}
