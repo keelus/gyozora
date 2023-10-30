@@ -22,6 +22,8 @@ main {
 	--blue-1:			rgb(34, 139, 230);
 	--blue-select:		rgba(55, 151, 240, .5);
 
+	--appTitleBarHeight:29px;
+
 	&.light {
 		--font-1:		black;
 		--font-2:		rgba(0, 0, 0, 0.788);
@@ -49,8 +51,9 @@ main {
 }
 
 
-main {
+main:not([data-user-os="darwin"]) {
 	.appTitleBar {display:none;}
+	--appTitleBarHeight:0;
 }
 
 @font-face {
@@ -119,7 +122,7 @@ main {
 
 .appTitleBar {
 	width:100%;
-	height:29px;
+	height:var(--appTitleBarHeight);
 	background: var(--baseBg);
 	border-bottom:1px solid var(--background-5);
 }
@@ -303,7 +306,7 @@ input[type=text]::selection {
 		box-sizing: border-box;
 		overflow:hidden;
 		overflow-y:auto;
-		max-height:calc(100vh - 35px - 20px - 16px - 2px);
+		max-height:calc(100vh - 35px - 20px - 16px - 2px - var(--appTitleBarHeight));
 
 		& > .file {
 			display:inline-flex;

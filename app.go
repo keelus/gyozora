@@ -40,6 +40,7 @@ func (a *App) GetUserOS() string {
 }
 
 func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse {
+	fmt.Printf("Want to read: '%s'\n", path)
 	CURRENT_PATH = path
 	dirFiles := make([]models.SysFile, 0)
 	dirFolders := make([]models.SysFile, 0)
@@ -57,16 +58,22 @@ func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse 
 
 	// Load path content
 	for _, file := range files {
-		if file.IsDir() {
-			dirFolders = append(dirFolders, fileUtils.GenerateSysFile(currentpath, filepath.Join(path, file.Name())))
-		} else {
-			dirFiles = append(dirFiles, fileUtils.GenerateSysFile(currentpath, filepath.Join(path, file.Name())))
+		generatedSysFile, err := fileUtils.GenerateSysFile(currentpath, filepath.Join(path, file.Name()))
+		if err == nil {
+			if file.IsDir() {
+				dirFolders = append(dirFolders, generatedSysFile)
+			} else {
+				dirFiles = append(dirFiles, generatedSysFile)
+			}
 		}
 	}
 
 	// Load path as breadcrumbs
 	for _, folderPath := range GetPathFolders(path) {
-		breadcrumbs = append(breadcrumbs, fileUtils.GenerateSysFile(currentpath, folderPath))
+		generatedBreadcrumb, err := fileUtils.GenerateSysFile(currentpath, folderPath)
+		if err == nil {
+			breadcrumbs = append(breadcrumbs, generatedBreadcrumb)
+		}
 	}
 
 	return models.ReadPathResponse{DirFiles: dirFiles, DirFolders: dirFolders, Breadcrumbs: breadcrumbs, Error: models.SimpleError{Status: false}}
@@ -236,7 +243,10 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 	}
 	file.Close()
 
-	createdFile := fileUtils.GenerateSysFile(path, filepath.Join(path, filename))
+	createdFile, err := fileUtils.GenerateSysFile(path, filepath.Join(path, filename))
+	if err != nil {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Error getting the information of the created file."}}
+	}
 
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
@@ -273,7 +283,10 @@ func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool)
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: err.Error()}}
 	}
 
-	pastedFile := fileUtils.GenerateSysFile(filepath.Dir(tgtPathFolder), tgtPathFolder)
+	pastedFile, err := fileUtils.GenerateSysFile(filepath.Dir(tgtPathFolder), tgtPathFolder)
+	if err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Error getting the information of the pasted folder."}}
+	}
 	pastedFile.Preview = srcFolder.Preview
 
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
@@ -337,7 +350,10 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Error writing the file."}}
 	}
 
-	pastedFile := fileUtils.GenerateSysFile(tgtPathParentFolder, tgtPathFile)
+	pastedFile, err := fileUtils.GenerateSysFile(tgtPathParentFolder, tgtPathFile)
+	if err != nil {
+		return models.PasteFileResponse{Error: models.SimpleError{Status: true, Reason: "Error getting the information of the pasted file."}}
+	}
 	pastedFile.Preview = srcFile.Preview
 
 	if pastedFile.Preview != "" {
@@ -364,7 +380,10 @@ func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionR
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
 
-	renamedFile := fileUtils.GenerateSysFile(file.Path, filepath.Join(file.Path, newFilename)) // Generate a new sys file (to handle renaming to different extension)
+	renamedFile, err := fileUtils.GenerateSysFile(file.Path, filepath.Join(file.Path, newFilename)) // Generate a new sys file (to handle renaming to different extension)
+	if err != nil {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Error getting the information of the renamed file."}}
+	}
 
 	if file.Extension == renamedFile.Extension {
 		renamedFile.Preview = file.Preview
@@ -403,7 +422,12 @@ func (a *App) PropertiesFile(fpath string) models.ActionResponse {
 		}
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unexpected error."}}
 	}
-	return models.ActionResponse{File: fileUtils.GenerateSysFile(fpath, fpath), Error: models.SimpleError{Status: false}}
+
+	generatedSysFile, err := fileUtils.GenerateSysFile(fpath, fpath)
+	if err != nil {
+		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Error getting the information of the pasted file."}}
+	}
+	return models.ActionResponse{File: generatedSysFile, Error: models.SimpleError{Status: false}}
 }
 
 func (a *App) FileExists(fpath string) bool {

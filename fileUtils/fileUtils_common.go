@@ -11,7 +11,6 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"math"
 	"os"
 	"path/filepath"
@@ -165,10 +164,11 @@ func GetImagePreview(fpath string, extension string) string {
 
 }
 
-func GenerateSysFile(bpath string, fpath string) models.SysFile {
+func GenerateSysFile(bpath string, fpath string) (models.SysFile, error) {
 	readFile, err := os.Stat(fpath)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("⚠️ eror reading '%s'. Reason:%s\n", fpath, err.Error())
+		return models.SysFile{}, err
 	}
 
 	name := readFile.Name()[:len(readFile.Name())-len(filepath.Ext(readFile.Name()))]
@@ -204,10 +204,10 @@ func GenerateSysFile(bpath string, fpath string) models.SysFile {
 		Size:             int(readFile.Size()),
 		IconClass:        fileType,
 		IsFolder:         readFile.IsDir(),
-		IsHidden:         IsHidden(fpath),
+		IsHidden:         IsHidden(fpath, filename),
 		ModifiedAt:       ModifiedAt(fpath),
 		Preview:          "",
 	}
 
-	return file
+	return file, nil
 }

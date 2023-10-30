@@ -31,7 +31,7 @@ func CreatedAt(fpath string) int {
 	return int(creationTime)
 }
 
-func IsHidden(fpath string) bool {
+func IsHidden(fpath string, filename string) bool {
 	pointer, err := syscall.UTF16PtrFromString(fpath)
 	if err != nil {
 		return false
