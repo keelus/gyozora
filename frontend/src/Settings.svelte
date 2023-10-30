@@ -112,17 +112,17 @@ enum SettingCategories {
 						<div class="double">
 							<div class="description">Control how many transparency has the app window.</div>
 							<div class="value">
-								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span style="color:white;">{$settings && GetSetting("transparency")}</span>
+								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span>{$settings && GetSetting("transparency")}%</span>
 							</div>
 						</div>
 					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
-					<div class="element inDevelopment">
+					<div class="element">
 						<div class="title">Zoom level</div>
 						<div class="double">
 							<div class="description">Change the explorer icon list zoom amount.</div>
 							<div class="value">
-								<input type="range" min="50" max="150" value={$settings && GetSetting("zoomLevel")} on:change={(e) => SetSetting("zoomLevel", e.target.value)}><span style="color:white;">{$settings && GetSetting("zoomLevel")}</span>
+								<input type="range" min="50" max="150" value={$settings && GetSetting("zoomLevel")} on:change={(e) => SetSetting("zoomLevel", e.target.value)}><span>{$settings && GetSetting("zoomLevel")}%</span>
 							</div>
 						</div>
 					</div>
