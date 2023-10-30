@@ -25,7 +25,6 @@ Gyozora is a fast and lightweight file explorer in early development. It current
 - User-friendly.
 - Enhanced performance.
 
-<br />
 
 ### 📷 Screenshot
 
@@ -81,8 +80,8 @@ The generated binaries will appear in `./build`
 #### 🧑‍💻 User configuration related:
 - [x] ~~🎨 Choose a color theme~~
 - [ ] 📊 Multiple UX options:
-  - [ ] Enable/disable file deletion confirmation modal
-  - [ ] Change language
+  - [x] ~~Enable/disable file deletion confirmation modal~~
+  - [x] ~~Change language~~
   - [ ] ... More
 
 #### 🥟 Others:
