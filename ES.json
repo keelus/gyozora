@@ -1,0 +1,121 @@
+{
+	"searchPlaceholder": "Busca un archivo",
+
+	"sideBtnHome":"Inicio",
+	"pinnedFolders": "Carpetas anclada",
+	"yourComputer": "Tu ordenador",
+	"pinnedFoldersEmpty": "Ninguna carpeta anclada encontrada",
+	"yourComputerEmpty": "Ningun disco o carpeta del sistema encontrado",
+
+	"fileBrowserEmpty":"No se encontraron archivos",
+
+	"disk": "Disco",
+
+	"jobsBtn":"proceso",
+	"jobsTitle":"Procesos en ejecución",
+	"jobsEmpty":"No hay ningún proceso en ejecución en este momento.",
+
+
+	"hoverName":"Nombre:  ",
+	"hoverSize":"Tamaño:   ",
+
+	"ctxAdd":"Crear",
+	"ctxOpen":"Abrir",
+	"ctxCut":"Cortar",
+	"ctxCopy":"Copiar",
+	"ctxPaste":"Pegar",
+	"ctxRename":"Renombrar",
+	"ctxDelete":"Borrar",
+	"ctxProperties":"Propiedades",
+	
+
+	
+	"modalBtnClose":"Cerrar",
+	"modalBtnCancel":"Cancelar",
+
+	"modalPropertiesTitle":"Propiedades de",
+	"modalPropertiesFieldType":"Tipo",
+	"modalPropertiesFieldLocation":"Ubicación",
+	"modalPropertiesFieldSize":"Tamaño",
+	"modalPropertiesFieldModification":"Modificado",
+	
+	"modalAddTitle":"Crear un nuevo archivo",
+	"modalAddCategoryType":"Tipo de archivo",
+	"modalAddCategoryFilename":"Nombre",
+	"modalAddTypeFile":"Archivo",
+	"modalAddTypeFolder":"Carpeta",
+	"modalAddInputPlaceholder":"Nombre y extensión...",
+	"modalAddBtnConfirm":"Crear",
+
+	"modalRenameTitle":"Renombrar",
+	"modalRenameInputPlaceholder":"Nuevo nombre y extension...",
+	"modalRenameTypeFile":"archivo",
+	"modalRenameTypeFolder":"carpeta",
+	"modalRenameBtnConfirm":"Renombrar",
+	
+	"modalDeleteTitle":"Eliminar un archivo",
+	"modalDeleteDesc":"Estás seguro de que quieres eliminar",
+	"modalDeleteDesc1":"los archivos",
+	"modalDeleteDesc2":"la carpeta y su contenido",
+	"modalDeleteDesc3":"el archivo",
+	"modalDeleteBtnConfirm":"Eliminar",
+	
+	"modalPasteErrorTitle":"Informe de error de pegado",
+	"modalPasteErrorDesc":"Los siguientes archivos no pudieron ser pegados",
+	
+	"modalDeleteErrorTitle":"Informe de error de borrado",
+	"modalDeleteErrorDesc":"Los siguientes archivos no pudieron ser borrados",
+
+
+	"settingsTitle":"Ajustes de gyozora",
+	"settingsInDevelopment":"En desarrollo",
+
+	"settingsCatAppearance":"Apariencia",
+	"settingsCatViewSettings":"Ajustes de interfaz",
+	"settingsCatAccessibility":"Accesibilidad",
+	"settingsCatImagePreviews":"Previews de imágenes",
+	"settingsCatAbout":"Sobre gyozora",
+
+	"settingsAppearanceThemeTitle": "Tema",
+	"settingsAppearanceThemeDesc": "Elige el tema principal de gyozora",
+	"settingsAppearanceThemeDark": "Tema oscuro",
+	"settingsAppearanceThemeLight": "Tema claro",
+	"settingsAppearanceTransparencyTitle": "Transparencia",
+	"settingsAppearanceTransparencyDesc": "Controla la transparencia de la ventana de aplicación",
+
+	
+	"settingsImagePreviewsZoomTitle": "Nivel de zoom",
+	"settingsImagePreviewsZoomDesc": "Cambiar la cantidad de zoom en el explorador",
+	"settingsImagePreviewsExtensionsTitle": "Mostrar extensión de los archivos",
+	"settingsImagePreviewsExtensionsDesc": "Escoge entre mostrar o esconder las extensiones de los archivos en el explorador.",
+	"settingsImagePreviewsHiddenTitle": "Mostrar archivos escondidos",
+	"settingsImagePreviewsHiddenDesc": "Escoge entre mostrar o esconder los archivos escondidos del sistema en el explorador.",
+
+	"settingsAccessibilityLanguageTitle": "Idioma",
+	"settingsAccessibilityLanguageDesc": "Escoge tu idioma preferido para gyozora",
+	"settingsAccessibilityLanguageBtnEN": "Inglés",
+	"settingsAccessibilityLanguageBtnES": "Español",
+	"settingsAccessibilityBreadcrumbsTitle": "Migas de pan",
+	"settingsAccessibilityBreadcrumbsDesc": "Elige entre mostrar o esconder las migas de pan, de la parte inferior izquierda",
+	"settingsAccessibilityDeleteConfirmationTitle": "Confirmación al eliminar",
+	"settingsAccessibilityDeleteConfirmationDesc": "Este dialogo aparece al intentar eliminar uno o varios archivos",
+	"settingsAccessibilityFastAccessTitle": "Carpetas de acceso rápido",
+	"settingsAccessibilityFastAccessDesc": "Añade, edita o borra tus carpetas de acceso rápido, las cuales aparecen en el menú de la parte izquierda",
+	
+	"settingsImagePreviewsThumbnailsTitle": "Usar previews de imágenes",
+	"settingsImagePreviewsThumbnailsDesc": "Mostrar una preview de los archivos de tipo image en el explorador (compatible para imágenes tipo png, jpegs, gifs y webp).",
+	"settingsImagePreviewsCacheTitle": "Usar caché",
+	"settingsImagePreviewsCacheDesc": "Guarda estas previews en caché, para hacer que las siguientes veces la preview sea mucho más rápida",
+	"settingsImagePreviewsCacheInUse": "Caché en uso",
+	"settingsImagePreviewsCacheBtn": "Limpiar caché",
+
+
+	"jobPasteTitle":"Pegando archivos",
+	"jobPasteDesc1":"Descubriendo carpetas...",
+	"jobPasteDesc2":"Pegando. ",
+	"jobPasteDesc2File":" archivo",
+	"jobPasteDesc2FailedSingular":" fallado",
+	"jobPasteDesc2FailedPlural":" fallados",
+	"jobPasteToastSuccess":"All copied.",
+	"jobPasteToastError":"Some files could not be pasted."
+}

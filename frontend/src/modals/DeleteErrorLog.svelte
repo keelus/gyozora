@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { languageDictionary, settings } from "../store";
   import type { models } from "../../wailsjs/go/models";
+  import { GetWord } from "../languages";
 
 	
 	let cancelButton : HTMLButtonElement;
@@ -17,11 +19,11 @@
 </script>
 	<div class="modal deleteErrorLog">
 		<div class="top">
-			<div class="title">Delete error log</div>
+			<div class="title">{GetWord("modalDeleteErrorTitle")}</div>
 		</div>
 		<div class="middle" style="padding:0 !important;">
 			<div class="flexContent">
-				<div class="note">The following files could not be deleted:</div>
+				<div class="note">{GetWord("modalDeleteErrorDesc")}:</div>
 				<div class="files">
 					{#each failedFiles as fail}
 					<div class="file">

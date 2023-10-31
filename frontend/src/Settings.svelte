@@ -2,7 +2,7 @@
 import { IconDictionary } from './icons';
 import Icon from '@iconify/svelte';
 import { GetSetting, SetSetting } from './settings';
-import { settings } from './store';
+import { languageDictionary, settings } from './store';
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 
 import appicon from './assets/icons/gyozora.svg'
@@ -18,6 +18,7 @@ import { Go_CacheSize, Go_CacheClear } from '../wailsjs/go/main/App';
 
 import darkThemeIMG from './assets/images/darkTheme.png'
 import lightThemeIMG from './assets/images/lightTheme.png'
+  import { GetWord } from './languages';
 
 
 let activeCategory = 0;
@@ -53,11 +54,13 @@ enum SettingCategories {
 	ABOUT
 }
 
+$: lang = $settings && $languageDictionary
+
 </script>
 <div class="settingsOuter" class:opened={opened}>
 	<div class="settingsWindow">
 		<div class="top">
-			<div class="title"><img src={appicon} alt="Gyozora icon" class="appicon"/> Gyozora settings</div>
+			<div class="title"><img src={appicon} alt="Gyozora icon" class="appicon"/> {lang && GetWord("settingsTitle")}</div>
 			<button class="closeButton" on:click={CloseSettings}>
 				<Icon icon={IconDictionary["uiClose"]} class="icon "/>
 			</button>
@@ -67,39 +70,39 @@ enum SettingCategories {
 		<div class="bottom">
 			<div class="categories">
 				<button class="category" class:active={activeCategory == SettingCategories.APPEARANCE} on:click={() => activeCategory = SettingCategories.APPEARANCE}>
-					<div class="title"><Icon icon={paintBrushLine} class="icon" /> Appearance</div>
+					<div class="title"><Icon icon={paintBrushLine} class="icon" /> {lang && GetWord("settingsCatAppearance")}</div>
 				</button>
 				<button class="category" class:active={activeCategory == SettingCategories.VIEW_SETTINGS} on:click={() => activeCategory = SettingCategories.VIEW_SETTINGS}>
-					<div class="title"><Icon icon={gridFill} class="icon" /> View settings</div>
+					<div class="title"><Icon icon={gridFill} class="icon" /> {lang && GetWord("settingsCatViewSettings")}</div>
 				</button>
 				<button class="category" class:active={activeCategory == SettingCategories.ACCESSIBILITY} on:click={() => activeCategory = SettingCategories.ACCESSIBILITY}>
-					<div class="title"><Icon icon={accessibilityIcon} class="icon" /> Accessibility</div>
+					<div class="title"><Icon icon={accessibilityIcon} class="icon" /> {lang && GetWord("settingsCatAccessibility")}</div>
 				</button>
 				<button class="category" class:active={activeCategory == SettingCategories.IMAGE_PREVIEWS} on:click={() => activeCategory = SettingCategories.IMAGE_PREVIEWS}>
-					<div class="title"><Icon icon={imageFill} class="icon" /> Image previews</div>
+					<div class="title"><Icon icon={imageFill} class="icon" /> {lang && GetWord("settingsCatImagePreviews")}</div>
 				</button>
 				<button class="category" class:active={activeCategory == SettingCategories.ABOUT} on:click={() => activeCategory = SettingCategories.ABOUT} style="margin-top:auto;" >
-					<div class="title"><Icon icon={githubLine} class="icon" /> About gyozora</div>
+					<div class="title"><Icon icon={githubLine} class="icon" /> {lang && GetWord("settingsCatAbout")}</div>
 				</button>
 			</div>
 			<div class="content">
 				{#if activeCategory == SettingCategories.APPEARANCE}
 					<div class="element">
-						<div class="title">Theme</div>
-						<div class="description">Choose the main theme for gyozora.</div>
+						<div class="title">{lang && GetWord("settingsAppearanceThemeTitle")}</div>
+						<div class="description">{lang && GetWord("settingsAppearanceThemeDesc")}</div>
 						<div class="themes">
 							<button class="theme" class:active={$settings && GetSetting("theme") == "dark"} on:click={() => SetSetting("theme", "dark")}>
 								<div class="top" style="background-image:url('{darkThemeIMG}');"></div>
 								<div class="bottom">
 									<div class="check"></div>
-									<div class="title">Dark theme</div>
+									<div class="title">{lang && GetWord("settingsAppearanceThemeDark")}</div>
 								</div>
 							</button>
 							<button class="theme" class:active={$settings && GetSetting("theme") == "light"} on:click={() => SetSetting("theme", "light")}>
 								<div class="top" style="background-image:url('{lightThemeIMG}');"></div>
 								<div class="bottom">
 									<div class="check"></div>
-									<div class="title">Light theme</div>
+									<div class="title">{lang && GetWord("settingsAppearanceThemeLight")}</div>
 								</div>
 							</button>
 						</div>
@@ -108,9 +111,9 @@ enum SettingCategories {
 					<div class="dividerH"></div>
 
 					<div class="element">
-						<div class="title">Transparency</div>
+						<div class="title">{lang && GetWord("settingsAppearanceTransparencyTitle")}</div>
 						<div class="double">
-							<div class="description">Control how many transparency has the app window.</div>
+							<div class="description">{lang && GetWord("settingsAppearanceTransparencyDesc")}</div>
 							<div class="value">
 								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span>{$settings && GetSetting("transparency")}%</span>
 							</div>
@@ -118,9 +121,9 @@ enum SettingCategories {
 					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
 					<div class="element">
-						<div class="title">Zoom level</div>
+						<div class="title">{lang && GetWord("settingsImagePreviewsZoomTitle")}</div>
 						<div class="double">
-							<div class="description">Change the explorer icon list zoom amount.</div>
+							<div class="description">{lang && GetWord("settingsImagePreviewsZoomDesc")}</div>
 							<div class="value">
 								<input type="range" min="50" max="150" value={$settings && GetSetting("zoomLevel")} on:change={(e) => SetSetting("zoomLevel", e.target.value)}><span>{$settings && GetSetting("zoomLevel")}%</span>
 							</div>
@@ -130,9 +133,9 @@ enum SettingCategories {
 					<div class="dividerH"></div>
 
 					<div class="element">
-						<div class="title">Show file extensions</div>
+						<div class="title">{lang && GetWord("settingsImagePreviewsExtensionsTitle")}</div>
 						<div class="double">
-							<div class="description">Choose wether to show or hide the file extensions on the file explorer.</div>
+							<div class="description">{lang && GetWord("settingsImagePreviewsExtensionsDesc")}</div>
 							<div class="value">
 								<Switch size="md" checked={$settings && GetSetting("showExtensions") === "true"} on:change={(e) => SetSetting("showExtensions", (e.target.checked).toString())} />
 							</div>
@@ -142,28 +145,28 @@ enum SettingCategories {
 					<div class="dividerH"></div>
 
 					<div class="element">
-						<div class="title">Show hidden files</div>
+						<div class="title">{lang && GetWord("settingsImagePreviewsHiddenTitle")}</div>
 						<div class="double">
-							<div class="description">Choose wether to show or hide the system hidden files on the file explorer.</div>
+							<div class="description">{lang && GetWord("settingsImagePreviewsHiddenDesc")}</div>
 							<div class="value">
 								<Switch size="md" checked={$settings && GetSetting("showHiddenFiles") === "true"} on:change={(e) => SetSetting("showHiddenFiles", (e.target.checked).toString())} />
 							</div>
 						</div>
 					</div>
 				{:else if activeCategory == SettingCategories.ACCESSIBILITY}
-					<div class="element inDevelopment">
-						<div class="title">Language</div>
-						<div class="description">Choose your preferred language in gyozora.</div>
-						<button class="option"  class:active={$settings && GetSetting("language") == "EN"} on:click={() => SetSetting("language", "EN")}>English</button>
-						<button class="option"  class:active={$settings && GetSetting("language") == "ES"} on:click={() => SetSetting("language", "ES")}>Spanish</button>
+					<div class="element inDevelopment" style="--text:'{lang && GetWord("settingsInDevelopment")}';">
+						<div class="title">{lang && GetWord("settingsAccessibilityLanguageTitle")}</div>
+						<div class="description">{lang && GetWord("settingsAccessibilityLanguageDesc")}</div>
+						<button class="option"  class:active={$settings && GetSetting("language") == "EN"} on:click={() => SetSetting("language", "EN")}>{lang && GetWord("settingsAccessibilityLanguageBtnEN")}</button>
+						<button class="option"  class:active={$settings && GetSetting("language") == "ES"} on:click={() => SetSetting("language", "ES")}>{lang && GetWord("settingsAccessibilityLanguageBtnES")}</button>
 					</div>
 					
 					<div class="dividerH"></div>
 
 					<div class="element">
-						<div class="title">Show breadcrumbs</div>
+						<div class="title">{lang && GetWord("settingsAccessibilityBreadcrumbsTitle")}</div>
 						<div class="double">
-							<div class="description">Choose wether to show or not the bottom left breadcrumbs.</div>
+							<div class="description">{lang && GetWord("settingsAccessibilityBreadcrumbsDesc")}</div>
 							<div class="value">
 								<Switch size="md" checked={$settings && GetSetting("showBreadcrumbs") === "true"} on:change={(e) => SetSetting("showBreadcrumbs", (e.target.checked).toString())} />
 							</div>
@@ -173,9 +176,9 @@ enum SettingCategories {
 					<div class="dividerH"></div>
 
 					<div class="element">
-						<div class="title">Show delete confirmation</div>
+						<div class="title">{lang && GetWord("settingsAccessibilityDeleteConfirmationTitle")}</div>
 						<div class="double">
-							<div class="description">This confirmation dialog appears when trying to delete a file.</div>
+							<div class="description">{lang && GetWord("settingsAccessibilityDeleteConfirmationDesc")}</div>
 							<div class="value">
 								<Switch size="md" checked={$settings && GetSetting("showDeleteConfirmation") === "true"} on:change={(e) => SetSetting("showDeleteConfirmation", (e.target.checked).toString())} />
 							</div>
@@ -184,15 +187,15 @@ enum SettingCategories {
 					
 					<div class="dividerH"></div>
 
-					<div class="element inDevelopment">
-						<div class="title">Fast access folders</div>
-						<div class="description">Add, edit or delete your fast access folders, which appears in the left sidebar.</div>
+					<div class="element inDevelopment" style="--text:'{lang && GetWord("settingsInDevelopment")}';">
+						<div class="title">{lang && GetWord("settingsAccessibilityFastAccessTitle")}</div>
+						<div class="description">{lang && GetWord("settingsAccessibilityFastAccessDesc")}</div>
 					</div>
 				{:else if activeCategory == SettingCategories.IMAGE_PREVIEWS}
 					<div class="element">
-						<div class="title">Use image thumbnails</div>
+						<div class="title">{lang && GetWord("settingsImagePreviewsThumbnailsTitle")}</div>
 						<div class="double">
-							<div class="description">Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files).</div>
+							<div class="description">{lang && GetWord("settingsImagePreviewsThumbnailsDesc")}</div>
 							<div class="value">
 								<Switch size="md" checked={$settings && GetSetting("useThumbnails") === "true"} on:change={(e) => SetSetting("useThumbnails", (e.target.checked).toString())} />
 							</div>
@@ -203,9 +206,9 @@ enum SettingCategories {
 
 					{#if $settings && GetSetting("useThumbnails") === "true"}
 						<div class="element">
-							<div class="title">Use cache</div>
+							<div class="title">{lang && GetWord("settingsImagePreviewsCacheTitle")}</div>
 							<div class="double">
-								<div class="description">Save the rendered image previews into cache, to get blazingly fast previews!</div>
+								<div class="description">{lang && GetWord("settingsImagePreviewsCacheDesc")}</div>
 								<div class="value">
 									<Switch size="md" checked={$settings && GetSetting("useCache") === "true"} on:change={(e) => SetSetting("useCache", (e.target.checked).toString())} />
 								</div>
@@ -214,9 +217,9 @@ enum SettingCategories {
 					{/if}
 					<div class="element">
 						<div class="double">
-							<div class="description" style="flex:unset;margin-right:10px;">Cache in use: {cacheSize}</div>
+							<div class="description" style="flex:unset;margin-right:10px;">{lang && GetWord("settingsImagePreviewsCacheInUse")}: {cacheSize}</div>
 							<div class="value">
-								<button class="cacheButton" disabled={cacheSize === "0B"} on:click={() => ClearCache()} >Empty cache</button>
+								<button class="cacheButton" disabled={cacheSize === "0B"} on:click={() => ClearCache()} >{lang && GetWord("settingsImagePreviewsCacheBtn")}</button>
 							</div>
 						</div>
 					</div>

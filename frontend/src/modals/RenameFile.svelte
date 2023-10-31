@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { languageDictionary, settings } from "../store";
 	import type { models } from "../../wailsjs/go/models";
+  import { GetWord } from "../languages";
 
 	let filename = "";
 	
@@ -32,16 +34,16 @@
 {#if renamingFile !== undefined}
 	<div class="modal rename">
 		<div class="top">
-			<div class="title">Rename {renamingFile.isFolder ? "folder" : "rename"}</div>
+			<div class="title">{GetWord("modalRenameTitle")} {renamingFile.isFolder ? GetWord("modalRenameTypeFolder") : GetWord("modalRenameTypeFile")}</div>
 		</div>
 		<div class="middle">
 			<div class="flexContent">
-				<input type="text" spellcheck="false" placeholder="New filename and extension..." bind:this={filenameInput} bind:value={filename}>
+				<input type="text" spellcheck="false" placeholder="{GetWord("modalRenameInputPlaceholder")}" bind:this={filenameInput} bind:value={filename}>
 			</div>
 		</div>
 		<div class="bottom">
-			<button class="cancel" bind:this={cancelButton} >Cancel</button>
-			<button class="confirm" bind:this={confirmButton} disabled={filename == ""}>Rename</button>
+			<button class="cancel" bind:this={cancelButton} >{GetWord("modalBtnCancel")}</button>
+			<button class="confirm" bind:this={confirmButton} disabled={filename == ""}>{GetWord("modalRenameBtnConfirm")}</button>
 		</div>
 	</div>
 {/if}

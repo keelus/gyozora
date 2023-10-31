@@ -1,9 +1,10 @@
 <script lang="ts">
 import { get } from "svelte/store";
-import { activeJobs } from "./store";
+import { activeJobs, languageDictionary, settings } from "./store";
 import { JobType, type ActiveJob, AddJob } from "./activeJobsLogin";
 import Icon from "@iconify/svelte";
 import { GetIconByType } from "./icons";
+  import { GetWord } from "./languages";
 
 let _activeJobs : {[key:string]:ActiveJob} = {}
 let _activeJobsAmount = 0;
@@ -16,15 +17,18 @@ let sub = activeJobs.subscribe((val) => {
 	_activeJobsAmount = Object.keys(val).length;
 })
 export let opened : boolean = false;
+
+$: lang = $settings && $languageDictionary
+
 </script>
 
 <div class="activeJobs {opened ? "opened" : ""}">
 	<div class="top">
-		<div class="title">Active jobs [{_activeJobsAmount}]</div>
+		<div class="title">{lang && GetWord("jobsTitle")} [{_activeJobsAmount}]</div>
 	</div>
 	<div class="jobs">
 		{#if _activeJobsAmount == 0}
-			<div class="noJobs">There are no jobs running right now.</div>
+			<div class="noJobs">{lang && GetWord("jobsEmpty")}</div>
 		{/if}
 		{#each Object.entries(_activeJobs) as [key, value]}
 			<div class="job">

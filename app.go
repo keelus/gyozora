@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"gyozora/data"
@@ -501,4 +502,26 @@ func (a *App) Go_CacheClear() models.SimpleError {
 		return models.SimpleError{Status: true}
 	}
 	return models.SimpleError{Status: false}
+}
+
+func (a *App) Go_LoadDictionary() map[string]map[string]string {
+	finalDictionary := make(map[string]map[string]string)
+
+	finalDictionary["EN"] = DictionaryData("EN")
+	finalDictionary["ES"] = DictionaryData("ES")
+
+	return finalDictionary
+}
+
+func DictionaryData(lang string) map[string]string {
+	langDict := make(map[string]string)
+
+	fileEN, err := os.ReadFile(fmt.Sprintf("%s.json", lang))
+	if err != nil {
+		fmt.Println("Error reading file EN.json")
+		return langDict
+	}
+
+	err = json.Unmarshal(fileEN, &langDict)
+	return langDict
 }

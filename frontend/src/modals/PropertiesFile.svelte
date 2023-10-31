@@ -1,5 +1,5 @@
 <script lang="ts">
-import { CURRENT_PATH, USER_OS, selectedFiles } from "../store";
+import { CURRENT_PATH, USER_OS, languageDictionary, selectedFiles, settings } from "../store";
 import Icon from "@iconify/svelte";
 import { GetIconByType, IconDictionary } from "../icons";
 import { get } from "svelte/store";
@@ -8,6 +8,7 @@ import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
 import { GenerateToast } from "../../src/toasts";
 import { renderBytes } from "../utils";
+import { GetWord } from "../languages";
 
 let cancelButton : HTMLButtonElement;
 
@@ -32,7 +33,7 @@ export async function WaitForModalResponse() {
 
 
 
-function renderDate(dateUnix : number) : string {
+function renderDate(dateUnix : number) : string { // TODO: Render for different languages
 	const modifTime = new Date(dateUnix * 1000)
 
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
@@ -53,7 +54,7 @@ export let propertiesFile : models.SysFile | undefined;
 <div class="modal properties">
 	{#if fileData !== undefined}
 		<div class="top">
-			<div class="title">Properties of {fileData.filename}</div>
+			<div class="title">{GetWord("modalPropertiesTitle")} {fileData.filename}</div>
 		</div>
 		<div class="middle" style="display:block;">
 			<div class="flexContent">
@@ -73,14 +74,14 @@ export let propertiesFile : models.SysFile | undefined;
 				</div>
 				<div class="divider"></div>
 				<div class="doubleField">
-					<div class="key">Type</div>
+					<div class="key">{GetWord("modalPropertiesFieldType")}</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.iconClass)}>
 						<div class="text" title={fileData.iconClass}>{fileData.iconClass}</div>
 						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
 					</button>
 				</div>
 				<div class="doubleField">
-					<div class="key">Location</div>
+					<div class="key">{GetWord("modalPropertiesFieldLocation")}</div>
 					<button class="value" on:click={() => copyToClipboard(fileData.path)}>
 						<div class="text" title={fileData.path}>{fileData.path}</div>
 						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
@@ -88,7 +89,7 @@ export let propertiesFile : models.SysFile | undefined;
 				</div>
 				{#if !fileData.isFolder}
 					<div class="doubleField">
-						<div class="key">Size</div>
+						<div class="key">{GetWord("modalPropertiesFieldSize")}</div>
 						<button class="value" on:click={() => copyToClipboard(renderBytes(fileData.size))}>
 							<div class="text" title={renderBytes(fileData.size)}>{renderBytes(fileData.size)}</div>
 						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
@@ -97,7 +98,7 @@ export let propertiesFile : models.SysFile | undefined;
 				{/if}
 				<div class="divider"></div>
 				<div class="doubleField">
-					<div class="key">Modification</div>
+					<div class="key">{GetWord("modalPropertiesFieldModification")}</div>
 					<button class="value" on:click={() => copyToClipboard(renderDate(fileData.modifiedAt))}>
 						<div class="text" style="font-size:13px;" title={renderDate(fileData.modifiedAt)}>{renderDate(fileData.modifiedAt)}</div>
 						<Icon icon={GetIconByType("uiCopy")} class="icon {$USER_OS}"/>
@@ -107,6 +108,6 @@ export let propertiesFile : models.SysFile | undefined;
 		</div>
 	{/if}
 	<div class="bottom">
-		<button class="cancel" style="margin-left:auto;" bind:this={cancelButton}>Close</button>
+		<button class="cancel" style="margin-left:auto;" bind:this={cancelButton}>{GetWord("modalBtnClose")}</button>
 	</div>
 </div>

@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { languageDictionary, settings } from "../store";
   import type { models } from "../../wailsjs/go/models";
+  import { GetWord } from "../languages";
 
 	
 	let cancelButton : HTMLButtonElement;
@@ -17,11 +19,11 @@
 </script>
 	<div class="modal pasteErrorLog">
 		<div class="top">
-			<div class="title">Paste error log</div>
+			<div class="title">{GetWord("modalPasteErrorTitle")}</div>
 		</div>
 		<div class="middle" style="padding:0 !important;">
 			<div class="flexContent">
-				<div class="note">The following files could not be pasted:</div>
+				<div class="note">{GetWord("modalPasteErrorDesc")}:</div>
 				<div class="files">
 					{#each failedFiles as fail}
 					<div class="file">

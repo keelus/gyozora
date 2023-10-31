@@ -10,6 +10,7 @@ export function CopyToClipboard() {
 import { AddJob, UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
 import OpenModal from "./modals/manager.js";
 import { Plural } from "./utils.js";
+import { GetWord } from "./languages.js";
 
 
 export async function PasteFromClipboard() {
@@ -17,7 +18,7 @@ export async function PasteFromClipboard() {
 	const targetPath = get(CURRENT_PATH);
 	let donePastes = 0
 	let todoPastes = get(clipboardFiles).length;
-	const JOB_ID = AddJob("Pasting files", -1, "Discovering folders...", JobType.PASTE)
+	const JOB_ID = AddJob(GetWord("jobPasteTitle"), -1, GetWord("jobPasteDesc"), JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
 		let baseFiles = files
@@ -178,7 +179,7 @@ export async function PasteFromClipboard() {
 		
 
 		function updateJobVisual() {
-			UpdateJob(JOB_ID, "Pasting. " + failedPastes.length + Plural(failedPastes.length, " file") + " failed.", (donePastes * 100 / todoPastes))
+			UpdateJob(JOB_ID, GetWord("jobPasteDesc2") + failedPastes.length + Plural(failedPastes.length, GetWord("jobPasteDesc2File")) + (failedPastes.length == 1 ? GetWord("jobPasteDesc2FailedSingular") : GetWord("jobPasteDesc2FailedPlural")), (donePastes * 100 / todoPastes))
 		}
 		updateJobVisual()
 		let progressInterval = setInterval(updateJobVisual, 1000)
@@ -186,9 +187,9 @@ export async function PasteFromClipboard() {
 		await toast.promise(
 			processTree(fileTree),
 			{
-				loading:"Pasting files 📋",
-				success:"All Copied.",
-				error:"Some files could not be pasted.",
+				loading: GetWord("jobPasteTitle")+" 📋",
+				success: GetWord("jobPasteToastSuccess"),
+				error: GetWord("jobPasteToastError")
 			},
 			{
 				position:'bottom-left'

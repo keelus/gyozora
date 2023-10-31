@@ -26,3 +26,4 @@ export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boole
 	delete:{show:true,disabled:false},
 	properties:{show:true,disabled:false}
 })
+export const languageDictionary = writable<{[key:string]:{[key:string]:string}}>({})

@@ -1,8 +1,9 @@
 <script lang="ts">
-import { USER_OS, selectedFiles } from "../store";
+import { USER_OS, languageDictionary, selectedFiles, settings } from "../store";
 import { IconDictionary } from "../icons";
 import { get } from "svelte/store";
   import { onMount } from "svelte";
+  import { GetWord } from "../languages";
 
 let cancelButton : HTMLButtonElement;
 let confirmButton : HTMLButtonElement;
@@ -24,24 +25,23 @@ let selectedAmount = 1;
 let singleFiletype = "file";
 onMount(() => {
 	selectedAmount = get(selectedFiles).length;
-	singleFiletype = get(selectedFiles)[0].isFolder ? "folder and its contents" : "file";
+	singleFiletype = get(selectedFiles)[0].isFolder ? GetWord("modalDeleteDesc2") : GetWord("modalDeleteDesc3");
 })
-
 </script>
 <div class="modal delete">
 	<div class="top">
-		<div class="title">Delete a new file</div>
+		<div class="title">{GetWord("modalDeleteTitle")}</div>
 	</div>
 	<div class="middle" style="display:block;">
-		Are you sure you want to delete
+		{GetWord("modalDeleteDesc")}
 		{#if selectedAmount == 1}
-			the {singleFiletype}?
+			{singleFiletype}?
 		{:else}
-			{selectedAmount} files?
+			{GetWord("modalDeleteDesc1")}?
 		{/if}
 	</div>
 	<div class="bottom">
-		<button class="cancel" bind:this={cancelButton}>Cancel</button>
-		<button class="confirm" bind:this={confirmButton} style="background-color:#F61C2C;">Delete</button>
+		<button class="cancel" bind:this={cancelButton}>{GetWord("modalBtnCancel")}</button>
+		<button class="confirm" bind:this={confirmButton} style="background-color:#F61C2C;">{GetWord("modalDeleteBtnConfirm")}</button>
 	</div>
 </div>

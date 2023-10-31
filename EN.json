@@ -1,0 +1,121 @@
+{
+	"searchPlaceholder": "Search here",
+
+	"sideBtnHome":"Home",
+	"pinnedFolders": "Pinned folders",
+	"yourComputer": "Your computer",
+	"pinnedFoldersEmpty": "No pinned folders found",
+	"yourComputerEmpty": "No system roots/disks found",
+
+	"fileBrowserEmpty":"No files found here",
+
+	"disk": "Disk",
+
+	"jobsBtn":"job",
+	"jobsTitle":"Active jobs",
+	"jobsEmpty":"There are no jobs running right now.",
+
+
+	"hoverName":"Name:  ",
+	"hoverSize":"Size:     ",
+
+	"ctxAdd":"Add",
+	"ctxOpen":"Open",
+	"ctxCut":"Cut",
+	"ctxCopy":"Copy",
+	"ctxPaste":"Paste",
+	"ctxRename":"Rename",
+	"ctxDelete":"Delete",
+	"ctxProperties":"Properties",
+	
+
+	
+	"modalBtnClose":"Close",
+	"modalBtnCancel":"Cancel",
+
+	"modalPropertiesTitle":"Properties of",
+	"modalPropertiesFieldType":"Type",
+	"modalPropertiesFieldLocation":"Location",
+	"modalPropertiesFieldSize":"Size",
+	"modalPropertiesFieldModification":"Modification",
+	
+	"modalAddTitle":"Create a new file",
+	"modalAddCategoryType":"Type of file",
+	"modalAddCategoryFilename":"Filename",
+	"modalAddTypeFile":"File",
+	"modalAddTypeFolder":"Folder",
+	"modalAddInputPlaceholder":"Filename and extension...",
+	"modalAddBtnConfirm":"Create",
+
+	"modalRenameTitle":"Rename",
+	"modalRenameTypeFile":"file",
+	"modalRenameTypeFolder":"folder",
+	"modalRenameInputPlaceholder":"New filename and extension...",
+	"modalRenameBtnConfirm":"Rename",
+	
+	"modalDeleteTitle":"Delete a file",
+	"modalDeleteDesc":"Are you sure you want to delete",
+	"modalDeleteDesc1":"the files",
+	"modalDeleteDesc2":"the folder and its contents",
+	"modalDeleteDesc3":"the file",
+	"modalDeleteBtnConfirm":"Delete",
+	
+	"modalPasteErrorTitle":"Paste error log",
+	"modalPasteErrorDesc":"The following files could not be pasted",
+	
+	"modalDeleteErrorTitle":"Delete error log",
+	"modalDeleteErrorDesc":"The following files could not be deleted",
+
+
+	"settingsTitle":"Gyozora settings",
+	"settingsInDevelopment":"In development",
+
+	"settingsCatAppearance":"Appearance",
+	"settingsCatViewSettings":"View Settings",
+	"settingsCatAccessibility":"Accessibility",
+	"settingsCatImagePreviews":"Image Previews",
+	"settingsCatAbout":"About gyozora",
+
+	"settingsAppearanceThemeTitle": "Theme",
+	"settingsAppearanceThemeDesc": "Choose the main theme for gyozora",
+	"settingsAppearanceThemeDark": "Dark theme",
+	"settingsAppearanceThemeLight": "Light theme",
+	"settingsAppearanceTransparencyTitle": "Transparency",
+	"settingsAppearanceTransparencyDesc": "Control how many transparency has the app window",
+
+	
+	"settingsImagePreviewsZoomTitle": "Zoom level",
+	"settingsImagePreviewsZoomDesc": "Change the explorer icon list zoom amount",
+	"settingsImagePreviewsExtensionsTitle": "Show file extensions",
+	"settingsImagePreviewsExtensionsDesc": "Choose wether to show or hide the file extensions on the file explorer",
+	"settingsImagePreviewsHiddenTitle": "Show hidden files",
+	"settingsImagePreviewsHiddenDesc": "Choose wether to show or hide the system hidden files on the file explorer",
+
+	"settingsAccessibilityLanguageTitle": "Language",
+	"settingsAccessibilityLanguageDesc": "Choose your preferred language in gyozora",
+	"settingsAccessibilityLanguageBtnEN": "English",
+	"settingsAccessibilityLanguageBtnES": "Spanish",
+	"settingsAccessibilityBreadcrumbsTitle": "Show breadcrumbs",
+	"settingsAccessibilityBreadcrumbsDesc": "Choose wether to show or not the bottom left breadcrumbs",
+	"settingsAccessibilityDeleteConfirmationTitle": "Show delete confirmation",
+	"settingsAccessibilityDeleteConfirmationDesc": "This confirmation dialog appears when trying to delete a file",
+	"settingsAccessibilityFastAccessTitle": "Fast access folders",
+	"settingsAccessibilityFastAccessDesc": "Add, edit or delete your fast access folders, which appears in the left sidebar",
+	
+	"settingsImagePreviewsThumbnailsTitle": "Use image thumbnails",
+	"settingsImagePreviewsThumbnailsDesc": "Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files)",
+	"settingsImagePreviewsCacheTitle": "Use cache",
+	"settingsImagePreviewsCacheDesc": "Save the rendered image previews into cache, to get blazingly fast previews!",
+	"settingsImagePreviewsCacheInUse": "Cache in use",
+	"settingsImagePreviewsCacheBtn": "Empty cache",
+
+
+	"jobPasteTitle":"Pasting files",
+	"jobPasteDesc1":"Discovering folders...",
+	"jobPasteDesc2":"Pasting. ",
+	"jobPasteDesc2File":" file",
+	"jobPasteDesc2FailedSingular":" failed",
+	"jobPasteDesc2FailedPlural":" failed",
+	"jobPasteToastSuccess":"All copied.",
+	"jobPasteToastError":"Some files could not be pasted."
+}

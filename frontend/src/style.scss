@@ -1378,7 +1378,7 @@ main > .bottom {
 						position:relative;
 
 						&::after {
-							content:'In development';
+							content:var(--text, "A");
 							position:absolute;
 							top:5px;
 							right:5px;
