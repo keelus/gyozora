@@ -25,7 +25,7 @@ export async function PasteFromClipboard() {
 		for(let i = 0; i < baseFiles.length; i++) {
 			if(!baseFiles[i].isFolder) continue;
 
-			let folderExists = await FileExists(baseFiles[i].pathfull)
+			let folderExists = await FileExists(targetPath, baseFiles[i].filename)
 			if(folderExists) {
 				failedPastes.push(baseFiles[i])
 				continue

@@ -430,8 +430,8 @@ func (a *App) PropertiesFile(fpath string) models.ActionResponse {
 	return models.ActionResponse{File: generatedSysFile, Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) FileExists(fpath string) bool {
-	if err := fileUtils.Exists(fpath); err == nil {
+func (a *App) FileExists(tgtPath string, filename string) bool {
+	if err := fileUtils.Exists(filepath.Join(tgtPath, filename)); err == nil {
 		return true
 	}
 	return false
