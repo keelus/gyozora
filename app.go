@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -513,15 +514,19 @@ func (a *App) Go_LoadDictionary() map[string]map[string]string {
 	return finalDictionary
 }
 
+//go:embed ES.json
+var jsonContentES []byte
+
+//go:embed EN.json
+var jsonContentEN []byte
+
 func DictionaryData(lang string) map[string]string {
-	langDict := make(map[string]string)
+	var loadedDictionary map[string]string
 
-	fileEN, err := os.ReadFile(fmt.Sprintf("%s.json", lang))
-	if err != nil {
-		fmt.Println("Error reading file EN.json")
-		return langDict
+	if lang == "EN" {
+		json.Unmarshal([]byte(jsonContentEN), &loadedDictionary)
+	} else if lang == "ES" {
+		json.Unmarshal([]byte(jsonContentES), &loadedDictionary)
 	}
-
-	err = json.Unmarshal(fileEN, &langDict)
-	return langDict
+	return loadedDictionary
 }
