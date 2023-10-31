@@ -7,7 +7,7 @@ import { onMount } from "svelte";
 import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
 import { GenerateToast } from "../../src/toasts";
-import { renderBytes } from "../utils";
+import { copyToClipboard, renderBytes, renderDate } from "../utils";
 import { GetWord } from "../languages";
 
 let cancelButton : HTMLButtonElement;
@@ -16,7 +16,7 @@ export async function WaitForModalResponse() {
 	if(propertiesFile === undefined){ // Right clicked current folder
 		let fileDataResponse = await PropertiesFile(get(CURRENT_PATH))
 		if(fileDataResponse.error.status) {
-			GenerateToast("error", "Error getting file properties", "📄")
+			GenerateToast("error", GetWord("modalPropertiesFailed"), "📄")
 			return new Promise(resolve => resolve(-1))
 		} else {
 			fileData = fileDataResponse.file
@@ -29,23 +29,6 @@ export async function WaitForModalResponse() {
 			resolve(-1)
 		})
 	})
-}
-
-
-
-function renderDate(dateUnix : number) : string { // TODO: Render for different languages
-	const modifTime = new Date(dateUnix * 1000)
-
-	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November","December"]
-	const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-
-
-	return `${days[modifTime.getDay()]}, ${months[modifTime.getMonth()]} ${modifTime.getDate().toString().padStart(2, '0')}, ${modifTime.getFullYear()}, ${modifTime.getHours().toString().padStart(2, '0')}:${modifTime.getMinutes().toString().padStart(2, '0')}:${modifTime.getSeconds().toString().padStart(2, '0')}`
-}
-
-function copyToClipboard(text : string) {
-	navigator.clipboard.writeText(text)
-	GenerateToast("success", "Copied to clipboard", "📋")
 }
 
 let fileData : models.SysFile;

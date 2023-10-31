@@ -10,6 +10,7 @@ import { CopyToClipboard, PastableFromClipboard, PasteFromClipboard } from "./cl
 import { Plural } from "./utils";
 import { AddJob, JobType, RemoveJob, UpdateJob } from "./activeJobsLogin";
 import { GetSetting } from "./settings";
+import { GetWord } from "./languages";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
 	fileContextMenu.classList.add("opened")
@@ -120,9 +121,9 @@ export async function doAction(action : string) {
 
 			const actionResponseOpen : models.ActionResponse = await OpenFile(selFile.pathfull)
 			if(actionResponseOpen.error.status) {
-				GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
+				GenerateToast("error", GetWord("actionOpenToasFailed") + actionResponseOpen.error.reason || "", "🚀")
 			} else {
-				GenerateToast("success", "File opened.", "🚀")
+				GenerateToast("success", GetWord("actionOpenToastSuccess"), "🚀")
 			}
 			break;
 		case "add":
@@ -133,13 +134,13 @@ export async function doAction(action : string) {
 			const actionResponse : models.ActionResponse = await AddFile(get(CURRENT_PATH), modalResponse?.content[0], modalResponse?.content[1])
 			if(actionResponse.error.status) {
 				console.error("File creation err:", actionResponse.error.reason || "Unknown")
-				GenerateToast("error", "Error creating the new file. " + actionResponse.error.reason || "", "📄")
+				GenerateToast("error", GetWord("actionAddToasFailed") + actionResponse.error.reason || "", "📄")
 			} else {
 				contents.update(cts => {
 					cts.push(actionResponse.file)
 					return cts
 				})
-				GenerateToast("success", "File created.", "📄")
+				GenerateToast("success", GetWord("actionAddToastSuccess"), "📄")
 			}
 			break;
 		case "cut":
@@ -160,7 +161,7 @@ export async function doAction(action : string) {
 			const actionResponseRename : models.ActionResponse = await RenameFile(targetFile, newFilename)
 			if(actionResponseRename.error.status) {
 				console.error("File rename err:", actionResponseRename.error.reason || "Unknown")
-				GenerateToast("error", "Error renaming the file. " + actionResponseRename.error.reason || "", "✏️")
+				GenerateToast("error", GetWord("actionRenameToasFailed") + actionResponseRename.error.reason || "", "✏️")
 			} else {
 				contents.update(cts => {
 					for(let i = 0; i < cts.length; i++) {
@@ -169,7 +170,7 @@ export async function doAction(action : string) {
 					}
 					return cts
 				})
-				GenerateToast("success", "File renamed to \"" + newFilename + "\".", "✏️")
+				GenerateToast("success", GetWord("actionRenameToastSuccess")+" \"" + newFilename + "\".", "✏️")
 			}
 			break;
 		case "delete":
@@ -183,12 +184,12 @@ export async function doAction(action : string) {
 			let doneDeletes = 0
 			let todoDeletes = deletingFiles.length
 
-			const JOB_ID = AddJob("Deleting files", -1, "", JobType.DELETE)
+			const JOB_ID = AddJob(GetWord("jobDeleteTitle"), -1, "", JobType.DELETE)
 
 			let progressInterval : number;
 			if(todoDeletes > 1){
 				function updateJobVisual() {
-					UpdateJob(JOB_ID, "Deleting. " + failedDeletes.length + Plural(failedDeletes.length, " file") + " failed.", (doneDeletes * 100 / todoDeletes))
+					UpdateJob(JOB_ID, GetWord("jobDeleteDesc1") + failedDeletes.length + Plural(failedDeletes.length, GetWord("jobDeleteDesc1File")) + (failedDeletes.length == 1 ? GetWord("jobDeleteDesc1FailedSingular") : GetWord("jobDeleteDesc1FailedPlural")), (doneDeletes * 100 / todoDeletes))
 				}
 				updateJobVisual()
 				progressInterval = setInterval(updateJobVisual, 1000)
@@ -238,9 +239,9 @@ export async function doAction(action : string) {
 					resolve(true)
 				}),
 				{
-					loading:"Deleting files 🗑️",
-					success:"Files deleted.",
-					error:"Some files could not be deleted.",
+					loading: GetWord("jobDeleteTitle")+" 🗑️",
+					success: GetWord("jobDeleteToastSuccess"),
+					error: GetWord("jobDeleteToastError"),
 				},
 				{
 					position:'bottom-left'

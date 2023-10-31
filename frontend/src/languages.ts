@@ -18,9 +18,6 @@ export function GetWord(key : string){
 export async function LoadDictionary() {
 	const dict = await Go_LoadDictionary();
 
-	console.log("Loaded language dictionary:")
-	console.log(dict)
-
 	languageDictionary.update(d => {
 		return dict;
 	})

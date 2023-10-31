@@ -18,7 +18,7 @@ export async function PasteFromClipboard() {
 	const targetPath = get(CURRENT_PATH);
 	let donePastes = 0
 	let todoPastes = get(clipboardFiles).length;
-	const JOB_ID = AddJob(GetWord("jobPasteTitle"), -1, GetWord("jobPasteDesc"), JobType.PASTE)
+	const JOB_ID = AddJob(GetWord("jobPasteTitle"), -1, GetWord("jobPasteDesc1"), JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
 		let baseFiles = files

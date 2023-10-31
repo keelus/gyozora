@@ -3,6 +3,7 @@ import { settings } from "./store";
 import type { models } from "../wailsjs/go/models";
 import { Go_LoadSettings, Go_GetSetting, Go_SetSetting, Go_DeleteSetting } from '../wailsjs/go/main/App.js'
 import { GenerateToast } from "./toasts";
+import { GetWord } from "./languages";
 
 export const MIN_ZOOM = 50;
 export const MAX_ZOOM = 150;
@@ -27,7 +28,7 @@ export function GetSetting(name : string) {
 
 export async function SetSetting(name : string, value : string) {
 	if(!IsValidSetting(name, value)) {
-		GenerateToast("error", "That setting cannot have that value.", "⚙️")
+		GenerateToast("error", GetWord("settingsErrorValue"), "⚙️")
 		return
 	}
 

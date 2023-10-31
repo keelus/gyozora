@@ -6,6 +6,7 @@ import { CURRENT_PATH, CURRENT_PATH_BREADCRUMB_ELEMENTS, backHistory, forwardHis
 import { doAction } from './contextMenu.js';
 import { GenerateToast } from './toasts.js';
 import { GetSetting } from './settings.js';
+import { GetWord } from './languages.js';
 
 export async function LoadFolder(newPath : string, goingBack : boolean, goingForward : boolean, ignorePathHistory : boolean) {
 	console.log("Loading folder 📂 ...")
@@ -14,7 +15,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath, newPath)
 
 	if(readPathResponse.error.status) {
-		GenerateToast("error", "Can't open the folder: " + readPathResponse.error.reason || "", "📂")
+		GenerateToast("error", GetWord("readPathError") + readPathResponse.error.reason || "", "📂")
 		return console.log("Error reading path!", readPathResponse.error.reason)
 	}
 
@@ -125,9 +126,9 @@ export async function elementClicked(fpath : string, isfolder : boolean) {
 
 	const actionResponseOpen : models.ActionResponse = await OpenFile(fpath)
 	if(actionResponseOpen.error.status) {
-		GenerateToast("error", "Can't open the file: " + actionResponseOpen.error.reason || "", "🚀")
+		GenerateToast("error", GetWord("actionRenameToasFailed") + actionResponseOpen.error.reason || "", "🚀")
 	} else {
-		GenerateToast("success", "File opened.", "🚀")
+		GenerateToast("success", GetWord("actionOpenToastSuccess"), "🚀")
 	}
 }
 

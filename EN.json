@@ -28,7 +28,6 @@
 	"ctxDelete":"Delete",
 	"ctxProperties":"Properties",
 	
-
 	
 	"modalBtnClose":"Close",
 	"modalBtnCancel":"Cancel",
@@ -37,7 +36,8 @@
 	"modalPropertiesFieldType":"Type",
 	"modalPropertiesFieldLocation":"Location",
 	"modalPropertiesFieldSize":"Size",
-	"modalPropertiesFieldModification":"Modification",
+	"modalPropertiesFieldModification":"Modified",
+	"modalPropertiesFailed":"Error getting file properties",
 	
 	"modalAddTitle":"Create a new file",
 	"modalAddCategoryType":"Type of file",
@@ -69,6 +69,7 @@
 
 	"settingsTitle":"Gyozora settings",
 	"settingsInDevelopment":"In development",
+	"settingsErrorValue": "Error. That settings cannot have that value.",
 
 	"settingsCatAppearance":"Appearance",
 	"settingsCatViewSettings":"View Settings",
@@ -110,12 +111,56 @@
 	"settingsImagePreviewsCacheBtn": "Empty cache",
 
 
+	"readPathError":"Error opening the folder: ",
+
+	"actionOpenToastSuccess":"File opened.",
+	"actionOpenToasFailed":"Can't open the file: ",
+	
+	"actionAddToastSuccess":"File created.",
+	"actionAddToasFailed":"Error creating the file: ",
+	
+	"actionRenameToastSuccess":"File renamed to",
+	"actionRenameToasFailed":"Error renaming the file: ",
+
+
 	"jobPasteTitle":"Pasting files",
 	"jobPasteDesc1":"Discovering folders...",
 	"jobPasteDesc2":"Pasting. ",
 	"jobPasteDesc2File":" file",
-	"jobPasteDesc2FailedSingular":" failed",
-	"jobPasteDesc2FailedPlural":" failed",
-	"jobPasteToastSuccess":"All copied.",
-	"jobPasteToastError":"Some files could not be pasted."
+	"jobPasteDesc2FailedSingular":" failed.",
+	"jobPasteDesc2FailedPlural":" failed.",
+	"jobPasteToastSuccess":"All files copied.",
+	"jobPasteToastError":"Some files could not be pasted.",
+	
+	"jobDeleteTitle":"Deleting files",
+	"jobDeleteDesc1":"Deleting. ",
+	"jobDeleteDesc1File":" file",
+	"jobDeleteDesc1FailedSingular":" failed.",
+	"jobDeleteDesc1FailedPlural":" failed.",
+	"jobDeleteToastSuccess":"All files deleted.",
+	"jobDeleteToastError":"Some files could not be deleted.",
+
+
+	"month_0":"January",
+	"month_1":"February",
+	"month_2":"March",
+	"month_3":"April",
+	"month_4":"May",
+	"month_5":"June",
+	"month_6":"July",
+	"month_7":"August",
+	"month_8":"September",
+	"month_9":"October",
+	"month_10":"November",
+	"month_11":"December",
+	
+	"day_0":"Sunday",
+	"day_1":"Monday",
+	"day_2":"Tuesday",
+	"day_3":"Wednesday",
+	"day_4":"Thursday",
+	"day_5":"Friday",
+	"day_6":"Saturday",
+
+	"clipboardCopySuccess":"Copied to clipboard"
 }
