@@ -64,16 +64,20 @@ function AddListeners() {
 			e.preventDefault()
 			doAction("add")
 		}
+
 		if(e.key == "Enter"){
-			const activeModal = modalParent.getAttribute("data-activeModal")
-			if(activeModal == "")
-				doAction("open")
-			else {
+			const activeModal = modalParent?.getAttribute("data-activeModal")
+			if(activeModal == "") {
+				let keyTarget : HTMLElement  = e.target as HTMLElement;
+				if(keyTarget.classList.contains("file")){
+					doAction("open")
+				}
+			} else {
 				const confirmButton = modalParent.querySelector(`.${activeModal} > .bottom > button.confirm`) as HTMLButtonElement
 				if(confirmButton) confirmButton.click()
 			}
 		} else if(e.key == "Escape"){
-			const activeModal = modalParent.getAttribute("data-activeModal")
+			const activeModal = modalParent?.getAttribute("data-activeModal")
 			if(activeModal == "")
 				$selectedFiles = []
 			else {
@@ -149,8 +153,21 @@ let activeJobsOpened = false;
 
 let settingsWindow : Settings;
 
+let pathInput : HTMLInputElement;
 let searchInputText = "";
 
+
+
+function checkPathEnterkey(e : KeyboardEvent) {
+	if(e.key == "Enter") {
+		const newPath = pathInput.value;
+		pathInput.blur()
+		LoadFolder(newPath, false, false, false);
+	}
+}
+function blurPath(e : FocusEvent) {
+	pathInput.value = $CURRENT_PATH;
+}
 
 </script>
 
@@ -165,8 +182,8 @@ let searchInputText = "";
 	<div class="pathbar">
 		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><Icon icon={IconDictionary["uiArrowLeft"]} class="icon"/></button>
 		<button class="forwardButton" disabled={!$goForwardEnabled} on:click={buttonGoForward}><Icon icon={IconDictionary["uiArrowRight"]} class="icon"/></button>
-		<input class="path" placeholder="Current path..." value={$CURRENT_PATH} disabled/>
-		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText}/>
+		<input class="path" placeholder="Current path..." value={$CURRENT_PATH} on:keydown={e => checkPathEnterkey(e)} bind:this={pathInput} on:blur={e => blurPath(e)}/>
+		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText} />
 	</div>
 	<div class="mainContent">
 		<div class="navPane"><div class="section">
