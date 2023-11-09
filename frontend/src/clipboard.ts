@@ -14,10 +14,13 @@ import { GetWord } from "./languages.js";
 
 
 export async function PasteFromClipboard() {
+	if(!PastableFromClipboard()) return;
+	
 	let failedPastes : models.SysFile[] = []
 	const targetPath = get(CURRENT_PATH);
 	let donePastes = 0
 	let todoPastes = get(clipboardFiles).length;
+	
 	const JOB_ID = AddJob(GetWord("jobPasteTitle"), -1, GetWord("jobPasteDesc1"), JobType.PASTE)
 
 	async function getTree(files : models.SysFile[]) : Promise<models.SysFile[]> {
@@ -151,8 +154,6 @@ export async function PasteFromClipboard() {
 
 
 	(async function main() {
-		if(!PastableFromClipboard()) return;
-
 		const pastingFiles = get(clipboardFiles)
 
 		const beginning = new Date()

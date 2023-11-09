@@ -56,36 +56,58 @@ async function FirstStart() {
 
 function AddListeners() {
 	document.addEventListener('contextmenu', e => e.preventDefault());
-	document.addEventListener("mousedown", e => (e.button === 3 && buttonGoBack()) || (e.button === 4 && buttonGoForward()));
-	document.addEventListener("keyup", e => e.key == "Delete" && doAction("delete"));
-	document.addEventListener("keydown", e => {
-		if(e.shiftKey && e.ctrlKey && e.key == "N"){ // For folder by default creating
-			e.preventDefault()
-			doAction("add")
+	document.addEventListener("mousedown", e => {
+		switch(e.button){
+			case 3:
+				buttonGoBack()
+				break;
+			case 4:
+				buttonGoForward()
+				break;
 		}
-
-		if(e.key == "Enter"){
-			const activeModal = modalParent?.getAttribute("data-activeModal")
-			if(activeModal == "") {
-				let keyTarget : HTMLElement  = e.target as HTMLElement;
-				if(keyTarget.classList.contains("file")){
-					doAction("open")
+	})
+	document.addEventListener("keydown", e => {
+		let activeModal = null;
+		switch(e.key) {
+			case "Enter":
+				activeModal = modalParent?.getAttribute("data-activeModal")
+				if(activeModal == "") {
+					let keyTarget : HTMLElement  = e.target as HTMLElement;
+					if(keyTarget.classList.contains("file")){
+						doAction("open")
+					}
+				} else {
+					const confirmButton = modalParent.querySelector(`.${activeModal} > .bottom > button.confirm`) as HTMLButtonElement
+					if(confirmButton) confirmButton.click()
 				}
-			} else {
-				const confirmButton = modalParent.querySelector(`.${activeModal} > .bottom > button.confirm`) as HTMLButtonElement
-				if(confirmButton) confirmButton.click()
-			}
-		} else if(e.key == "Escape"){
-			const activeModal = modalParent?.getAttribute("data-activeModal")
-			if(activeModal == "")
-				$selectedFiles = []
-			else {
-				const cancelButton = modalParent.querySelector(`.${activeModal} > .bottom > button.cancel`) as HTMLButtonElement
-				if(cancelButton) cancelButton.click()
-			}
+				break;
+			case "Escape":
+				activeModal = modalParent?.getAttribute("data-activeModal")
+				if(activeModal == "")
+					$selectedFiles = []
+				else {
+					const cancelButton = modalParent.querySelector(`.${activeModal} > .bottom > button.cancel`) as HTMLButtonElement
+					if(cancelButton) cancelButton.click()
+				}
+				break;
+			case "Delete":
+				doAction("delete");
+				break;
+			case "F2":
+				doAction("rename")
+				break;
+			case "N":
+				if(e.shiftKey && e.ctrlKey){ // For folder by default creating
+					e.preventDefault()
+					doAction("add")
+				}
+				break;
 		}
 	});
-	document.addEventListener("mousewheel", e => {
+
+	document.addEventListener("mousewheel", event => {
+		const e : WheelEvent = event as WheelEvent
+
 		if(!e.ctrlKey) return;
 		const goingUp = e.deltaY === -100;
 		

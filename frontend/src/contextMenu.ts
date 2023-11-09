@@ -109,9 +109,6 @@ export async function setContextMenuOptions(mode : string) {
 
 
 export async function doAction(action : string) {
-	const selFiles = get(selectedFiles)
-	console.log(selFiles)
-	console.log("🔥 Doing the action: ", action)
 	switch(action) {
 		case "open":
 			const selFile = get(selectedFiles)[0]
@@ -152,6 +149,9 @@ export async function doAction(action : string) {
 			PasteFromClipboard()
 			break;
 		case "rename":
+			if(get(selectedFiles).length == 0) return;
+			if(!document.activeElement?.classList.contains("file")) return;
+
 			const modalResponseRename = await OpenModal({modalName:"rename", file:get(selectedFiles)[0]})
 			if(modalResponseRename?.cancelled) return
 
@@ -163,10 +163,13 @@ export async function doAction(action : string) {
 				console.error("File rename err:", actionResponseRename.error.reason || "Unknown")
 				GenerateToast("error", GetWord("actionRenameToasFailed") + actionResponseRename.error.reason || "", "✏️")
 			} else {
+				selectedFiles.set([])
 				contents.update(cts => {
 					for(let i = 0; i < cts.length; i++) {
-						if(cts[i].pathfull == targetFile.pathfull)
+						if(cts[i].pathfull == targetFile.pathfull){
 							cts[i] = actionResponseRename.file
+							selectedFiles.set([cts[i]])
+						}
 					}
 					return cts
 				})
@@ -174,13 +177,15 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "delete":
-			const deletingFiles = get(selectedFiles)
 			if(get(selectedFiles).length == 0) return;
+			if(!document.activeElement?.classList.contains("file")) return;
+			
 			if(GetSetting("showDeleteConfirmation") === "true") {
 				const modalResponseDelete = await OpenModal({modalName:"delete"})
 				if(modalResponseDelete?.cancelled) return;
 			}
 			
+			const deletingFiles = get(selectedFiles)
 			let failedDeletes : models.SysFile[] = []
 			let doneDeletes = 0
 			let todoDeletes = deletingFiles.length

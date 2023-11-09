@@ -17,7 +17,6 @@ import { activeJobs } from './store'
 
 export function AddJob(title : string, progress : number, additional : string, jobType : JobType) : string {
 	let newID = Math.round(Math.random() * 100).toString()
-	console.log("ADDING JOB. NEW ID =", newID)
 	activeJobs.update(aJobs => {
 		let newJob : ActiveJob = {title: title, progress:progress, additional: additional, jType: jobType}
 		aJobs[newID] = newJob;

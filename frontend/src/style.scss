@@ -790,6 +790,7 @@ main > .bottom {
 	align-items: center;
 	background:rgba(var(--bg-r), var(--bg-g), var(--bg-b), .9);
 	z-index:999;
+	gap:20px;
 	
 	.modal {
 		padding:0 15px;
@@ -1019,13 +1020,7 @@ main > .bottom {
 	}
 
 	&[data-activemodal=""] {display:none;}
-
-	&[data-activemodal="newFile"] > .modal.newFile {display:flex;}
-	&[data-activemodal="rename"] > .modal.rename {display:flex;}
-	&[data-activemodal="delete"] > .modal.delete {display:flex;}
-	&[data-activemodal="properties"] > .modal.properties {display:flex;}
-	&[data-activemodal="pasteErrorLog"] > .modal.pasteErrorLog {display:flex;}
-	&[data-activemodal="deleteErrorLog"] > .modal.deleteErrorLog {display:flex;}
+	&:not([data-activemodal=""]) > .modal {display:flex;}
 	
 
 }

@@ -25,7 +25,6 @@ export async function WaitForModalResponse() {
 
 	return new Promise(resolve => {
 		cancelButton.addEventListener("click", () => {
-			console.log("Modal cancel button")
 			resolve(-1)
 		})
 	})
