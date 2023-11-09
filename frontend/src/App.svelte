@@ -168,9 +168,6 @@ function checkPathEnterkey(e : KeyboardEvent) {
 function pathOnFocus(e : FocusEvent) {
 	pathInput.value = $CURRENT_PATH;
 	pathIsFocus = true;
-
-
-	console.log(renderBytes(1289780))
 }
 function pathOnBlur(e : FocusEvent) {
 	pathInput.value = $CURRENT_PATH;

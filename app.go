@@ -70,6 +70,8 @@ func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse 
 	}
 
 	// Load path as breadcrumbs
+	fmt.Println("Breadcrumbs for" + path)
+	fmt.Println(GetPathFolders(path))
 	for _, folderPath := range GetPathFolders(path) {
 		generatedBreadcrumb, err := fileUtils.GenerateSysFile(currentpath, folderPath)
 		if err == nil {
