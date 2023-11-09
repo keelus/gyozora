@@ -15,7 +15,7 @@ export function renderBytes(bytes : number) : string {
 	return bytes.toString()
 }
 
-export function renderDate(dateUnix : number) : string { // TODO: Render for different languages
+export function renderDate(dateUnix : number) : string {
 	const modifTime = new Date(dateUnix * 1000)
 	
 	const dayWeek = GetWord("day_" + modifTime.getDay())

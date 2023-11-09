@@ -160,7 +160,7 @@ export async function PasteFromClipboard() {
 		fileTree = await getTree(pastingFiles);
 
 		fileTree.sort((a, b) => {
-			if(a.isFolder && b.isFolder) { // TODO: Get real folder file sizes
+			if(a.isFolder && b.isFolder) {
 				let aLength = ((a.childrenFiles?.length ?? 0) + (a.childrenFolders?.length ?? 0))
 				let bLength = ((b.childrenFiles?.length ?? 0) + (b.childrenFolders?.length ?? 0))
 				return aLength - bLength

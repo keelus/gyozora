@@ -1,11 +1,11 @@
 import folderFill from '@iconify/icons-ri/folder-fill';
 import computerLine from '@iconify/icons-ri/computer-line';
 import folderDownloadFill from '@iconify/icons-ri/folder-download-fill';
-import foldersFill from '@iconify/icons-ri/folders-fill';// TODO: Different
+import foldersFill from '@iconify/icons-ri/folders-fill';
 import folderImageFill from '@iconify/icons-ri/folder-image-fill';
 import folderMusicFill from '@iconify/icons-ri/folder-music-fill';
 import hardDrive3Fill from '@iconify/icons-ri/hard-drive-3-fill';
-import appStoreFill from '@iconify/icons-ri/app-store-fill';// TODO: Different
+import appStoreFill from '@iconify/icons-ri/app-store-fill';
 import folderVideoFill from '@iconify/icons-ri/folder-video-fill';
 
 import file3Fill from '@iconify/icons-ri/file-3-fill';
