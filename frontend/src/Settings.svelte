@@ -160,7 +160,7 @@ $: lang = $settings && $languageDictionary
 						</div>
 					</div>
 				{:else if activeCategory == SettingCategories.ACCESSIBILITY}
-					<div class="element inDevelopment" style="--text:'{lang && GetWord("settingsInDevelopment")}';">
+					<div class="element">
 						<div class="title">{lang && GetWord("settingsAccessibilityLanguageTitle")}</div>
 						<div class="description">{lang && GetWord("settingsAccessibilityLanguageDesc")}</div>
 						<button class="option"  class:active={$settings && GetSetting("language") == "EN"} on:click={() => SetSetting("language", "EN")}>{lang && GetWord("settingsAccessibilityLanguageBtnEN")}</button>
