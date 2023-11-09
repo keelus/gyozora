@@ -153,11 +153,11 @@ let activeJobsOpened = false;
 
 let settingsWindow : Settings;
 
-let pathInput : HTMLInputElement;
+
 let searchInputText = "";
 
-
-
+let pathInput : HTMLInputElement;
+let pathIsFocus : boolean = false;
 function checkPathEnterkey(e : KeyboardEvent) {
 	if(e.key == "Enter") {
 		const newPath = pathInput.value;
@@ -165,8 +165,23 @@ function checkPathEnterkey(e : KeyboardEvent) {
 		LoadFolder(newPath, false, false, false);
 	}
 }
-function blurPath(e : FocusEvent) {
+function pathOnFocus(e : FocusEvent) {
 	pathInput.value = $CURRENT_PATH;
+	pathIsFocus = true;
+}
+function pathOnBlur(e : FocusEvent) {
+	pathInput.value = $CURRENT_PATH;
+	pathIsFocus = false;
+}
+
+function pathGoRefreshAction() {
+	if(pathIsFocus){
+		const newPath = pathInput.value;
+		pathInput.blur()
+		LoadFolder(newPath, false, false, false);
+	} else {
+		LoadFolder($CURRENT_PATH, false, false, true);
+	}
 }
 
 </script>
@@ -182,7 +197,16 @@ function blurPath(e : FocusEvent) {
 	<div class="pathbar">
 		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><Icon icon={IconDictionary["uiArrowLeft"]} class="icon"/></button>
 		<button class="forwardButton" disabled={!$goForwardEnabled} on:click={buttonGoForward}><Icon icon={IconDictionary["uiArrowRight"]} class="icon"/></button>
-		<input class="path" placeholder="Current path..." value={$CURRENT_PATH} on:keydown={e => checkPathEnterkey(e)} bind:this={pathInput} on:blur={e => blurPath(e)}/>
+		<div class="inputWithButton">
+			<input class="path" placeholder="Current path..." value={$CURRENT_PATH} on:keydown={e => checkPathEnterkey(e)} bind:this={pathInput} on:blur={e => pathOnBlur(e)} on:focus={e => pathOnFocus(e)}/>
+			<button class="pathGoRefresh" on:mousedown={pathGoRefreshAction}>
+				{#if pathIsFocus}
+					<Icon icon={IconDictionary["uiArrowRight"]} class="icon"/>
+				{:else}
+					<Icon icon={IconDictionary["uiRefresh"]} class="icon"/>
+				{/if}
+			</button>
+		</div>
 		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText} />
 	</div>
 	<div class="mainContent">

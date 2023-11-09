@@ -67,6 +67,7 @@ import arrowLeftLine from '@iconify/icons-ri/arrow-left-line';
 import arrowLeftSLine from '@iconify/icons-ri/arrow-left-s-line';
 import arrowRightLine from '@iconify/icons-ri/arrow-right-line';
 import arrowRightSLine from '@iconify/icons-ri/arrow-right-s-line';
+import refreshLine from '@iconify/icons-ri/refresh-line';
 import home4Line from '@iconify/icons-ri/home-4-line';
 import settings3Fill from '@iconify/icons-ri/settings-3-fill';
 import closeFill from '@iconify/icons-ri/close-fill';
@@ -144,6 +145,7 @@ export const IconDictionary : {[key:string]:any} = {
 	"uiArrowLeftS":			arrowLeftSLine,
 	"uiArrowRight":			arrowRightLine,
 	"uiArrowRightS":		arrowRightSLine,
+	"uiRefresh":			refreshLine,
 	"uiHome":				home4Line,
 	"uiSettingsGear":		settings3Fill,
 	"uiClose":				closeFill,

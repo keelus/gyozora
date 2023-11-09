@@ -151,7 +151,7 @@ input[type=text]::selection {
 	padding:0 10px;
 	gap:10px;	box-sizing: border-box;
 
-	& > .backButton, & > .forwardButton {
+	& > .backButton, & > .forwardButton, & > .inputWithButton > .pathGoRefresh {
 		width:25px;
 		height:25px;
 		color:var(--font-1);
@@ -183,7 +183,7 @@ input[type=text]::selection {
 		}
 	}
 
-	& > .path , & > .search {
+	& > .inputWithButton > .path , & > .search {
 		height:35px;
 		padding:0;
 		margin:0;
@@ -201,6 +201,22 @@ input[type=text]::selection {
 		&.path {
 			color:var(--font-2);
 			flex:1;
+		}
+	}
+
+	& > .inputWithButton {
+		display:flex;
+		flex:1;
+		justify-content: center;
+		align-items: center;
+		height:35px;
+		position:relative;
+
+		& > .path {
+		}
+		& > .pathGoRefresh {
+			position:absolute;
+			right:5px;
 		}
 	}
 }

@@ -12,6 +12,8 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	console.log("Loading folder 📂 ...")
 	// Check if we are able to open directory
 
+	newPath = newPath.replace(/[\/\\]+$/, '')
+
 	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath, newPath)
 
 	if(readPathResponse.error.status) {
