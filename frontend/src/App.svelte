@@ -149,6 +149,9 @@ let activeJobsOpened = false;
 
 let settingsWindow : Settings;
 
+let searchInputText = "";
+
+
 </script>
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
@@ -163,7 +166,7 @@ let settingsWindow : Settings;
 		<button class="backButton" disabled={!$goBackEnabled} on:click={buttonGoBack}><Icon icon={IconDictionary["uiArrowLeft"]} class="icon"/></button>
 		<button class="forwardButton" disabled={!$goForwardEnabled} on:click={buttonGoForward}><Icon icon={IconDictionary["uiArrowRight"]} class="icon"/></button>
 		<input class="path" placeholder="Current path..." value={$CURRENT_PATH} disabled/>
-		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text"/>
+		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText}/>
 	</div>
 	<div class="mainContent">
 		<div class="navPane"><div class="section">
@@ -242,29 +245,31 @@ let settingsWindow : Settings;
 				<span class="text">{lang && GetWord("ctxProperties")}</span>
 			</button>
 		</div>
-		{#if $contents.length == 0}
-			<div class="emptyMessage">{lang && GetWord("fileBrowserEmpty")} 👎</div>
-		{/if}
 		{#each $contents as content}
 			{#if content != undefined}
-				{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
-					<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{lang && GetWord("hoverName")}{content.filename}&#013;{lang && GetWord("hoverSize")}{renderBytes(content.size)}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)} style="--zoom:{$settings && GetSetting("zoomLevel")}">
-						{#if content.iconClass == "fileImage" && content.preview != "" && $settings && GetSetting("useThumbnails") === "true"}
-							<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
-						{:else}
-							<div class="iconOuter">
-								{#if content.iconClass.startsWith("file_")}
-									<Icon icon={GetIconByType("file_")} class="icon file_ {$USER_OS}"/>
-								{/if}
-								<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
+				{#if content.filename.includes(searchInputText)}
+					{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
+						<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{lang && GetWord("hoverName")}{content.filename}&#013;{lang && GetWord("hoverSize")}{renderBytes(content.size)}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)} style="--zoom:{$settings && GetSetting("zoomLevel")}">
+							{#if content.iconClass == "fileImage" && content.preview != "" && $settings && GetSetting("useThumbnails") === "true"}
+								<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
+							{:else}
+								<div class="iconOuter">
+									{#if content.iconClass.startsWith("file_")}
+										<Icon icon={GetIconByType("file_")} class="icon file_ {$USER_OS}"/>
+									{/if}
+									<Icon icon={GetIconByType(content.iconClass)} class="icon {content.iconClass} {content.iconClass.startsWith("file_") ? "file_icon" : ""} {$USER_OS}"/>
+								</div>
+							{/if}
+							<div class="text">{content.name}{$settings && GetSetting("showExtensions") === "true" ? content.extension : ""}
 							</div>
-						{/if}
-						<div class="text">{content.name}{$settings && GetSetting("showExtensions") === "true" ? content.extension : ""}
-						</div>
-					</button>
+						</button>
+					{/if}
 				{/if}
 			{/if}
 		{/each}
+		{#if searchInputText && $contents && ($contents.length == 0 || fileBrowser.querySelectorAll(".file").length == 0)}
+			<div class="emptyMessage">{lang && GetWord("fileBrowserEmpty")} 👎</div>
+		{/if}
 		</div>
 	</div>
 	<div class="loader">
