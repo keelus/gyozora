@@ -139,6 +139,9 @@
 	"jobDeleteDesc1FailedPlural":" failed.",
 	"jobDeleteToastSuccess":"All files deleted.",
 	"jobDeleteToastError":"Some files could not be deleted.",
+	
+	"jobRenderTitle":"Indexing previews",
+	"jobRenderDesc":"Indexing file preview icons.",
 
 
 	"month_0":"January",

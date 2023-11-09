@@ -139,6 +139,9 @@
 	"jobDeleteDesc1FailedPlural":" fallados.",
 	"jobDeleteToastSuccess":"Todos los archivos borrados.",
 	"jobDeleteToastError":"Algunos archivos no pudieron ser borrados.",
+	
+	"jobRenderTitle":"Indexando previews",
+	"jobRenderDesc":"Generando previews de archivos.",
 
 
 	"month_0":"Enero",

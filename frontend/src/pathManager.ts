@@ -7,6 +7,7 @@ import { doAction } from './contextMenu.js';
 import { GenerateToast } from './toasts.js';
 import { GetSetting } from './settings.js';
 import { GetWord } from './languages.js';
+import { AddJob, JobType, RemoveJob, UpdateJob } from './activeJobsLogin.js';
 
 export async function LoadFolder(newPath : string, goingBack : boolean, goingForward : boolean, ignorePathHistory : boolean) {
 	console.log("Loading folder 📂 ...")
@@ -83,10 +84,12 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	const useThumbnails = GetSetting("useThumbnails") === "true"
 	const useCache = GetSetting("useCache") === "true"
 
+	let frontJobID = "-1";
 	if (previewTotalCount == 0 || !useThumbnails) {
 		console.log("NO PREVIEW NEEDED")
 	} else {
 		let remaining = previewTotalCount
+		frontJobID = AddJob(GetWord("jobRenderTitle"), 0, GetWord("jobRenderDesc"), JobType.RENDER);
 		console.log("Current job: ", get(currentJob))
 
 		for(let i = 0; i < directoryElements.length; i++ ){
@@ -100,7 +103,8 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 			remaining -= 1 
 
 			let newPreview =  await RenderPreview(directoryElements[i],  batchUnix, remaining, useCache);
-			previewProgress.set(((previewTotalCount - remaining) * 100 / previewTotalCount).toFixed(2))
+			const progress = (previewTotalCount - remaining) * 100 / previewTotalCount
+			previewProgress.set(progress.toFixed(2))
 
 			if(get(currentJob) != batchUnix) {
 				console.log("COMPLETLY CANCELLED !")
@@ -112,6 +116,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 				cts[i].preview = newPreview.preview
 				return cts
 			})
+			UpdateJob(frontJobID, GetWord("jobRenderDesc"), progress)
 		}
 	}
 	
@@ -119,6 +124,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 		console.log("Preview render finished")
 		currentJob.set(-1)
 	}
+	RemoveJob(frontJobID)
 	previewProgress.set("100")
 }
 export async function elementClicked(fpath : string, isfolder : boolean) {
