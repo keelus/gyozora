@@ -477,7 +477,7 @@ func (a *App) Go_DeleteSetting(name string) models.SimpleError {
 	return models.SimpleError{Status: false}
 }
 
-func (a *App) Go_CacheSize() string {
+func (a *App) Go_CacheSize() int {
 	cache := make([]models.CachePreview, 0)
 	data.DataDB.Select(&cache, "SELECT * FROM cache")
 
@@ -488,13 +488,7 @@ func (a *App) Go_CacheSize() string {
 		sizeB += len(cacheElem.Preview)
 	}
 
-	if sizeB == 0 {
-		return "0B"
-	}
-
-	sizeKB := float64(sizeB) / 1024.0
-
-	return fmt.Sprintf("%.2fKB", sizeKB)
+	return sizeB
 }
 
 func (a *App) Go_CacheClear() models.SimpleError {

@@ -18,11 +18,14 @@ import { Go_CacheSize, Go_CacheClear } from '../wailsjs/go/main/App';
 
 import darkThemeIMG from './assets/images/darkTheme.png'
 import lightThemeIMG from './assets/images/lightTheme.png'
-  import { GetWord } from './languages';
+import { GetWord } from './languages';
+
+import { renderBytes } from './utils';
+  import { GenerateToast } from './toasts';
 
 
 let activeCategory = 0;
-let cacheSize = "0B"
+let cacheSize = 0
 
 
 export async function OpenSettings() {
@@ -40,8 +43,11 @@ export function CloseSettings() {
 async function ClearCache() {
 	const error : models.SimpleError = await Go_CacheClear()
 	if(error.status) 
-		console.log("Error clearing cache")
-	else cacheSize = "0B"
+		GenerateToast("error", GetWord("cacheEmptyError"), "🧹")
+	else {
+		cacheSize = 0
+		GenerateToast("success", GetWord("cacheEmptySuccess"), "🧹")
+	}
 }
 
 let opened = false;
@@ -217,9 +223,9 @@ $: lang = $settings && $languageDictionary
 					{/if}
 					<div class="element">
 						<div class="double">
-							<div class="description" style="flex:unset;margin-right:10px;">{lang && GetWord("settingsImagePreviewsCacheInUse")}: {cacheSize}</div>
+							<div class="description" style="flex:unset;margin-right:10px;">{lang && GetWord("settingsImagePreviewsCacheInUse")}: {renderBytes(cacheSize) }</div>
 							<div class="value">
-								<button class="cacheButton" disabled={cacheSize === "0B"} on:click={() => ClearCache()} >{lang && GetWord("settingsImagePreviewsCacheBtn")}</button>
+								<button class="cacheButton" disabled={cacheSize === 0} on:click={() => ClearCache()} >{lang && GetWord("settingsImagePreviewsCacheBtn")}</button>
 							</div>
 						</div>
 					</div>

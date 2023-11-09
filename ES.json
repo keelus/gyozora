@@ -108,7 +108,7 @@
 	"settingsImagePreviewsCacheTitle": "Usar caché",
 	"settingsImagePreviewsCacheDesc": "Guarda estas previews en caché, para hacer que las siguientes veces la preview sea mucho más rápida",
 	"settingsImagePreviewsCacheInUse": "Caché en uso",
-	"settingsImagePreviewsCacheBtn": "Limpiar caché",
+	"settingsImagePreviewsCacheBtn": "Vaciar caché",
 
 
 	"readPathError":"Error al abrir la carpeta: ",
@@ -162,5 +162,8 @@
 	"day_5":"Viernes",
 	"day_6":"Sábado",
 
-	"clipboardCopySuccess":"Copiado al portapapeles"
+	"clipboardCopySuccess":"Copiado al portapapeles",
+	
+	"cacheEmptySuccess":"Caché vaciada.",
+	"cacheEmptyError":"Ha habido un error al vaciar la caché."
 }
