@@ -174,12 +174,13 @@ export async function doAction(action : string) {
 			}
 			break;
 		case "delete":
+			const deletingFiles = get(selectedFiles)
+			if(get(selectedFiles).length == 0) return;
 			if(GetSetting("showDeleteConfirmation") === "true") {
 				const modalResponseDelete = await OpenModal({modalName:"delete"})
 				if(modalResponseDelete?.cancelled) return;
 			}
 			
-			const deletingFiles = get(selectedFiles)
 			let failedDeletes : models.SysFile[] = []
 			let doneDeletes = 0
 			let todoDeletes = deletingFiles.length
