@@ -97,25 +97,37 @@ func GetPathFolders(fpath string) []string {
 }
 
 func (a *App) LoadPinnedFolders() []models.LeftBarElement {
-	pinnedFolders := make([]models.LeftBarElement, 0)
+	pinnedFoldersLBE := make([]models.LeftBarElement, 0)
+	pinnedFolders := make([]string, 0)
 
-	if runtime.GOOS == "windows" {
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Desktop", Type: "folderDesktop", Path: filepath.Join(sysUtils.UserHomedir(), "Desktop")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Downloads", Type: "folderDownloads", Path: filepath.Join(sysUtils.UserHomedir(), "Downloads")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Documents", Type: "folderDocuments", Path: filepath.Join(sysUtils.UserHomedir(), "Documents")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Pictures", Type: "folderPictures", Path: filepath.Join(sysUtils.UserHomedir(), "Pictures")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Music", Type: "folderMusic", Path: filepath.Join(sysUtils.UserHomedir(), "Music")})
-	} else if runtime.GOOS == "darwin" {
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Applications", Type: "folderApplications", Path: filepath.Join(sysUtils.UserRoots()[0], "Applications")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Desktop", Type: "folderDesktop", Path: filepath.Join(sysUtils.UserHomedir(), "Desktop")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Documents", Type: "folderDocuments", Path: filepath.Join(sysUtils.UserHomedir(), "Documents")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Downloads", Type: "folderDownloads", Path: filepath.Join(sysUtils.UserHomedir(), "Downloads")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Pictures", Type: "folderPictures", Path: filepath.Join(sysUtils.UserHomedir(), "Pictures")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Music", Type: "folderMusic", Path: filepath.Join(sysUtils.UserHomedir(), "Music")})
-		pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Movies", Type: "folderMovies", Path: filepath.Join(sysUtils.UserHomedir(), "Movies")})
+	pinnedFoldersStr := ""
+	data.DataDB.QueryRow("SELECT value FROM config WHERE name='pinnedFolders'").Scan(&pinnedFoldersStr)
+
+	_ = json.Unmarshal([]byte(pinnedFoldersStr), &pinnedFolders)
+
+	for _, pinnedFolder := range pinnedFolders {
+		folderName := filepath.Base(pinnedFolder)
+		folderType := fileUtils.GetFileType(folderName, "", true)
+		pinnedFoldersLBE = append(pinnedFoldersLBE, models.LeftBarElement{Name: folderName, Type: folderType, Path: pinnedFolder})
 	}
 
-	return pinnedFolders
+	// if runtime.GOOS == "windows" {
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Desktop", Type: "folderDesktop", Path: filepath.Join(sysUtils.UserHomedir(), "Desktop")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Downloads", Type: "folderDownloads", Path: filepath.Join(sysUtils.UserHomedir(), "Downloads")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Documents", Type: "folderDocuments", Path: filepath.Join(sysUtils.UserHomedir(), "Documents")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Pictures", Type: "folderPictures", Path: filepath.Join(sysUtils.UserHomedir(), "Pictures")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Music", Type: "folderMusic", Path: filepath.Join(sysUtils.UserHomedir(), "Music")})
+	// } else if runtime.GOOS == "darwin" {
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Applications", Type: "folderApplications", Path: filepath.Join(sysUtils.UserRoots()[0], "Applications")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Desktop", Type: "folderDesktop", Path: filepath.Join(sysUtils.UserHomedir(), "Desktop")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Documents", Type: "folderDocuments", Path: filepath.Join(sysUtils.UserHomedir(), "Documents")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Downloads", Type: "folderDownloads", Path: filepath.Join(sysUtils.UserHomedir(), "Downloads")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Pictures", Type: "folderPictures", Path: filepath.Join(sysUtils.UserHomedir(), "Pictures")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Music", Type: "folderMusic", Path: filepath.Join(sysUtils.UserHomedir(), "Music")})
+	// 	pinnedFolders = append(pinnedFolders, models.LeftBarElement{Name: "Movies", Type: "folderMovies", Path: filepath.Join(sysUtils.UserHomedir(), "Movies")})
+	// }
+
+	return pinnedFoldersLBE
 }
 
 func (a *App) LoadYourComputer() []models.LeftBarElement {
@@ -525,4 +537,55 @@ func DictionaryData(lang string) map[string]string {
 		json.Unmarshal([]byte(jsonContentES), &loadedDictionary)
 	}
 	return loadedDictionary
+}
+
+func (a *App) Go_TogglePin(folderToPin string) error {
+	pinnedFolders := make([]string, 0)
+	newPinnedFolders := make([]string, 0)
+
+	pinnedFoldersStr := ""
+	data.DataDB.QueryRow("SELECT value FROM config WHERE name='pinnedFolders'").Scan(&pinnedFoldersStr)
+
+	_ = json.Unmarshal([]byte(pinnedFoldersStr), &pinnedFolders)
+
+	if len(pinnedFolders) == 0 {
+		newPinnedFolders = append(newPinnedFolders, folderToPin)
+	} else {
+		exists := false
+		for _, pinnedFolder := range pinnedFolders {
+			if pinnedFolder != folderToPin {
+				newPinnedFolders = append(newPinnedFolders, pinnedFolder)
+			} else {
+				exists = true
+			}
+		}
+		if !exists {
+			newPinnedFolders = append(newPinnedFolders, folderToPin)
+		}
+	}
+
+	newPinnedFoldersStr, err := json.Marshal(newPinnedFolders)
+	if err != nil {
+		fmt.Println("Error while saving the new pinned folders")
+		return err
+	}
+
+	a.Go_SetSetting("pinnedFolders", string(newPinnedFoldersStr))
+	return nil
+}
+
+func (a *App) Go_IsFolderPinned(folderPath string) bool {
+	pinnedFolders := make([]string, 0)
+
+	pinnedFoldersStr := ""
+	data.DataDB.QueryRow("SELECT value FROM config WHERE name='pinnedFolders'").Scan(&pinnedFoldersStr)
+
+	_ = json.Unmarshal([]byte(pinnedFoldersStr), &pinnedFolders)
+
+	for _, pinnedFolder := range pinnedFolders {
+		if pinnedFolder == folderPath {
+			return true
+		}
+	}
+	return false
 }

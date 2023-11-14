@@ -26,6 +26,8 @@
 	"ctxPaste":"Paste",
 	"ctxRename":"Rename",
 	"ctxDelete":"Delete",
+	"ctxAddToPinned": "Add to pinned folders",
+	"ctxRemoveFromPinned": "Remove from pinned folders",
 	"ctxProperties":"Properties",
 	
 	

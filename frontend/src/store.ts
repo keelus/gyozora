@@ -24,6 +24,9 @@ export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boole
 	paste:{show:true,disabled:false},
 	rename:{show:true,disabled:false},
 	delete:{show:true,disabled:false},
+	addToPinned:{show:true,disabled:false},
+	removeFromPinned:{show:true,disabled:false},
 	properties:{show:true,disabled:false}
 })
 export const languageDictionary = writable<{[key:string]:{[key:string]:string}}>({})
+export const pinnedFolders = writable<models.LeftBarElement[]>([]);

@@ -10,7 +10,7 @@ import appicon from './assets/icons/gyozora.svg'
 // UI Icons
 import Icon from '@iconify/svelte';
 // Gyozora browser, icons & logic
-import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS, settings, languageDictionary } from "./store";
+import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS, settings, languageDictionary, pinnedFolders } from "./store";
 import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
 import { IconDictionary, GetIconByType } from "./icons";
 import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
@@ -20,7 +20,6 @@ import { Toaster } from 'svelte-french-toast';
 import zoomOutLine from '@iconify/icons-ri/zoom-out-line';
 import zoomInLine from '@iconify/icons-ri/zoom-in-line';
 
-let pinnedFolders : models.LeftBarElement[] = []
 let yourComputer : models.LeftBarElement[] = []
 
 let fileBrowser : HTMLDivElement;
@@ -46,7 +45,7 @@ async function FirstStart() {
 	AddListeners()
 	USER_OS.set(await GetUserOS());
 	$CURRENT_PATH = await GetStartingPath()
-	pinnedFolders = await LoadPinnedFolders()
+	pinnedFolders.set(await LoadPinnedFolders())
 	yourComputer = await LoadYourComputer()
 	LoadSettings()
 	LoadFolder($CURRENT_PATH, false, false, true)
@@ -231,21 +230,22 @@ function pathGoRefreshAction() {
 		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText} />
 	</div>
 	<div class="mainContent">
-		<div class="navPane"><div class="section">
-			<div class="elements">
-				<div class="element">
-					<Icon icon={IconDictionary["uiHome"]} class="icon home"/>
-					<div class="text">{lang && GetWord("sideBtnHome")}</div>
+		<div class="navPane">
+			<div class="section">
+				<div class="elements">
+					<div class="element">
+						<Icon icon={IconDictionary["uiHome"]} class="icon home"/>
+						<div class="text">{lang && GetWord("sideBtnHome")}</div>
+					</div>
 				</div>
 			</div>
-		</div>
 			<div class="section">
 				<div class="title"><span class="text">{lang && GetWord("pinnedFolders")}</span></div>
 				<div class="elements">
-				{#if pinnedFolders.length == 0}
+				{#if $pinnedFolders.length == 0}
 					<div class="emptyMessage">{lang && GetWord("pinnedFoldersEmpty")} 👎</div>
 				{/if}
-					{#each pinnedFolders as content}
+					{#each $pinnedFolders as content}
 						<button class="element {$CURRENT_PATH == content.path ? "active" : ""}" on:click={() => elementClicked(content.path, true)}>
 							<Icon icon={IconDictionary[content.type]} class="icon {content.type} {$USER_OS}"/>
 							<div class="text">{content.name}</div>
@@ -271,38 +271,47 @@ function pathGoRefreshAction() {
 
 	<div class="fileBrowser" bind:this={fileBrowser}>
 		<div class="fileContextMenu" bind:this={fileContextMenu}>
-			<button class:disabled={$fileContextMenuOptions.add.disabled} class:hide={!$fileContextMenuOptions.add.show} class="element" on:click={() => doAction("add")}>
+			<button class:disabled={$fileContextMenuOptions.add.disabled} class:hide={!$fileContextMenuOptions.add.show} class="ctxMenuButton element" on:click={() => doAction("add")}>
 				<Icon icon={IconDictionary.ctxMenuAdd} class="icon add" />
 				<span class="text">{lang && GetWord("ctxAdd")}</span>
 			</button>
-			<button class:disabled={$fileContextMenuOptions.open.disabled} class:hide={!$fileContextMenuOptions.open.show} class="element"on:click={() => doAction("open")}>
+			<button class:disabled={$fileContextMenuOptions.open.disabled} class:hide={!$fileContextMenuOptions.open.show} class="ctxMenuButton element"on:click={() => doAction("open")}>
 				<Icon icon={IconDictionary.ctxMenuOpen} class="icon open" />
 				<span class="text">{lang && GetWord("ctxOpen")}</span>
 			</button>
 			<div class:hide={!$fileContextMenuOptions.add.show && !$fileContextMenuOptions.open.show} class="divider"></div>
-			<button class:disabled={$fileContextMenuOptions.cut.disabled} class:hide={!$fileContextMenuOptions.cut.show} class="element"on:click={() => doAction("cut")}>
+			<button class:disabled={$fileContextMenuOptions.cut.disabled} class:hide={!$fileContextMenuOptions.cut.show} class="ctxMenuButton element"on:click={() => doAction("cut")}>
 				<Icon icon={IconDictionary.ctxMenuCut} class="icon cut" />
 				<span class="text">{lang && GetWord("ctxCut")}</span>
 			</button>
-			<button class:disabled={$fileContextMenuOptions.copy.disabled} class:hide={!$fileContextMenuOptions.copy.show} class="element"on:click={() => doAction("copy")}>
+			<button class:disabled={$fileContextMenuOptions.copy.disabled} class:hide={!$fileContextMenuOptions.copy.show} class="ctxMenuButton element"on:click={() => doAction("copy")}>
 				<Icon icon={IconDictionary.ctxMenuCopy} class="icon copy" />
 				<span class="text">{lang && GetWord("ctxCopy")}</span>
 			</button>
-			<button class:disabled={$fileContextMenuOptions.paste.disabled} class:hide={!$fileContextMenuOptions.paste.show} class="element"on:click={() => doAction("paste")}> <!-- Allow only if clicked on body, not on file -->
+			<button class:disabled={$fileContextMenuOptions.paste.disabled} class:hide={!$fileContextMenuOptions.paste.show} class="ctxMenuButton element"on:click={() => doAction("paste")}> <!-- Allow only if clicked on body, not on file -->
 				<Icon icon={IconDictionary.ctxMenuPaste} class="icon paste" />
 				<span class="text">{lang && GetWord("ctxPaste")}</span> 
 			</button>
 			<div class:hide={!$fileContextMenuOptions.rename.show && !$fileContextMenuOptions.delete.show} class="divider"></div>
-			<button class:disabled={$fileContextMenuOptions.rename.disabled} class:hide={!$fileContextMenuOptions.rename.show} class="element"on:click={() => doAction("rename")}>
+			<button class:disabled={$fileContextMenuOptions.rename.disabled} class:hide={!$fileContextMenuOptions.rename.show} class="ctxMenuButton element"on:click={() => doAction("rename")}>
 				<Icon icon={IconDictionary.ctxMenuRename} class="icon rename" />
 				<span class="text">{lang && GetWord("ctxRename")}</span>
 			</button>
-			<button class:disabled={$fileContextMenuOptions.delete.disabled} class:hide={!$fileContextMenuOptions.delete.show} class="element"on:click={() => doAction("delete")}>
+			<button class:disabled={$fileContextMenuOptions.delete.disabled} class:hide={!$fileContextMenuOptions.delete.show} class="ctxMenuButton element"on:click={() => doAction("delete")}>
 				<Icon icon={IconDictionary.ctxMenuDelete} class="icon delete" />
 				<span class="text">{lang && GetWord("ctxDelete")}</span>
 			</button>
+			<div class:hide={!$fileContextMenuOptions.addToPinned.show && !$fileContextMenuOptions.removeFromPinned.show } class="divider"></div>
+			<button class:disabled={$fileContextMenuOptions.addToPinned.disabled} class:hide={!$fileContextMenuOptions.addToPinned.show} class="ctxMenuButton element"on:click={() => doAction("togglePinned")}>
+				<Icon icon={IconDictionary.ctxMenuAddToPinned} class="icon addToPinned" />
+				<span class="text">{lang && GetWord("ctxAddToPinned")}</span>
+			</button>
+			<button class:disabled={$fileContextMenuOptions.removeFromPinned.disabled} class:hide={!$fileContextMenuOptions.removeFromPinned.show} class="ctxMenuButton element"on:click={() => doAction("togglePinned")}>
+				<Icon icon={IconDictionary.ctxMenuAddToPinned} class="icon removeFromPinned" />
+				<span class="text">{lang && GetWord("ctxRemoveFromPinned")}</span>
+			</button>
 			<div class:hide={!$fileContextMenuOptions.properties.show} class="divider"></div>
-			<button class:disabled={$fileContextMenuOptions.properties.disabled} class:hide={!$fileContextMenuOptions.properties.show} class="element"on:click={() => doAction("properties")}>
+			<button class:disabled={$fileContextMenuOptions.properties.disabled} class:hide={!$fileContextMenuOptions.properties.show} class="ctxMenuButton element"on:click={() => doAction("properties")}>
 				<Icon icon={IconDictionary.ctxMenuProperties} class="icon properties" />
 				<span class="text">{lang && GetWord("ctxProperties")}</span>
 			</button>

@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
-import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents } from "./store";
-import { OpenFile, AddFile, RenameFile, DeleteFile, } from '../wailsjs/go/main/App.js'
+import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents, pinnedFolders } from "./store";
+import { OpenFile, AddFile, RenameFile, DeleteFile, Go_TogglePin, LoadPinnedFolders, Go_IsFolderPinned } from '../wailsjs/go/main/App.js'
 import OpenModal from "./modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
@@ -61,6 +61,8 @@ export async function setContextMenuOptions(mode : string) {
 		paste:{show:true,disabled:false},
 		rename:{show:true,disabled:false},
 		delete:{show:true,disabled:false},
+		addToPinned:{show:true,disabled:false},
+		removeFromPinned:{show:true,disabled:false},
 		properties:{show:true,disabled:false}
 	})
 
@@ -74,19 +76,28 @@ export async function setContextMenuOptions(mode : string) {
 			open: { show: false, disabled: false },
 			cut: { show: false, disabled: false },
 			copy: { show: false, disabled: false },
-			paste: { show: true, disabled: !clipboardPastable },  // Check clipboard
+			paste: { show: true, disabled: !clipboardPastable },
 			rename: { show: false, disabled: false },
-			delete: { show: false, disabled: false }
+			delete: { show: false, disabled: false },
+			addToPinned: { show: false, disabled: false },
+			removeFromPinned: { show: false, disabled: false }
 		  };
 		});
 	}
 
 	if(mode == "single") {
+		const isFolderSelected = get(selectedFiles)[0].isFolder;
+		let isFolderPinned = false;
+		if(isFolderSelected) {
+			isFolderPinned = await Go_IsFolderPinned(get(selectedFiles)[0].pathfull)
+		}
 		fileContextMenuOptions.update(options => {
 		  return {
 			...options,
 			add: { show: false, disabled: false },
-			paste: { show: true, disabled: !clipboardPastable }  // Check clipboard
+			paste: { show: true, disabled: !clipboardPastable },
+			addToPinned: { show: isFolderSelected && !isFolderPinned, disabled: false },
+			removeFromPinned: { show: isFolderSelected && isFolderPinned, disabled: false }
 		  };
 		});
 	}
@@ -99,7 +110,9 @@ export async function setContextMenuOptions(mode : string) {
 			open: { show: false, disabled: false },
 			paste: { show: true, disabled: !clipboardPastable },  // Check clipboard
 			rename: { show: false, disabled: false },
-			properties: { show: false, disabled: false }
+			properties: { show: false, disabled: false },
+			addToPinned: { show: false, disabled: false },
+			removeFromPinned: { show: false, disabled: false }
 		  };
 		});
 	}
@@ -178,7 +191,7 @@ export async function doAction(action : string) {
 			break;
 		case "delete":
 			if(get(selectedFiles).length == 0) return;
-			if(!document.activeElement?.classList.contains("file")) return;
+			if(!document.activeElement?.classList.contains("file") && !document.activeElement?.classList.contains("ctxMenuButton")) return;
 			
 			if(GetSetting("showDeleteConfirmation") === "true") {
 				const modalResponseDelete = await OpenModal({modalName:"delete"})
@@ -253,6 +266,17 @@ export async function doAction(action : string) {
 					position:'bottom-left'
 				}
 			).catch(error => {})
+			
+			break;
+		case "togglePinned":
+			if(get(selectedFiles).length != 1 || !get(selectedFiles)[0].isFolder) return;
+			const folderToPin = get(selectedFiles)[0].pathfull;
+
+			await Go_TogglePin(folderToPin)
+			const newPinnedFolders = await LoadPinnedFolders();
+			pinnedFolders.update(pFolders => {
+				return newPinnedFolders;
+			})
 			
 			break;
 		case "properties":

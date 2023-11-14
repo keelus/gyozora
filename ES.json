@@ -2,7 +2,7 @@
 	"searchPlaceholder": "Busca un archivo",
 
 	"sideBtnHome":"Inicio",
-	"pinnedFolders": "Carpetas anclada",
+	"pinnedFolders": "Carpetas ancladas",
 	"yourComputer": "Tu ordenador",
 	"pinnedFoldersEmpty": "Ninguna carpeta anclada encontrada",
 	"yourComputerEmpty": "Ningun disco o carpeta del sistema encontrado",
@@ -26,6 +26,8 @@
 	"ctxPaste":"Pegar",
 	"ctxRename":"Renombrar",
 	"ctxDelete":"Borrar",
+	"ctxAddToPinned": "Añadir a carpetas ancladas",
+	"ctxRemoveFromPinned": "Quitar de carpetas ancladas",
 	"ctxProperties":"Propiedades",
 	
 	

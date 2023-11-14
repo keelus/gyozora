@@ -28,6 +28,7 @@ import fileCopy2Fill from '@iconify/icons-ri/file-copy-2-fill';
 import clipboardFill from '@iconify/icons-ri/clipboard-fill';
 import inputCursorMove from '@iconify/icons-ri/input-cursor-move';
 import deleteBin5Fill from '@iconify/icons-ri/delete-bin-5-fill';
+import pushpinFill from '@iconify/icons-ri/pushpin-fill';
 import fileInfoFill from '@iconify/icons-ri/file-info-fill';
 
 import imageFill from '@iconify/icons-ri/image-fill';
@@ -106,8 +107,9 @@ export const IconDictionary : {[key:string]:any} = {
 	"ctxMenuPaste": 		clipboardFill,
 	"ctxMenuRename": 		inputCursorMove,
 	"ctxMenuDelete": 		deleteBin5Fill,
+	"ctxMenuAddToPinned": 	pushpinFill,
 	"ctxMenuProperties": 	fileInfoFill,
-
+	
 	"jobPaste":				clipboardFill,
 	"jobDelete":			deleteBin5Fill,
 	"jobRender":			imageFill,
