@@ -103,7 +103,8 @@
 	"settingsAccessibilityDeleteConfirmationTitle": "Confirmación al eliminar",
 	"settingsAccessibilityDeleteConfirmationDesc": "Este dialogo aparece al intentar eliminar uno o varios archivos",
 	"settingsAccessibilityFastAccessTitle": "Carpetas de acceso rápido",
-	"settingsAccessibilityFastAccessDesc": "Añade, edita o borra tus carpetas de acceso rápido, las cuales aparecen en el menú de la parte izquierda",
+	"settingsAccessibilityFastAccessDesc": "Mueve o borra tus carpetas de acceso rápido, las cuales aparecen en el menú de la parte izquierda",
+	"settingsAccessibilityFastAccessEmptyMessage": "No hay ninguna carpeta de acceso rápido añadida. \nPara anclar una, haz click derecho sobre una carpeta en el explorador, y selecciona la opción \"Añadir a carpetas ancladas\".",
 	
 	"settingsImagePreviewsThumbnailsTitle": "Usar previews de imágenes",
 	"settingsImagePreviewsThumbnailsDesc": "Mostrar una preview de los archivos de tipo image en el explorador (compatible para imágenes tipo png, jpegs, gifs y webp).",

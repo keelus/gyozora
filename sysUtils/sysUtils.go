@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -68,4 +69,26 @@ func GetInvalidFilenameCharacters() string {
 	}
 	return "/"
 
+}
+
+func GetDefaultPinnedFolders() []string {
+	pinnedFolders := make([]string, 0)
+
+	if runtime.GOOS == "windows" {
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Desktop"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Downloads"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Documents"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Pictures"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Music"))
+	} else if runtime.GOOS == "darwin" {
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserRoots()[0], "Applications"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Desktop"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Documents"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Downloads"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Pictures"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Music"))
+		pinnedFolders = append(pinnedFolders, filepath.Join(UserHomedir(), "Movies"))
+	}
+
+	return pinnedFolders
 }

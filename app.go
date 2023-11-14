@@ -96,8 +96,8 @@ func GetPathFolders(fpath string) []string {
 	return pathes
 }
 
-func (a *App) LoadPinnedFolders() []models.LeftBarElement {
-	pinnedFoldersLBE := make([]models.LeftBarElement, 0)
+func (a *App) LoadPinnedFolders() []models.SysFile {
+	pinnedFoldersLBE := make([]models.SysFile, 0)
 	pinnedFolders := make([]string, 0)
 
 	pinnedFoldersStr := ""
@@ -106,9 +106,10 @@ func (a *App) LoadPinnedFolders() []models.LeftBarElement {
 	_ = json.Unmarshal([]byte(pinnedFoldersStr), &pinnedFolders)
 
 	for _, pinnedFolder := range pinnedFolders {
-		folderName := filepath.Base(pinnedFolder)
-		folderType := fileUtils.GetFileType(folderName, "", true)
-		pinnedFoldersLBE = append(pinnedFoldersLBE, models.LeftBarElement{Name: folderName, Type: folderType, Path: pinnedFolder})
+		generatedSysFile, err := fileUtils.GenerateSysFile(filepath.Dir(pinnedFolder), pinnedFolder)
+		if err == nil {
+			pinnedFoldersLBE = append(pinnedFoldersLBE, generatedSysFile)
+		}
 	}
 
 	// if runtime.GOOS == "windows" {
@@ -551,15 +552,18 @@ func (a *App) Go_TogglePin(folderToPin string) error {
 	if len(pinnedFolders) == 0 {
 		newPinnedFolders = append(newPinnedFolders, folderToPin)
 	} else {
-		exists := false
+		isPinned := false
 		for _, pinnedFolder := range pinnedFolders {
 			if pinnedFolder != folderToPin {
-				newPinnedFolders = append(newPinnedFolders, pinnedFolder)
+				_, err := fileUtils.GenerateSysFile(filepath.Dir(pinnedFolder), pinnedFolder)
+				if err == nil { // If folder currently exists, else just delete the non existing pinned folder
+					newPinnedFolders = append(newPinnedFolders, pinnedFolder)
+				}
 			} else {
-				exists = true
+				isPinned = true
 			}
 		}
-		if !exists {
+		if !isPinned {
 			newPinnedFolders = append(newPinnedFolders, folderToPin)
 		}
 	}
@@ -588,4 +592,43 @@ func (a *App) Go_IsFolderPinned(folderPath string) bool {
 		}
 	}
 	return false
+}
+
+func (a *App) Go_MovePinnedOrderTo(folderPath string, indexPosition int) error {
+	pinnedFolders := make([]string, 0)
+	newPinnedFolders := make([]string, 0)
+
+	pinnedFoldersStr := ""
+	data.DataDB.QueryRow("SELECT value FROM config WHERE name='pinnedFolders'").Scan(&pinnedFoldersStr)
+
+	_ = json.Unmarshal([]byte(pinnedFoldersStr), &pinnedFolders)
+
+	pinnedFoldersWithout := make([]string, 0)
+	for _, pinnedFolder := range pinnedFolders {
+		if pinnedFolder != folderPath {
+			pinnedFoldersWithout = append(pinnedFoldersWithout, pinnedFolder)
+		}
+	}
+
+	added := false
+	for i, pinnedFolder := range pinnedFoldersWithout {
+		if i == indexPosition {
+			added = true
+			newPinnedFolders = append(newPinnedFolders, folderPath)
+		}
+		newPinnedFolders = append(newPinnedFolders, pinnedFolder)
+
+	}
+	if !added {
+		newPinnedFolders = append(newPinnedFolders, folderPath)
+	}
+
+	newPinnedFoldersStr, err := json.Marshal(newPinnedFolders)
+	if err != nil {
+		fmt.Println("Error while saving the new pinned folders")
+		return err
+	}
+
+	a.Go_SetSetting("pinnedFolders", string(newPinnedFoldersStr))
+	return nil
 }

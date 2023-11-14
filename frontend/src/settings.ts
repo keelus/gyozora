@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
-import { settings } from "./store";
+import { settings, pinnedFolders } from "./store";
 import type { models } from "../wailsjs/go/models";
-import { Go_LoadSettings, Go_GetSetting, Go_SetSetting, Go_DeleteSetting } from '../wailsjs/go/main/App.js'
+import { Go_LoadSettings, Go_SetSetting, Go_DeleteSetting, Go_TogglePin, Go_MovePinnedOrderTo, LoadPinnedFolders } from '../wailsjs/go/main/App.js'
 import { GenerateToast } from "./toasts";
 import { GetWord } from "./languages";
 
@@ -125,4 +125,17 @@ export function ZoomIn() {
 export function ZoomOut() {
 	const newZoom = parseInt(GetSetting("zoomLevel")) - INC_ZOOM
 	SetSetting("zoomLevel", newZoom.toString())
+}
+
+export async function ChangePinned(pathfull : string, newIndex : number) {
+	if(newIndex === -1) {
+		await Go_TogglePin(pathfull)
+	} else {
+		await Go_MovePinnedOrderTo(pathfull, newIndex)
+	}
+
+	const newPinnedFolders = await LoadPinnedFolders();
+	pinnedFolders.update(pFolders => {
+		return newPinnedFolders;
+	})
 }

@@ -308,6 +308,7 @@ input[type=text]::selection {
 					display:flex;
 					justify-content: center;
 					align-items: center;
+					text-align: center;
 
 					color:var(--font-1);
 					opacity:.4;
@@ -415,6 +416,7 @@ input[type=text]::selection {
 			display:flex;
 			justify-content: center;
 			align-items: center;
+			text-align: center;
 
 			color:var(--font-1);
 			opacity:.4;
@@ -1272,6 +1274,9 @@ main > .bottom {
 			display:flex;
 			padding:10px 20px;
 			align-items: center;
+			height:51px;
+			box-sizing: border-box;
+
 			& > .title {
 				display:flex;
 				align-items: center;
@@ -1317,6 +1322,8 @@ main > .bottom {
 			padding:10px 20px;
 			box-sizing: border-box;
 			flex:1;
+			max-height:calc(100% - 51px);
+
 			& > .categories {
 				min-width:200px;
 				display:flex;
@@ -1377,7 +1384,9 @@ main > .bottom {
 				display:flex;
 				flex-direction: column;
 				gap:15px;
+				overflow-y:auto;
 				
+
 				& > .dividerH {
 					width:100%;
 					height:0;
@@ -1598,5 +1607,79 @@ main > .bottom {
 		to {
 			transform: rotate(360deg);
 		}
+	}
+}
+
+.settingsPinnedFolders {
+	display:flex;
+	flex-direction: column;
+	overflow:hidden;
+	gap:5px;
+	margin-right:27px;
+	margin-top:10px;
+
+	.pinnedFolder {
+		height:40px;
+		width:100%;
+		display:flex;
+		background:var(--background-3);
+		box-sizing: border-box;
+		align-items: center;
+		padding:10px; 
+		border-radius: 3px;
+		overflow:hidden;
+
+		& > .icon {
+			width:30px;
+			height:30px;
+		}
+		& > .name {
+			margin-left:20px;
+			flex:1;
+		}
+
+		& > .buttonUp, & > .buttonDown, & > .buttonDelete {
+			margin-left:3px;
+			display:flex;
+			justify-content: center;
+			align-items: center;
+			width:30px;
+			height:30px;
+			border-radius:5px;
+			background:var(--background-4);
+			cursor:pointer;
+			transition:all .2s linear;
+			border:none;
+			outline:none;
+
+			& > .icon {
+				color:white;
+			}
+
+			&:hover {
+				background:var(--background-5);
+			}
+		}
+
+		&:first-of-type > .buttonUp {
+			display:none;
+		}
+		&:last-of-type > .buttonDown {
+			display:none;
+		}
+	}
+	
+	& > .emptyMessage {
+		width:100%;
+		height:100%;
+		display:flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+
+		color:var(--font-1);
+		opacity:.4;
+		font-size:13px;
+		font-weight: 200;
 	}
 }

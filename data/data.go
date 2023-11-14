@@ -1,7 +1,9 @@
 package data
 
 import (
+	"encoding/json"
 	"fmt"
+	"gyozora/sysUtils"
 	"os"
 	"path/filepath"
 
@@ -31,7 +33,7 @@ func ConnectDB() {
 		return
 	}
 
-	cacheTable := `CREATE TABLE IF NOT EXISTS "cache" (
+	cacheTable := `CREATE TABLE "cache" (
 							"pathfull"	TEXT NOT NULL UNIQUE,
 							"dateModification"	INTEGER NOT NULL,
 							"preview"	BLOB NOT NULL,
@@ -48,9 +50,15 @@ func ConnectDB() {
 	if err != nil {
 		fmt.Printf("Error creating the cache table. Error: %s\n", err)
 	}
+
 	_, err = DataDB.Exec(configTable)
 	if err != nil {
 		fmt.Printf("Error creating the config table. Error: %s\n", err)
+	} else {
+		defaultPinnedFolders := sysUtils.GetDefaultPinnedFolders()
+		defaultPinnedFoldersBytes, _ := json.Marshal(defaultPinnedFolders)
+
+		DataDB.Query("INSERT OR REPLACE INTO config(name, value) VALUES(?, ?)", "pinnedFolders", string(defaultPinnedFoldersBytes))
 	}
 
 	fmt.Println("✅ cache connected.")

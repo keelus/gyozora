@@ -134,12 +134,12 @@ function AddListeners() {
 		if(e.target != document.body) return;
 		PasteFromClipboard();
 	})
-}
 
-
-$: if (fileBrowser) {
-	fileBrowser.addEventListener("mouseup", (e : MouseEvent) => {
+	document.addEventListener("mouseup", (e : MouseEvent) => {
 		let clickedTarget = e.target as HTMLElement;
+		if(clickedTarget.closest(".fileBrowser") === null) {
+			return closeFileContextMenu(fileContextMenu)
+		}; // Prevent context menu outside the file browser
 		if(!clickedTarget) return;
 		let clickedFile = clickedTarget.closest("button.file")
 		let clickedCtxMenu = clickedTarget.closest(".fileContextMenu")
@@ -163,6 +163,8 @@ $: if (fileBrowser) {
 		}
 	})
 }
+
+
 
 $: lang = $settings && $languageDictionary
 
@@ -246,10 +248,10 @@ function pathGoRefreshAction() {
 					<div class="emptyMessage">{lang && GetWord("pinnedFoldersEmpty")} 👎</div>
 				{/if}
 					{#each $pinnedFolders as content}
-						<button class="element {$CURRENT_PATH == content.path ? "active" : ""}" on:click={() => elementClicked(content.path, true)}>
-							<Icon icon={IconDictionary[content.type]} class="icon {content.type} {$USER_OS}"/>
-							<div class="text">{content.name}</div>
-						</button>
+							<button class="element {$CURRENT_PATH == content.pathfull ? "active" : ""}" on:click={() => elementClicked(content.pathfull, true)}>
+								<Icon icon={IconDictionary[content.iconClass]} class="icon {content.iconClass} {$USER_OS}"/>
+								<div class="text">{content.filename}</div>
+							</button>
 					{/each}
 				</div>
 			</div>
@@ -307,7 +309,7 @@ function pathGoRefreshAction() {
 				<span class="text">{lang && GetWord("ctxAddToPinned")}</span>
 			</button>
 			<button class:disabled={$fileContextMenuOptions.removeFromPinned.disabled} class:hide={!$fileContextMenuOptions.removeFromPinned.show} class="ctxMenuButton element"on:click={() => doAction("togglePinned")}>
-				<Icon icon={IconDictionary.ctxMenuAddToPinned} class="icon removeFromPinned" />
+				<Icon icon={IconDictionary.ctxMenuRemoveFromPinned} class="icon removeFromPinned" />
 				<span class="text">{lang && GetWord("ctxRemoveFromPinned")}</span>
 			</button>
 			<div class:hide={!$fileContextMenuOptions.properties.show} class="divider"></div>

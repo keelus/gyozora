@@ -1,8 +1,8 @@
 <script lang="ts">
 import { IconDictionary } from './icons';
 import Icon from '@iconify/svelte';
-import { GetSetting, SetSetting } from './settings';
-import { languageDictionary, settings } from './store';
+import { GetSetting, SetSetting, ChangePinned } from './settings';
+import { languageDictionary, settings, pinnedFolders, USER_OS } from './store';
 import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
 
 import appicon from './assets/icons/gyozora.svg'
@@ -193,9 +193,27 @@ $: lang = $settings && $languageDictionary
 					
 					<div class="dividerH"></div>
 
-					<div class="element inDevelopment" style="--text:'{lang && GetWord("settingsInDevelopment")}';">
+					<div class="element" style="--text:'{lang && GetWord("settingsInDevelopment")}';">
 						<div class="title">{lang && GetWord("settingsAccessibilityFastAccessTitle")}</div>
 						<div class="description">{lang && GetWord("settingsAccessibilityFastAccessDesc")}</div>
+
+						<div class="settingsPinnedFolders">
+							{#if $pinnedFolders.length === 0}
+							<div class="emptyMessage">
+								{lang && GetWord("settingsAccessibilityFastAccessEmptyMessage")}
+							</div>
+							{:else }
+								{#each $pinnedFolders as content, i}
+									<div class="pinnedFolder">
+										<Icon icon={IconDictionary[content.iconClass]} class="icon {content.iconClass} {$USER_OS}"/>
+										<div class="name">{content.filename}</div>
+										<button class="buttonUp" on:click={e => ChangePinned(content.pathfull, i - 1)}><Icon icon={IconDictionary["uiArrowUp"]} class="icon"/></button>
+										<button class="buttonDown" on:click={e => ChangePinned(content.pathfull, i + 1)}><Icon icon={IconDictionary["uiArrowDown"]} class="icon"/></button>
+										<button class="buttonDelete" on:click={e => ChangePinned(content.pathfull, -1)}><Icon icon={IconDictionary["ctxMenuRemoveFromPinned"]} class="icon"/></button>
+									</div>
+								{/each}
+							{/if}
+						</div>
 					</div>
 				{:else if activeCategory == SettingCategories.IMAGE_PREVIEWS}
 					<div class="element">

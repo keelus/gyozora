@@ -104,6 +104,8 @@
 	"settingsAccessibilityDeleteConfirmationDesc": "This confirmation dialog appears when trying to delete a file",
 	"settingsAccessibilityFastAccessTitle": "Fast access folders",
 	"settingsAccessibilityFastAccessDesc": "Add, edit or delete your fast access folders, which appears in the left sidebar",
+	"settingsAccessibilityFastAccessEmptyMessage": "There are no folders pinned to fast access. \nTo pin one, just right click into one and choose \"Add to pinned folders\" option.",
+
 	
 	"settingsImagePreviewsThumbnailsTitle": "Use image thumbnails",
 	"settingsImagePreviewsThumbnailsDesc": "Show image files' previews when using the explorer (supported for png, jpegs, gifs and webp files)",

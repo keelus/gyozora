@@ -29,6 +29,7 @@ import clipboardFill from '@iconify/icons-ri/clipboard-fill';
 import inputCursorMove from '@iconify/icons-ri/input-cursor-move';
 import deleteBin5Fill from '@iconify/icons-ri/delete-bin-5-fill';
 import pushpinFill from '@iconify/icons-ri/pushpin-fill';
+import unpinFill from '@iconify/icons-ri/unpin-fill';
 import fileInfoFill from '@iconify/icons-ri/file-info-fill';
 
 import imageFill from '@iconify/icons-ri/image-fill';
@@ -65,8 +66,10 @@ import fileTypeLightFont from '@iconify/icons-vscode-icons/file-type-light-font'
 
 
 import arrowLeftLine from '@iconify/icons-ri/arrow-left-line';
+import arrowUpLine from '@iconify/icons-ri/arrow-up-line';
 import arrowLeftSLine from '@iconify/icons-ri/arrow-left-s-line';
 import arrowRightLine from '@iconify/icons-ri/arrow-right-line';
+import arrowDownLine from '@iconify/icons-ri/arrow-down-line';
 import arrowRightSLine from '@iconify/icons-ri/arrow-right-s-line';
 import refreshLine from '@iconify/icons-ri/refresh-line';
 import home4Line from '@iconify/icons-ri/home-4-line';
@@ -77,83 +80,86 @@ import closeFill from '@iconify/icons-ri/close-fill';
 
 
 export const IconDictionary : {[key:string]:any} = {
-	"folder": 				folderFill,
-	"folderDesktop":		computerLine,
-	"folderDownloads": 		folderDownloadFill,
-	"folderDocuments": 		foldersFill,
-	"folderPictures":		folderImageFill,
-	"folderMusic": 			folderMusicFill,
-	"folderDisk": 			hardDrive3Fill,
-	"folderApplications": 	appStoreFill,
-	"folderMovies": 		folderVideoFill,
+	"folder": 					folderFill,
+	"folderDesktop":			computerLine,
+	"folderDownloads": 			folderDownloadFill,
+	"folderDocuments": 			foldersFill,
+	"folderPictures":			folderImageFill,
+	"folderMusic": 				folderMusicFill,
+	"folderDisk": 				hardDrive3Fill,
+	"folderApplications": 		appStoreFill,
+	"folderMovies": 			folderVideoFill,
 
-	"file": 				file3Fill,
-	"file_":				fileFilled,
-	"fileImage": 			fileImageFill,
-	"fileAudio": 			fileMusicFill,
-	"fileVideo": 			fileVideoFill,
-	"fileCompressed": 		fileZipFill,
-	"fileExecutable":		windowFill,
-	"fileExecutableScript":	filePaper2Fill,
-	"filePdf":				filePdf2Fill,
-	"fileDoc":				fileWord2Fill,
-	"fileCalc":				fileExcel2Fill,
-	"fileSlides":			filePpt2Fill,
+	"file": 					file3Fill,
+	"file_":					fileFilled,
+	"fileImage": 				fileImageFill,
+	"fileAudio": 				fileMusicFill,
+	"fileVideo": 				fileVideoFill,
+	"fileCompressed": 			fileZipFill,
+	"fileExecutable":			windowFill,
+	"fileExecutableScript":		filePaper2Fill,
+	"filePdf":					filePdf2Fill,
+	"fileDoc":					fileWord2Fill,
+	"fileCalc":					fileExcel2Fill,
+	"fileSlides":				filePpt2Fill,
 
-	"ctxMenuAdd": 			addCircleFill,
-	"ctxMenuOpen": 			externalLinkLine,
-	"ctxMenuCut": 			scissors2Fill,
-	"ctxMenuCopy": 			fileCopy2Fill,
-	"ctxMenuPaste": 		clipboardFill,
-	"ctxMenuRename": 		inputCursorMove,
-	"ctxMenuDelete": 		deleteBin5Fill,
-	"ctxMenuAddToPinned": 	pushpinFill,
-	"ctxMenuProperties": 	fileInfoFill,
+	"ctxMenuAdd": 				addCircleFill,
+	"ctxMenuOpen": 				externalLinkLine,
+	"ctxMenuCut": 				scissors2Fill,
+	"ctxMenuCopy": 				fileCopy2Fill,
+	"ctxMenuPaste": 			clipboardFill,
+	"ctxMenuRename": 			inputCursorMove,
+	"ctxMenuDelete": 			deleteBin5Fill,
+	"ctxMenuAddToPinned": 		pushpinFill,
+	"ctxMenuRemoveFromPinned":	unpinFill,
+	"ctxMenuProperties": 		fileInfoFill,
 	
-	"jobPaste":				clipboardFill,
-	"jobDelete":			deleteBin5Fill,
-	"jobRender":			imageFill,
+	"jobPaste":					clipboardFill,
+	"jobDelete":				deleteBin5Fill,
+	"jobRender":				imageFill,
 
-	"codeLangJs":			fileTypeJs,
-	"codeLangTs":			fileTypeTypescript,
-	"codeLangHtml":			fileTypeHtml,
-	"codeLangCss":			fileTypeCss,
-	"codeLangSass":			fileTypeSass,
-	"codeLangReact": 		fileTypeReactjs,
-	"codeLangSvelte":		fileTypeSvelte,
-	"codeLangPhp":			fileTypePhp,
+	"codeLangJs":				fileTypeJs,
+	"codeLangTs":				fileTypeTypescript,
+	"codeLangHtml":				fileTypeHtml,
+	"codeLangCss":				fileTypeCss,
+	"codeLangSass":				fileTypeSass,
+	"codeLangReact": 			fileTypeReactjs,
+	"codeLangSvelte":			fileTypeSvelte,
+	"codeLangPhp":				fileTypePhp,
 
-	"codeLangC":			fileTypeC,
-	"codeLangCpp": 			fileTypeCpp,
-	"codeLangCCppH": 		fileTypeCheader,
-	"codeLangCs":			fileTypeCsharp,
-	"codeLangGo":			fileTypeGo,
+	"codeLangC":				fileTypeC,
+	"codeLangCpp": 				fileTypeCpp,
+	"codeLangCCppH": 			fileTypeCheader,
+	"codeLangCs":				fileTypeCsharp,
+	"codeLangGo":				fileTypeGo,
 
-	"codeLangJava":			fileTypeJava,
-	"codeLangJavaClass": 	fileTypeClass,
-	"codeLangKotlin": 		fileTypeKotlin,
+	"codeLangJava":				fileTypeJava,
+	"codeLangJavaClass": 		fileTypeClass,
+	"codeLangKotlin": 			fileTypeKotlin,
 
-	"codeLangPython":		fileTypePython,
-	"codeLangRb": 			fileTypeRuby,
-	"codeLangRs": 			fileTypeRust,
-	"codeLangSwift": 		fileTypeSwift,
+	"codeLangPython":			fileTypePython,
+	"codeLangRb": 				fileTypeRuby,
+	"codeLangRs": 				fileTypeRust,
+	"codeLangSwift": 			fileTypeSwift,
 
-	"codeLangJson":			fileTypeLightJson,
-	"codeLangXml": 			fileTypeXml,
-	"codeLangMd":			fileTypeMarkdown,
+	"codeLangJson":				fileTypeLightJson,
+	"codeLangXml": 				fileTypeXml,
+	"codeLangMd":				fileTypeMarkdown,
 
 
-	"uiArrowLeft":			arrowLeftLine,
-	"uiArrowLeftS":			arrowLeftSLine,
-	"uiArrowRight":			arrowRightLine,
-	"uiArrowRightS":		arrowRightSLine,
-	"uiRefresh":			refreshLine,
-	"uiHome":				home4Line,
-	"uiSettingsGear":		settings3Fill,
-	"uiClose":				closeFill,
-	"uiCopy":				fileCopy2Fill,
+	"uiArrowLeft":				arrowLeftLine,
+	"uiArrowLeftS":				arrowLeftSLine,
+	"uiArrowRight":				arrowRightLine,
+	"uiArrowRightS":			arrowRightSLine,
+	"uiArrowDown":				arrowDownLine,
+	"uiArrowUp":				arrowUpLine,
+	"uiRefresh":				refreshLine,
+	"uiHome":					home4Line,
+	"uiSettingsGear":			settings3Fill,
+	"uiClose":					closeFill,
+	"uiCopy":					fileCopy2Fill,
 	
-	"file_font":			fileTypeLightFont,
+	"file_font":				fileTypeLightFont,
 }
 
 export function GetIconByType(ftype : string) {

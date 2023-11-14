@@ -13,6 +13,7 @@ import { GetSetting } from "./settings";
 import { GetWord } from "./languages";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
+	console.log("trying to open")
 	fileContextMenu.classList.add("opened")
 	console.log(get(selectedFiles))
 
