@@ -143,6 +143,8 @@ function AddListeners() {
 		if(!clickedTarget) return;
 		let clickedFile = clickedTarget.closest("button.file")
 		let clickedCtxMenu = clickedTarget.closest(".fileContextMenu")
+
+		if(clickedFile) clickedTarget.focus();
 		
 		if($USER_OS == "darwin") {
 			if(e.button == 0 && ! e.ctrlKey){ // Left click

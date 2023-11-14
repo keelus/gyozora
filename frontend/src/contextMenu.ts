@@ -13,9 +13,7 @@ import { GetSetting } from "./settings";
 import { GetWord } from "./languages";
 
 export async function openFileContextMenu(fileContextMenu : HTMLDivElement, coordinates : {[key:string]:number}, file : Element | null) {
-	console.log("trying to open")
 	fileContextMenu.classList.add("opened")
-	console.log(get(selectedFiles))
 
 	if(file == null) { // Right clicked in the body
 		await setContextMenuOptions("none")
@@ -164,7 +162,6 @@ export async function doAction(action : string) {
 			break;
 		case "rename":
 			if(get(selectedFiles).length == 0) return;
-			if(!document.activeElement?.classList.contains("file")) return;
 
 			const modalResponseRename = await OpenModal({modalName:"rename", file:get(selectedFiles)[0]})
 			if(modalResponseRename?.cancelled) return
@@ -192,7 +189,6 @@ export async function doAction(action : string) {
 			break;
 		case "delete":
 			if(get(selectedFiles).length == 0) return;
-			if(!document.activeElement?.classList.contains("file") && !document.activeElement?.classList.contains("ctxMenuButton")) return;
 			
 			if(GetSetting("showDeleteConfirmation") === "true") {
 				const modalResponseDelete = await OpenModal({modalName:"delete"})

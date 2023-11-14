@@ -8,7 +8,6 @@ import DeleteErrorLog from './DeleteErrorLog.svelte'
 export default async function OpenModal({ modalName, file, files = [] }: { modalName: string, file: models.SysFile | undefined, files?: models.SysFile[] }): Promise<{ [key: string]: any }> {
 	const parentModal = document.querySelector(".modalParent")
 	if(!parentModal) return {error: true};
-	document.activeElement?.blur()
 	
 	parentModal.setAttribute("data-activeModal", modalName)
 
