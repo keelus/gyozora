@@ -262,7 +262,7 @@ function pathGoRefreshAction() {
 					<div class="emptyMessage">{lang && GetWord("yourComputerEmpty")} 👎</div>
 				{/if}
 				{#each yourComputer as content}
-					<button class="element" on:click={() => elementClicked(content.path, true)}>
+					<button class="element {$CURRENT_PATH == content.path ? "active" : ""}" on:click={() => elementClicked(content.path, true)}>
 						<Icon icon={IconDictionary[content.type]} class="icon {content.type} {$USER_OS}"/>
 						<div class="text">{content.name}</div>
 					</button>

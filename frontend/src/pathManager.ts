@@ -17,6 +17,7 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	if(/^[A-Za-z]:$/.test(newPath)) {
 		newPath += "\\";
 	}
+	if(newPath == "") newPath = "/"
 
 	const readPathResponse : models.ReadPathResponse = await ReadPath(newPath, newPath)
 
