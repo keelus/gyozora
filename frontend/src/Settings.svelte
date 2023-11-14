@@ -121,7 +121,7 @@ $: lang = $settings && $languageDictionary
 						<div class="double">
 							<div class="description">{lang && GetWord("settingsAppearanceTransparencyDesc")}</div>
 							<div class="value">
-								<input type="range" max="100" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span>{$settings && GetSetting("transparency")}%</span>
+								<input type="range" max="70" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span>{$settings && GetSetting("transparency")}%</span>
 							</div>
 						</div>
 					</div>

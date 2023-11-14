@@ -89,7 +89,7 @@ function IsValidSetting(name : string, value : string) : boolean {
 	case "theme":
 		return value == "dark" || value == "light"
 	case "transparency":
-		return valueInt >= 0 && valueInt <= 100
+		return valueInt >= 0 && valueInt <= 70
 	// View settings
 	case "zoomLevel":
 		return valueInt >= MIN_ZOOM && valueInt <= MAX_ZOOM
