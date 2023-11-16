@@ -15,7 +15,6 @@ export async function LoadSettings() {
 	settings.update(stngs => {
 		return loadedSettings;
 	})
-	console.log("Loaded settings")
 }
 
 export function GetSetting(name : string) {

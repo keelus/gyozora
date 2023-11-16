@@ -70,8 +70,6 @@ func (a *App) ReadPath(currentpath string, path string) models.ReadPathResponse 
 	}
 
 	// Load path as breadcrumbs
-	fmt.Println("Breadcrumbs for" + path)
-	fmt.Println(GetPathFolders(path))
 	for _, folderPath := range GetPathFolders(path) {
 		generatedBreadcrumb, err := fileUtils.GenerateSysFile(currentpath, folderPath)
 		if err == nil {
@@ -459,9 +457,6 @@ func (a *App) Go_LoadSettings() map[string]string {
 	var configs []models.Config
 
 	data.DataDB.Select(&configs, "SELECT * FROM config")
-
-	fmt.Println("⚙️ Loaded settings:")
-	fmt.Println(configs)
 
 	settings := make(map[string]string)
 	for _, config := range configs {
