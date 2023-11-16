@@ -8,12 +8,16 @@ main {
 	--ft-g:255;
 	--ft-b:255;
 
-	--background-1:		#000000;
-	--background-2:		#121212;
-	--background-3:		#1a1a1a;
-	--background-4:		#262626;
-	--background-5:		#363636;
-	--background-6:		#585858;
+	--background-1:		#1f1f1f;
+	--background-2:		#282828;
+	--background-3:		#323232;
+	--background-4:		#393939;
+	--background-5:		#3b3b3b;
+	--background-6:		#535353;
+	--modalBackground: var(--background-1);
+	--scrollThumb: var(--background-5);
+
+	background: var(--background-2) !important;
 
 	--bg-r:0;
 	--bg-g:0;
@@ -34,12 +38,14 @@ main {
 		--ft-g:0;
 		--ft-b:0;
 
-		--background-1:	#FFFFFF;
-		--background-2:	#F0F0F0;
-		--background-3:	#EAEAEA;
-		--background-4:	#DEDEDE;
-		--background-5:	#C8C8C8;
-		--background-6:	#A8A8A8;
+		--background-1:	#dddddd;
+		--background-2:	#f5f5f5;
+		--background-3:	#f0f0f0;
+		--background-4:	#e4e4e4;
+		--background-5:	#dfdfdf;
+		--background-6:	rgba(214,214,214);
+		--modalBackground: #ffffff;
+		--scrollThumb: #bbbbbb;
 
 		--bg-r:255;
 		--bg-g:255;
@@ -142,7 +148,7 @@ input[type=text]::selection {
 	display:none;
 }
 .pathbar {
-	background:var(--baseBg); /*t*/
+	background:var(--background-2); /*t*/
 	width:100%;
 	height:50px;
 
@@ -152,8 +158,8 @@ input[type=text]::selection {
 	gap:10px;	box-sizing: border-box;
 
 	& > .backButton, & > .forwardButton, & > .inputWithButton > .pathGoRefresh {
-		width:25px;
-		height:25px;
+		width:26px;
+		height:26px;
 		color:var(--font-1);
 		font-size:14px;
 		display:block;
@@ -164,6 +170,7 @@ input[type=text]::selection {
 		border:none;
 		outline:none;
 		padding:0;
+		transition: all .1s linear;
 		
 		& > .icon {
 			width:16px;
@@ -173,7 +180,7 @@ input[type=text]::selection {
 		}
 
 		&:not(:disabled):hover {
-			background:var(--background-5);
+			background:var(--background-4);
 		}
 
 		&:disabled {
@@ -183,17 +190,27 @@ input[type=text]::selection {
 		}
 	}
 
+	& > .inputWithButton > .pathGoRefresh {
+		border-radius: 5px;
+		&:hover {
+			background:var(--background-2) !important;
+		}
+	}
+
 	& > .inputWithButton > .path , & > .search {
 		height:35px;
 		padding:0;
 		margin:0;
 		border:0;
 		color:var(--font-1);
-		background:var(--baseBg); /*t*/
-		border:1px solid var(--background-5);
+		background:var(--background-4); /*t*/
+		border-radius:5px;
 		padding:0 5px;
+		padding-left:10px;
 		box-sizing: border-box;
 		outline:none;
+		border:1px solid transparent;
+		transition: all .1s linear;
 
 		&:focus {
 			border-color:var(--background-6);
@@ -225,14 +242,13 @@ input[type=text]::selection {
 	display:flex;
 	& > .navPane {
 		flex:1;
-		background:var(--baseBg); /*t*/
-		max-width:225px;
-		border-right:1px solid var(--background-5);
+		background:var(--background-2); /*t*/
+		max-width:218px;
 		padding:5px;
 		box-sizing: border-box;
 		overflow:hidden;
-		overflow-y:scroll;
-		max-height:calc(100vh - 35px - 20px - 16px - 2px - var(--appTitleBarHeight));
+		overflow-y:auto;
+		max-height:calc(100vh - 35px - 20px - 16px - 9px - var(--appTitleBarHeight));
 
 		& > .section {
 			margin-bottom:10px;
@@ -242,14 +258,16 @@ input[type=text]::selection {
 			& > .title {
 				position: relative;
 				z-index:1;
+				margin-bottom:3px;
 
 				& > .text {
 					color:var(--font-1);
 					font-size:13px;
 					font-weight: 400;
-					margin-left:10px;
-					padding:0 5px;
+					margin-left:5px;
+					padding:0 10px;
 					box-sizing: border-box;
+					background:var(--background-2);
 				}
 
 				&::before {
@@ -267,6 +285,7 @@ input[type=text]::selection {
 			& > .elements {
 				display:flex;
 				flex-direction: column;
+				gap:3px;
 
 				& > .element {
 					padding:7px 15px;
@@ -278,6 +297,9 @@ input[type=text]::selection {
 					background:none;
 					border:none;
 					text-align: left;
+					border-radius:4px;
+					transition:all .2s linear;
+					border:1px solid transparent;
 
 					& > .icon {
 						width:16px;
@@ -290,15 +312,20 @@ input[type=text]::selection {
 						flex:1;
 						overflow:hidden;
 						font-weight: 300;
+						max-width:154px;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
 					}
 
 					&:hover {
 						cursor:pointer;
-						background:var(--background-4);
+						background:var(--background-3);
 					}
 
 					&.active {
 						background:var(--background-3);
+						border-color: var(--background-6);
 					}
 				}
 				
@@ -321,12 +348,15 @@ input[type=text]::selection {
 
 	& > .fileBrowser {
 		flex:2;
-		background:var(--baseBg); /*t*/
+		background:var(--background-3); /*t*/
 		padding:0 10px 5px 10px;
 		box-sizing: border-box;
 		overflow:hidden;
 		overflow-y:auto;
-		max-height:calc(100vh - 35px - 20px - 16px - 2px - var(--appTitleBarHeight));
+		max-height:calc(100vh - 35px - 20px - 16px - 9px - var(--appTitleBarHeight));
+		border-radius:10px;
+		margin-right:10px;
+		margin-bottom:0;
 
 		& > .file {
 			display:inline-flex;
@@ -401,11 +431,11 @@ input[type=text]::selection {
 			}
 
 			&:hover, &:focus {
-				background:var(--background-3);
+				background:var(--background-4);
 			}
 
 			&.selected {
-				background:rgba(var(--ft-r), var(--ft-g), var(--ft-b), .2);
+				background:var(--background-6);
 				border-color: rgba(var(--ft-r), var(--ft-g), var(--ft-b), .2);
 			}
 		}
@@ -428,8 +458,10 @@ input[type=text]::selection {
 
 .loader {
 	width:100%;
-
+	position:relative;
 	& > .progress {
+		position:absolute;
+		top:-2px;
 		width:var(--loadProgress, 0) !important;
 		height:2px;
 		background:var(--blue-1);
@@ -439,18 +471,18 @@ input[type=text]::selection {
 }
 
 main > .bottom {
-	background:var(--baseBg); /*t*/
+	background:var(--background-2); /*t*/
 	width:100%;
-	height:20px;
+	height:30px;
 	display:flex;
 	padding:0;
 	z-index:1;
-	border-top:1px solid var(--background-5);
 
 	& > .breadcrumbs {
-		display:flex;
-		align-items: center;
 		flex:1;
+		overflow-y:auto;
+		width:300px;
+		height:30px;
 	
 	
 		& > .icon {
@@ -460,12 +492,12 @@ main > .bottom {
 		}
 	
 		& > .breadcrumb {
-			display:flex;
+			display:inline-flex;
 			overflow:hidden;
 			align-items: center;
 			padding:0 4px;
 			gap:4px;
-			height:20px;
+			height:30px;
 			background:none;
 			border:none;
 			outline:none;
@@ -484,7 +516,7 @@ main > .bottom {
 	
 			&:hover {
 				cursor:pointer;
-				background:var(--background-6);
+				background:var(--background-4);
 			}
 		}
 	}
@@ -525,7 +557,7 @@ main > .bottom {
 
 			&:not(:disabled):hover {
 				cursor:pointer;
-				background:var(--background-5);
+				background:var(--background-4);
 			}
 		}
 
@@ -567,8 +599,9 @@ main > .bottom {
 
 	}
 	& > .right {
-		width:150px;
+		width:160px;
 		height:100%;
+
 		& > .logo {
 			padding:0;
 			padding-right:10px;
@@ -584,11 +617,11 @@ main > .bottom {
 
 			&:hover {
 				cursor:pointer;
-				opacity:.8;
+				background:var(--background-4);
 			}
 
 			& > img.appicon {
-				height:100%;
+				height:25px;
 			}
 
 			& > span.appname {
@@ -694,19 +727,14 @@ main > .bottom {
   
   /* Track */
   ::-webkit-scrollbar-track {
-	background: var(--baseBg); 
   }
    
   /* Handle */
   ::-webkit-scrollbar-thumb {
-	background: var(--background-4); 
+	background: var(--scrollThumb); 
 	border-radius:4px;
   }
   
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-	background: var(--background-5); 
-  }
 
 .fileContextMenu {
 	position:fixed;
@@ -803,7 +831,7 @@ main > .bottom {
 		min-width:400px;
 
 		border:1px solid var(--background-5);
-		background:var(--background-1);
+		background:var(--modalBackground);
 		display:flex;
 		flex-direction: column;
 		border-radius:6px;
@@ -846,6 +874,7 @@ main > .bottom {
 					outline:none;
 					color:var(--font-1);
 					padding:10px;
+					background:var(--background-2);
 					border:1px solid var(--background-5);
 					width:100%;
 					box-sizing: border-box;
@@ -873,24 +902,24 @@ main > .bottom {
 				transition: all .1s linear;
 
 				&.cancel {
-					background:var(--background-1);
+					background:var(--background-2);
 					border:1px solid var(--background-5);
-					color:var(--font-2);
 
 					&:hover {
 						cursor:pointer;
 						color:var(--font-1);
+						background:var(--background-4);
 						border-color:var(--background-6);
 					}
 				}
 
 				&.confirm {
 					background:var(--blue-select);
-					color:var(--font-3);
+					color:rgba(white, .8);
 
 					&:not(:disabled) {
 						background:#00a5ff;
-						color:var(--font-1);
+						color:white;
 						&:hover {
 							cursor:pointer;
 							opacity:.9;
@@ -1034,15 +1063,14 @@ main > .bottom {
 .activeJobs {
 	position:absolute;
 	width:300px;
-	bottom:21px;
+	bottom:30px;
 	right:-1px;
 	z-index:0;
 	flex-direction: column;
 	border:1px solid var(--background-5);
-	background:var(--background-1);
+	background:var(--background-2);
 	border-top-left-radius:6px;
 	border-top-right-radius:6px;
-	border-bottom:0;
 	display:flex;
 
 	opacity: 0;
@@ -1070,7 +1098,7 @@ main > .bottom {
 		box-sizing: border-box;
 		display:flex;
 		flex-direction: column;
-		overflow-y:scroll;
+		overflow-y:auto;
 		max-height:200px;
 		gap:5px;
 
@@ -1143,9 +1171,8 @@ main > .bottom {
 						height:35px;
 						border-radius: 50%;
 
-						background: 
-						radial-gradient(closest-side, var(--background-3) 79%, transparent 95% 100%),
-						conic-gradient(var(--font-1) var(--progress, 0), transparent 0);    
+						background: radial-gradient(closest-side, var(--background-3) 79%, transparent 95% 100%),
+							conic-gradient(var(--font-1) var(--progress, 0), transparent 0);    
 
 						& > .text {
 							color:var(--font-1);
@@ -1233,7 +1260,7 @@ main > .bottom {
 
 	&:hover {
 		cursor:pointer;
-		background-color:var(--background-6);
+		background:var(--background-4);
 		& > .icon {
 			color:var(--font-1);
 		}
@@ -1262,7 +1289,7 @@ main > .bottom {
 	}
 
 	& > .settingsWindow {
-		background:var(--background-1);
+		background:var(--modalBackground);
 		width:calc(100% - 100px);
 		height:calc(100% - 100px);
 		border-radius:6px;
@@ -1325,7 +1352,7 @@ main > .bottom {
 			max-height:calc(100% - 51px);
 
 			& > .categories {
-				min-width:200px;
+				min-width:235px;
 				display:flex;
 				flex-direction: column;
 				gap:5px;
@@ -1339,7 +1366,7 @@ main > .bottom {
 					background:none;
 					border:none;
 					outline:none;
-					border:1px solid black;
+					border:1px solid transparent;
 
 					& > .title {
 						display:flex;
@@ -1357,8 +1384,8 @@ main > .bottom {
 					}
 
 					&.active {
-						border-color: var(--font-3);
-						background:var(--background-3);
+						background: var(--background-3);
+						border-color: var(--background-6);
 						
 					& > .title {
 						color:var(--font-1);
@@ -1453,22 +1480,35 @@ main > .bottom {
 						outline:none;
 						border:none;
 						background:none;
-
-						font-size:16px;
-						padding:3px 10px;
-						border-radius:5px;
-						background:var(--background-4);
+						font-size:14px;
+						border:none;
+						outline:none;
+						background:var(--font-1);
 						color:var(--font-1);
-						border:1px solid var(--background-5);
-						transition:all .1s linear;
-
+						padding:5px 15px;
+						border-radius: 2px;
+						font-weight: 500;
+						transition: all .1s linear;
+						
+						
 						&.active {
-							background-color:var(--blue-1);
-							border-color:var(--blue-1);
+							background:#00a5ff;
+							color:white;
 						}
-						&:not(.active):hover {
-							cursor:pointer;
+
+						&:not(.active) {
+							background:var(--background-2);
+							border:1px solid var(--background-5);
+
+							&:hover {
+								cursor:pointer;
+								color:var(--font-1);
+								background:var(--background-4);
+								border-color:var(--background-6);
+							}
 						}
+
+
 					}
 					
 					button.cacheButton {
@@ -1516,7 +1556,7 @@ main > .bottom {
 								background-size: cover;
 								background-repeat: no-repeat;
 								background-position: center;
-								background-color:var(--background-5);
+								background-color:var(--background-3);
 							}
 
 							& > .bottom {
@@ -1553,6 +1593,7 @@ main > .bottom {
 
 							&:not(.active):hover {
 								cursor:pointer;
+								background:var(--background-2);
 								border-color:var(--font-4);
 								& > .bottom > .check {
 									border-color:var(--font-4);
@@ -1623,6 +1664,7 @@ main > .bottom {
 		width:100%;
 		display:flex;
 		background:var(--background-3);
+		border:1px solid var(--background-6);
 		box-sizing: border-box;
 		align-items: center;
 		padding:10px; 
@@ -1646,18 +1688,19 @@ main > .bottom {
 			width:30px;
 			height:30px;
 			border-radius:5px;
-			background:var(--background-4);
+			background:var(--background-1);
 			cursor:pointer;
 			transition:all .2s linear;
 			border:none;
 			outline:none;
+			border:1px solid var(--background-6);
 
 			& > .icon {
-				color:white;
+				color:var(--font-1);
 			}
 
 			&:hover {
-				background:var(--background-5);
+				background:var(--background-2);
 			}
 		}
 

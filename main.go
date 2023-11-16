@@ -47,7 +47,7 @@ func main() {
 			BackdropType:         windows.Acrylic,
 			Theme:                windows.SystemDefault,
 			CustomTheme: &windows.ThemeSettings{
-				DarkModeTitleBar:           windows.RGB(20, 20, 20),
+				DarkModeTitleBar:           windows.RGB(31, 31, 31),
 				DarkModeTitleBarInactive:   windows.RGB(0, 0, 0),
 				DarkModeTitleText:          windows.RGB(255, 255, 255),
 				DarkModeTitleTextInactive:  windows.RGB(175, 175, 175),

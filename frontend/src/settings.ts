@@ -53,8 +53,6 @@ function GetDefaultSetting(name : string) : string {
 	// Appearance
 	case "theme":
 		return "dark"
-	case "transparency":
-		return "0"
 	// View settings
 	case "zoomLevel":
 		return "100"
@@ -88,8 +86,6 @@ function IsValidSetting(name : string, value : string) : boolean {
 	// Appearance
 	case "theme":
 		return value == "dark" || value == "light"
-	case "transparency":
-		return valueInt >= 0 && valueInt <= 70
 	// View settings
 	case "zoomLevel":
 		return valueInt >= MIN_ZOOM && valueInt <= MAX_ZOOM

@@ -211,10 +211,7 @@ function pathGoRefreshAction() {
 </script>
 
 <link rel="shortcut icon" href={favicon} type="image/x-icon">
-<main data-user-os={$USER_OS} class="{$settings && GetSetting("theme")}" style="
-	--baseBg:rgba({$settings && GetSetting("theme") == "dark" ? "0, 0, 0" : "255, 255, 255"}, {$settings && 1-parseInt(GetSetting("transparency"))/100});
-	--lang:'{$settings && GetSetting("language")}';
-">
+<main data-user-os={$USER_OS} class="{$settings && GetSetting("theme")}" style="--lang:'{$settings && GetSetting("language")}';">
 	<div class="appTitleBar" style="widows: 1;"></div>
 	<Toaster containerStyle="margin-bottom:10px;"/>
 	<div class="toolbar"></div>

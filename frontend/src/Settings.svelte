@@ -113,18 +113,6 @@ $: lang = $settings && $languageDictionary
 							</button>
 						</div>
 					</div>
-
-					<div class="dividerH"></div>
-
-					<div class="element">
-						<div class="title">{lang && GetWord("settingsAppearanceTransparencyTitle")}</div>
-						<div class="double">
-							<div class="description">{lang && GetWord("settingsAppearanceTransparencyDesc")}</div>
-							<div class="value">
-								<input type="range" max="70" value={$settings && GetSetting("transparency")} on:change={(e) => SetSetting("transparency", e.target.value)}><span>{$settings && GetSetting("transparency")}%</span>
-							</div>
-						</div>
-					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
 					<div class="element">
 						<div class="title">{lang && GetWord("settingsImagePreviewsZoomTitle")}</div>
