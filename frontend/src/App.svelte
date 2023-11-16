@@ -236,14 +236,6 @@ function pathGoRefreshAction() {
 	<div class="mainContent">
 		<div class="navPane">
 			<div class="section">
-				<div class="elements">
-					<div class="element">
-						<Icon icon={IconDictionary["uiHome"]} class="icon home"/>
-						<div class="text">{lang && GetWord("sideBtnHome")}</div>
-					</div>
-				</div>
-			</div>
-			<div class="section">
 				<div class="title"><span class="text">{lang && GetWord("pinnedFolders")}</span></div>
 				<div class="elements">
 				{#if $pinnedFolders.length == 0}
