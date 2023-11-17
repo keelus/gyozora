@@ -357,6 +357,7 @@ input[type=text]::selection {
 		border-radius:10px;
 		margin-right:10px;
 		margin-bottom:0;
+		scroll-padding-top: 10px;
 
 		& > .file {
 			display:inline-flex;

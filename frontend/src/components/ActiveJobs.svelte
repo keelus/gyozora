@@ -1,10 +1,10 @@
 <script lang="ts">
 import { get } from "svelte/store";
-import { activeJobs, languageDictionary, settings } from "./store";
-import { JobType, type ActiveJob, AddJob } from "./activeJobsLogin";
+import { activeJobs, languageDictionary, settings } from "../utils/store";
+import { JobType, type ActiveJob, AddJob } from "../utils/activeJobsLogin";
 import Icon from "@iconify/svelte";
-import { GetIconByType } from "./icons";
-  import { GetWord } from "./languages";
+import { GetIconByType } from "../utils/icons";
+  import { GetWord } from "../utils/languages";
 
 let _activeJobs : {[key:string]:ActiveJob} = {}
 let _activeJobsAmount = 0;

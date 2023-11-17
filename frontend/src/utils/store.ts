@@ -29,3 +29,5 @@ export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boole
 })
 export const languageDictionary = writable<{[key:string]:{[key:string]:string}}>({})
 export const pinnedFolders = writable<models.SysFile[]>([]);
+export const searchInput = writable<HTMLInputElement>();
+export const searchInputText = writable<string>("");

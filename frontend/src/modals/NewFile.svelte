@@ -1,9 +1,9 @@
 <script lang="ts">
-import { USER_OS, languageDictionary, settings } from "../store";
+import { USER_OS, languageDictionary, settings } from "../utils/store";
 import Icon from "@iconify/svelte";
-import { GetIconByType } from "../icons";
+import { GetIconByType } from "../utils/icons";
 import { get } from "svelte/store";
-  import { GetWord } from "../languages";
+  import { GetWord } from "../utils/languages";
 
 let filename = "";
 let activeFileType = "file";

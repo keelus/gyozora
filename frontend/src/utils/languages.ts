@@ -1,6 +1,6 @@
 import { GetSetting } from "./settings";
 import { languageDictionary } from "./store";
-import { Go_LoadDictionary } from '../wailsjs/go/main/App.js'
+import { Go_LoadDictionary } from '../../wailsjs/go/main/App.js'
 import { get } from "svelte/store";
 
 export function GetWord(key : string){

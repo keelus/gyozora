@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { settings, pinnedFolders } from "./store";
-import type { models } from "../wailsjs/go/models";
-import { Go_LoadSettings, Go_SetSetting, Go_DeleteSetting, Go_TogglePin, Go_MovePinnedOrderTo, LoadPinnedFolders } from '../wailsjs/go/main/App.js'
+import type { models } from "../../wailsjs/go/models";
+import { Go_LoadSettings, Go_SetSetting, Go_DeleteSetting, Go_TogglePin, Go_MovePinnedOrderTo, LoadPinnedFolders } from '../../wailsjs/go/main/App.js'
 import { GenerateToast } from "./toasts";
 import { GetWord } from "./languages";
 

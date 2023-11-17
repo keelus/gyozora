@@ -1,8 +1,8 @@
-import { ReadPath, RenderPreview, OpenFile } from '../wailsjs/go/main/App.js';
+import { ReadPath, RenderPreview, OpenFile } from '../../wailsjs/go/main/App.js';
 import type { models } from "wailsjs/go/models";
-import { USER_OS, contents, selectedFiles } from "./store"
+import { USER_OS, contents, searchInput, searchInputText, selectedFiles } from "./store.js"
 import { get } from "svelte/store";
-import { CURRENT_PATH, CURRENT_PATH_BREADCRUMB_ELEMENTS, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store";
+import { CURRENT_PATH, CURRENT_PATH_BREADCRUMB_ELEMENTS, backHistory, forwardHistory, goBackEnabled, goForwardEnabled, previewProgress, currentJob } from "./store.js";
 import { doAction } from './contextMenu.js';
 import { GenerateToast } from './toasts.js';
 import { GetSetting } from './settings.js';
@@ -130,6 +130,11 @@ export async function LoadFolder(newPath : string, goingBack : boolean, goingFor
 	}
 	RemoveJob(frontJobID)
 	previewProgress.set("100")
+	searchInput.update(e => {
+		e.value = "";
+		return e
+	})
+	searchInputText.set("")
 }
 export async function elementClicked(fpath : string, isfolder : boolean) {
 	if(isfolder){

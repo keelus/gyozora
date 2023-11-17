@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { languageDictionary, settings } from "../store";
+  import { languageDictionary, settings } from "../utils/store";
 	import type { models } from "../../wailsjs/go/models";
-  import { GetWord } from "../languages";
+  import { GetWord } from "../utils/languages";
 
 	let filename = "";
 	

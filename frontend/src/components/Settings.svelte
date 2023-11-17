@@ -1,11 +1,11 @@
 <script lang="ts">
-import { IconDictionary } from './icons';
+import { IconDictionary } from '../utils/icons';
 import Icon from '@iconify/svelte';
-import { GetSetting, SetSetting, ChangePinned } from './settings';
-import { languageDictionary, settings, pinnedFolders, USER_OS } from './store';
-import { BrowserOpenURL } from '../wailsjs/runtime/runtime'
+import { GetSetting, SetSetting, ChangePinned } from '../utils/settings';
+import { languageDictionary, settings, pinnedFolders, USER_OS } from '../utils/store';
+import { BrowserOpenURL } from '../../wailsjs/runtime/runtime'
 
-import appicon from './assets/icons/gyozora.svg'
+import appicon from '../assets/icons/gyozora.svg'
 import paintBrushLine from '@iconify/icons-ri/paint-brush-line';
 import gridFill from '@iconify/icons-ri/grid-fill';
 import accessibilityIcon from '@iconify/icons-material-symbols/accessibility';
@@ -14,14 +14,14 @@ import githubLine from '@iconify/icons-ri/github-line';
 
 import { Switch } from '@svelteuidev/core';
 import type { models } from 'wailsjs/go/models';
-import { Go_CacheSize, Go_CacheClear } from '../wailsjs/go/main/App';
+import { Go_CacheSize, Go_CacheClear } from '../../wailsjs/go/main/App';
 
-import darkThemeIMG from './assets/images/darkTheme.png'
-import lightThemeIMG from './assets/images/lightTheme.png'
-import { GetWord } from './languages';
+import darkThemeIMG from '../assets/images/darkTheme.png'
+import lightThemeIMG from '../assets/images/lightTheme.png'
+import { GetWord } from '../utils/languages';
 
-import { renderBytes } from './utils';
-  import { GenerateToast } from './toasts';
+import { renderBytes } from '../utils/utils';
+  import { GenerateToast } from '../utils/toasts';
 
 
 let activeCategory = 0;

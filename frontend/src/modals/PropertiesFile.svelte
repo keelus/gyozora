@@ -1,14 +1,14 @@
 <script lang="ts">
-import { CURRENT_PATH, USER_OS, languageDictionary, selectedFiles, settings } from "../store";
+import { CURRENT_PATH, USER_OS, languageDictionary, selectedFiles, settings } from "../utils/store";
 import Icon from "@iconify/svelte";
-import { GetIconByType, IconDictionary } from "../icons";
+import { GetIconByType, IconDictionary } from "../utils/icons";
 import { get } from "svelte/store";
 import { onMount } from "svelte";
 import type { models } from "wailsjs/go/models";
 import { PropertiesFile } from '../../wailsjs/go/main/App.js';
-import { GenerateToast } from "../../src/toasts";
-import { copyToClipboard, renderBytes, renderDate } from "../utils";
-import { GetWord } from "../languages";
+import { GenerateToast } from "../utils/toasts";
+import { copyToClipboard, renderBytes, renderDate } from "../utils/utils";
+import { GetWord } from "../utils/languages";
 
 let cancelButton : HTMLButtonElement;
 

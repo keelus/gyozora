@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { selectedFiles, fileContextMenuOptions, CURRENT_PATH, contents, pinnedFolders } from "./store";
-import { OpenFile, AddFile, RenameFile, DeleteFile, Go_TogglePin, LoadPinnedFolders, Go_IsFolderPinned } from '../wailsjs/go/main/App.js'
-import OpenModal from "./modals/manager";
+import { OpenFile, AddFile, RenameFile, DeleteFile, Go_TogglePin, LoadPinnedFolders, Go_IsFolderPinned } from '../../wailsjs/go/main/App.js'
+import OpenModal from "../modals/manager";
 import type { models } from 'wailsjs/go/models.js';
 import toast from "svelte-french-toast";
 import { GenerateToast } from "./toasts";

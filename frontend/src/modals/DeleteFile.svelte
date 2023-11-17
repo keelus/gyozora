@@ -1,9 +1,9 @@
 <script lang="ts">
-import { USER_OS, languageDictionary, selectedFiles, settings } from "../store";
-import { IconDictionary } from "../icons";
+import { USER_OS, languageDictionary, selectedFiles, settings } from "../utils/store";
+import { IconDictionary } from "../utils/icons";
 import { get } from "svelte/store";
   import { onMount } from "svelte";
-  import { GetWord } from "../languages";
+  import { GetWord } from "../utils/languages";
 
 let cancelButton : HTMLButtonElement;
 let confirmButton : HTMLButtonElement;

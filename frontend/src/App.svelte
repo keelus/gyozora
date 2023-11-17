@@ -10,10 +10,10 @@ import appicon from './assets/icons/gyozora.svg'
 // UI Icons
 import Icon from '@iconify/svelte';
 // Gyozora browser, icons & logic
-import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS, settings, languageDictionary, pinnedFolders } from "./store";
-import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./pathManager";
-import { IconDictionary, GetIconByType } from "./icons";
-import { closeFileContextMenu, openFileContextMenu, doAction } from "./contextMenu";
+import { activeJobs, contents, selectedFiles, fileContextMenuOptions, CURRENT_PATH, goBackEnabled, goForwardEnabled, previewProgress, USER_OS, CURRENT_PATH_BREADCRUMB_ELEMENTS, settings, languageDictionary, pinnedFolders, searchInput, searchInputText } from "./utils/store";
+import { LoadFolder, buttonGoBack, buttonGoForward, elementClicked, addToSelected } from "./utils/pathManager.js";
+import { IconDictionary, GetIconByType } from "./utils/icons";
+import { closeFileContextMenu, openFileContextMenu, doAction } from "./utils/contextMenu";
 
 import { Toaster } from 'svelte-french-toast';
 
@@ -26,14 +26,16 @@ let fileBrowser : HTMLDivElement;
 let fileContextMenu : HTMLDivElement;
 let modalParent : HTMLDivElement;
 
-import { CopyToClipboard, PasteFromClipboard } from './clipboard.js';
+let fileButton : HTMLButtonElement;
 
-import ActiveJobs from './ActiveJobs.svelte'
-import { Plural, renderBytes } from './utils.js';
+import { CopyToClipboard, PasteFromClipboard } from './utils/clipboard';
 
-import { GetSetting, LoadSettings, MAX_ZOOM, MIN_ZOOM, SetSetting, ZoomIn, ZoomOut } from './settings.js';
-import Settings from './Settings.svelte';
-import { GetWord, LoadDictionary } from './languages.js';
+import ActiveJobs from './components/ActiveJobs.svelte'
+import { Plural, renderBytes } from './utils/utils';
+
+import { GetSetting, LoadSettings, MAX_ZOOM, MIN_ZOOM, SetSetting, ZoomIn, ZoomOut } from './utils/settings';
+import Settings from './components/Settings.svelte';
+import { GetWord, LoadDictionary } from './utils/languages';
 import { onMount } from 'svelte';
 
 
@@ -54,7 +56,7 @@ async function FirstStart() {
 }
 
 function AddListeners() {
-	document.addEventListener('contextmenu', e => e.preventDefault());
+	// document.addEventListener('contextmenu', e => e.preventDefault());
 	document.addEventListener("mousedown", e => {
 		switch(e.button){
 			case 3:
@@ -107,7 +109,51 @@ function AddListeners() {
 				}
 				break;
 		}
+
+		const targetElement = e.target as HTMLElement;
+		if(targetElement.tagName != "INPUT" && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey)
+			if((e.which >= 65 && e.which <= 90) || (e.which >= 48 && e.which <= 57) || e.which == 192) { // a-z, 0-9, ñ
+				const letter = e.key.toLowerCase();
+
+
+				let alreadySelectedFile = null;
+				if($selectedFiles.length == 1) {
+					if($selectedFiles[0].filename[0].toLowerCase() == letter) {
+						alreadySelectedFile = $selectedFiles[0]
+					}
+				}
+
+				let itemToSelect = null;
+				if(alreadySelectedFile){
+					const filesStartingThatLetter = $contents.filter(file => {if (file.filename[0].toLowerCase() == letter) return file})
+					const alreadySelectedFileIndex = filesStartingThatLetter.indexOf(alreadySelectedFile)
+
+					let targetIndex = alreadySelectedFileIndex + 1;
+					if(alreadySelectedFileIndex == filesStartingThatLetter.length-1) targetIndex = 0;
+
+					itemToSelect = filesStartingThatLetter[targetIndex];
+				} else {
+					for(const file of $contents) {
+						console.log("iteracion");
+
+						if(file.filename[0].toLowerCase() == letter) {
+							$selectedFiles.push(file);
+							itemToSelect = file;
+							break;
+						}
+					}
+				}
+
+				if(itemToSelect) {
+					$selectedFiles = [itemToSelect]
+
+					const fileElement = itemToSelect.divElement as HTMLElement
+					fileElement.scrollIntoView({behavior:'smooth'})
+				}
+				
+			}
 	});
+
 
 	document.addEventListener("mousewheel", event => {
 		const e : WheelEvent = event as WheelEvent
@@ -183,8 +229,6 @@ let activeJobsOpened = false;
 let settingsWindow : Settings;
 
 
-let searchInputText = "";
-
 let pathInput : HTMLInputElement;
 let pathIsFocus : boolean = false;
 function checkPathEnterkey(e : KeyboardEvent) {
@@ -233,7 +277,7 @@ function pathGoRefreshAction() {
 				{/if}
 			</button>
 		</div>
-		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={searchInputText} />
+		<input class="search" placeholder="{lang && GetWord("searchPlaceholder")}" type="text" bind:value={$searchInputText} bind:this={$searchInput} />
 	</div>
 	<div class="mainContent">
 		<div class="navPane">
@@ -312,9 +356,9 @@ function pathGoRefreshAction() {
 		</div>
 		{#each $contents as content}
 			{#if content != undefined}
-				{#if content.filename.includes(searchInputText)}
+				{#if content.filename.toLowerCase().includes($searchInputText.toLowerCase())}
 					{#if !content.isHidden || (content.isHidden && $settings && GetSetting("showHiddenFiles") === "true") }
-						<button class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{lang && GetWord("hoverName")}{content.filename}&#013;{lang && GetWord("hoverSize")}{renderBytes(content.size)}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)} style="--zoom:{$settings && GetSetting("zoomLevel")}">
+						<button bind:this={content.divElement} class="file {content.isHidden ? "hidden" : ""} {$selectedFiles.includes(content) ? "selected" : ""}" title="{lang && GetWord("hoverName")}{content.filename}&#013;{lang && GetWord("hoverSize")}{renderBytes(content.size)}" on:dblclick={() => elementClicked(content.pathfull, content.isFolder)} on:mouseup={e => addToSelected(e, content)} style="--zoom:{$settings && GetSetting("zoomLevel")}">
 							{#if content.iconClass == "fileImage" && content.preview != "" && $settings && GetSetting("useThumbnails") === "true"}
 								<div class="imagePreview" style="background-image:url(data:image/png;base64,{content.preview});{content.extension == ".svg" ? "background-color:white;" : ""}"></div>
 							{:else}
@@ -332,7 +376,7 @@ function pathGoRefreshAction() {
 				{/if}
 			{/if}
 		{/each}
-		{#if searchInputText && $contents && ($contents.length == 0 || fileBrowser.querySelectorAll(".file").length == 0)}
+		{#if $contents && ($contents.length == 0 || fileBrowser.querySelectorAll(".file").length == 0)}
 			<div class="emptyMessage">{lang && GetWord("fileBrowserEmpty")} 👎</div>
 		{/if}
 		</div>

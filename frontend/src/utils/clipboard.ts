@@ -1,14 +1,14 @@
-import { PasteFile, PasteFolder, ReadPath, FileExists } from "../wailsjs/go/main/App.js";
+import { PasteFile, PasteFolder, ReadPath, FileExists } from "../../wailsjs/go/main/App.js";
 import { CURRENT_PATH, clipboardFiles, contents, selectedFiles } from "./store"
 import { get } from "svelte/store"
 import toast from "svelte-french-toast";
-import { models } from "../wailsjs/go/models.js";
+import { models } from "../../wailsjs/go/models.js";
 export function CopyToClipboard() {
 	clipboardFiles.set(get(selectedFiles))
 }
 
 import { AddJob, UpdateJob, RemoveJob, JobType } from "./activeJobsLogin.js";
-import OpenModal from "./modals/manager.js";
+import OpenModal from "../modals/manager.js";
 import { Plural } from "./utils.js";
 import { GetWord } from "./languages.js";
 
