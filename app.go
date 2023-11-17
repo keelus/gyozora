@@ -265,10 +265,6 @@ func (a *App) AddFile(path string, filename string, fileType string) models.Acti
 	return models.ActionResponse{Error: models.SimpleError{Status: false}, File: createdFile}
 }
 
-func (a *App) CutFile_s(fpaths []string) {
-	fmt.Println("TBD -1")
-}
-
 // TODO: Duplicating folders
 func (a *App) PasteFolder(srcFolder models.SysFile, tgtPath string, isBase bool) models.PasteFileResponse {
 	srcPath := srcFolder.PathFull

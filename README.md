@@ -71,7 +71,6 @@ The generated binaries will appear in `./build`
 #### 📄 Context menu/file related:
 - [x] ~~➕ Add/create a file~~
 - [x] ~~📋 Copy file(s)~~
-- [ ] 📋 Cut file(s)
 - [x] ~~📋 Paste file(s)~~
 - [x] ~~🆔 Rename a file~~
 - [x] ~~🗑️ Delete file(s)~~

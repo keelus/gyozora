@@ -55,7 +55,6 @@ export async function setContextMenuOptions(mode : string) {
 	fileContextMenuOptions.set({	
 		add:{show:true,disabled:false},
 		open:{show:true,disabled:false},
-		cut:{show:true,disabled:false},
 		copy:{show:true,disabled:false},
 		paste:{show:true,disabled:false},
 		rename:{show:true,disabled:false},
@@ -73,7 +72,6 @@ export async function setContextMenuOptions(mode : string) {
 		  return {
 			...options,
 			open: { show: false, disabled: false },
-			cut: { show: false, disabled: false },
 			copy: { show: false, disabled: false },
 			paste: { show: true, disabled: !clipboardPastable },
 			rename: { show: false, disabled: false },
@@ -151,8 +149,6 @@ export async function doAction(action : string) {
 				})
 				GenerateToast("success", GetWord("actionAddToastSuccess"), "📄")
 			}
-			break;
-		case "cut":
 			break;
 		case "copy":
 			CopyToClipboard()

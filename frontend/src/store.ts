@@ -19,7 +19,6 @@ export const settings = writable<{[key:string]:string}>({})
 export const fileContextMenuOptions = writable<{[key:string]:{[key:string]:boolean}}>({	
 	add:{show:true,disabled:false},
 	open:{show:true,disabled:false},
-	cut:{show:true,disabled:false},
 	copy:{show:true,disabled:false},
 	paste:{show:true,disabled:false},
 	rename:{show:true,disabled:false},

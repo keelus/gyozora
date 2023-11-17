@@ -90,13 +90,18 @@ function AddListeners() {
 				}
 				break;
 			case "Delete":
-				doAction("delete");
+					doAction("delete");
+				break;
+			case "Backspace":
+				if(e.metaKey)
+					doAction("delete");
 				break;
 			case "F2":
 				doAction("rename")
 				break;
 			case "N":
-				if(e.shiftKey && e.ctrlKey){ // For folder by default creating
+			case "n":
+				if(e.shiftKey && (e.ctrlKey || e.metaKey)){ // For folder by default creating
 					e.preventDefault()
 					doAction("add")
 				}
@@ -273,10 +278,6 @@ function pathGoRefreshAction() {
 				<span class="text">{lang && GetWord("ctxOpen")}</span>
 			</button>
 			<div class:hide={!$fileContextMenuOptions.add.show && !$fileContextMenuOptions.open.show} class="divider"></div>
-			<button class:disabled={$fileContextMenuOptions.cut.disabled} class:hide={!$fileContextMenuOptions.cut.show} class="ctxMenuButton element"on:click={() => doAction("cut")}>
-				<Icon icon={IconDictionary.ctxMenuCut} class="icon cut" />
-				<span class="text">{lang && GetWord("ctxCut")}</span>
-			</button>
 			<button class:disabled={$fileContextMenuOptions.copy.disabled} class:hide={!$fileContextMenuOptions.copy.show} class="ctxMenuButton element"on:click={() => doAction("copy")}>
 				<Icon icon={IconDictionary.ctxMenuCopy} class="icon copy" />
 				<span class="text">{lang && GetWord("ctxCopy")}</span>
