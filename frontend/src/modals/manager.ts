@@ -65,13 +65,13 @@ function IsManualModalOpened(parentModal : Element) : boolean {
 	const modalNames = ["newFile", "rename", "delete", "properties"]
 
 	let opened = false;
-	Array.from(parentModal.children).forEach(element => {
-		if(modalNames.includes(element.classList[1])){
-			opened = true;
-			return false;
 
+	for(const modal of Array.from(parentModal.children)) {
+		if(modalNames.includes(modal.classList[1])){
+			opened = true;
+			break
 		}
-	});
+	}
 
 	return opened;
 }
