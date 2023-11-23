@@ -73,7 +73,6 @@ function GetDefaultSetting(name : string) : string {
 		return "true"
 	case "useCache": // false if useThumbnails==false
 		return "true"
-	// TODO: Shortcuts?
 	default:
 		return ""
 	}
@@ -106,7 +105,6 @@ function IsValidSetting(name : string, value : string) : boolean {
 		return value == "true" || value == "false"
 	case "useCache": // false if useThumbnails==false
 		return value == "true" || value == "false"
-	// TODO: Shortcuts?
 	default:
 		return true
 	}
