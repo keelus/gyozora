@@ -213,11 +213,11 @@ func (a *App) OpenFile(fpath string) models.ActionResponse {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
-		cmd = exec.Command("cmd", "/c", "start", "", fpath)
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", fpath)
 	case "darwin":
 		cmd = exec.Command("open", fpath)
 	case "linux":
-		cmd = exec.Command("xdg-open", fpath) // TODO: Test
+		cmd = exec.Command("xdg-open", fpath)
 	default:
 		return models.ActionResponse{Error: models.SimpleError{Status: true, Reason: "Unsupported operating system."}}
 	}
@@ -373,7 +373,7 @@ func (a *App) PasteFile(srcFile models.SysFile, tgtPath string, isBase bool) mod
 	return models.PasteFileResponse{File: pastedFile, Error: models.SimpleError{Status: false}}
 }
 
-func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse { // TODO: Update cache DB
+func (a *App) RenameFile(file models.SysFile, newFilename string) models.ActionResponse {
 	newPath := filepath.Join(file.Path, newFilename)
 
 	if err := fileUtils.Exists(newPath); err == nil {
