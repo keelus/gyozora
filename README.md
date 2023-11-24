@@ -6,14 +6,15 @@
 
 <p align="center">
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/⚖️ license-GNU%20GPL%20v3.0-blue" alt="MIT License"></a>
-  <img src="https://img.shields.io/github/stars/keelus/gyozora?color=red&logo=github" alt="stars">
-  <img src="https://img.shields.io/badge/🚧 In%20development-FCBA03" alt="In development" />
+  <a href="https://github.com/keelus/gyozora/stargazers"><img src="https://img.shields.io/github/stars/keelus/gyozora?color=red&logo=github" alt="Repo stars"></a>
+  <a href="https://github.com/keelus/gyozora/releases/tag/v1.0.0"><img src="https://img.shields.io/github/downloads-pre/keelus/gyozora/latest/total" alt="Latest release"></a>
+    
+    
 </p>
 
 <h2>About gyozora</h2>
-Gyozora is a fast and lightweight file explorer in early development. It currently supports Windows & macOS and will be fully compatible with Linux in future versions. <br /><br />
 
-***Note: Gyozora it's still in development. Some key features might not work as expected.***
+Gyozora is a fast and lightweight file explorer in early development. It´s fully compatible with **Windows** and **macOS**. **Linux** will be compatible in the future versions. <br /><br />
 
 <h2>Key features</h2>
 
@@ -27,8 +28,12 @@ Gyozora is a fast and lightweight file explorer in early development. It current
 
 
 ### 📷 Screenshot
+![Gyozora screenshot windows dark](https://github.com/keelus/gyozora/assets/86611436/b5f6e08b-dad0-49ea-936a-5984d3e5e00d)
+![Gyozora screensho macOS light](https://github.com/keelus/gyozora/assets/86611436/cb35b948-d184-446b-b58b-aea3d2d96c6a)
 
-<img src=".github/gyozora_screenshot.webp"  alt="Gyozora screenshot" />
+
+
+
 
 ### ⬇️ Install it
 You can install the latest release <a href="https://github.com/keelus/gyozora/releases/latest">here</a>.
@@ -60,35 +65,6 @@ wails build -nsis
 wails build
 ```
 The generated binaries will appear in `./build`
-
-### 🥟📂 Important incoming features:
-
-#### 💻 OS compatibility:
-- [x] ~~🪟 Windows (10 & 11)~~
-- [x] ~~🍎 macOS (arm64[m1, m2] & amd64[intel])~~
-- [ ] 🐧 Linux (amd64, arm64 & arm)
-
-#### 📄 Context menu/file related:
-- [x] ~~➕ Add/create a file~~
-- [x] ~~📋 Copy file(s)~~
-- [x] ~~📋 Paste file(s)~~
-- [x] ~~🆔 Rename a file~~
-- [x] ~~🗑️ Delete file(s)~~
-- [x] ~~ℹ️ Properties of a file~~
-
-#### 🧑‍💻 User configuration related:
-- [x] ~~🎨 Choose a color theme~~
-- [ ] 📊 Multiple UX options:
-  - [x] ~~Enable/disable file deletion confirmation modal~~
-  - [x] ~~Change language~~
-  - [ ] ... More
-
-#### 🥟 Others:
-- [ ] 🌍 Internationalization
-  - [x] ~~🇺🇸 English~~
-  - [ ] 🇪🇸 Spanish
-- [x] ~~ℹ️ Error messages/toasts~~
-
 ## ⚖️ License
 This project is open source under the terms of the [GNU GPL v3.0 license](./LICENSE)
 
