@@ -238,8 +238,9 @@ $: lang = $settings && $languageDictionary
 
 					{:else if activeCategory == SettingCategories.ABOUT}
 						<div class="about">
-							Gyozora is an open-source file explorer created by <button on:click={() => BrowserOpenURL("https://github.com/keelus")}>keelus</button>, written in Golang & Svelte, currently in development.<br><br>
-							This project is under the GNU GLP v3.0 license. <br><br>
+							Gyozora is an open-source file explorer created by <button on:click={() => BrowserOpenURL("https://github.com/keelus")}>keelus</button>. <br>
+							The backend uses Golang with Wails, and the frontend Svelte with TypeScript. <br>
+							This project/program is under the GNU GLP v3.0 license.<br><br>
 							Check the GitHub repository <button on:click={() => BrowserOpenURL("https://github.com/keelus/gyozora")}>here</button>.
 						</div>
 					{/if}

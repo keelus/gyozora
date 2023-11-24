@@ -17,6 +17,8 @@ import (
 	"runtime"
 	"strings"
 	"unsafe"
+
+	wails_runtime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var CURRENT_PATH = ""
@@ -472,6 +474,11 @@ func (a *App) Go_SetSetting(name string, value string) models.SimpleError {
 	if err != nil {
 		return models.SimpleError{Status: true}
 	}
+
+	if name == "theme" {
+		wails_runtime.WindowSetLightTheme(a.ctx)
+	}
+
 	return models.SimpleError{Status: false}
 }
 
@@ -480,6 +487,11 @@ func (a *App) Go_DeleteSetting(name string) models.SimpleError {
 	if err != nil {
 		return models.SimpleError{Status: true}
 	}
+
+	if name == "theme" {
+		wails_runtime.WindowSetDarkTheme(a.ctx)
+	}
+
 	return models.SimpleError{Status: false}
 }
 

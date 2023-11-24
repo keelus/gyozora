@@ -9,6 +9,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
@@ -23,6 +24,13 @@ func main() {
 
 	// Create an instance of the app structure
 	app := NewApp()
+
+	macTheme := mac.NSAppearanceNameDarkAqua
+	windowsTheme := windows.Dark
+	if app.Go_GetSetting("theme") == "light" {
+		macTheme = mac.NSAppearanceNameVibrantLight
+		windowsTheme = windows.Light
+	}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -42,10 +50,7 @@ func main() {
 			&models.Job{},
 		},
 		Windows: &windows.Options{
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
-			BackdropType:         windows.Acrylic,
-			Theme:                windows.SystemDefault,
+			Theme: windowsTheme,
 			CustomTheme: &windows.ThemeSettings{
 				DarkModeTitleBar:           windows.RGB(31, 31, 31),
 				DarkModeTitleBarInactive:   windows.RGB(0, 0, 0),
@@ -63,15 +68,18 @@ func main() {
 		},
 		Mac: &mac.Options{
 			TitleBar: &mac.TitleBar{
-				TitlebarAppearsTransparent: true, // Set to false
+				TitlebarAppearsTransparent: true,
 				HideToolbarSeparator:       true,
 			},
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
 				Title:   "Gyozora",
 				Message: "© 2023 keelus",
 			},
+			Appearance: macTheme,
+		},
+		Linux: &linux.Options{
+			WebviewGpuPolicy: linux.WebviewGpuPolicyAlways,
+			ProgramName:      "Gyozora",
 		},
 		Frameless:       false,
 		CSSDragProperty: "widows",
