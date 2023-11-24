@@ -81,6 +81,9 @@
 	"settingsAppearanceThemeDesc": "Choose the main theme for gyozora",
 	"settingsAppearanceThemeDark": "Dark theme",
 	"settingsAppearanceThemeLight": "Light theme",
+	"settingsAppearanceThemeNote": "Reload the app to apply window's color theme correctly.",
+
+	
 
 	
 	"settingsImagePreviewsZoomTitle": "Zoom level",

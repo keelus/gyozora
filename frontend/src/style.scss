@@ -1454,6 +1454,12 @@ main > .bottom {
 						margin-bottom:5px;
 					}
 
+					& > .note {
+						color:var(--font-3);
+						font-size:12px;
+						margin-top:5px;
+					}
+
 					& > .double {
 						display:flex;
 						align-items: center;

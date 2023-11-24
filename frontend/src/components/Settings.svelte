@@ -112,6 +112,9 @@ $: lang = $settings && $languageDictionary
 								</div>
 							</button>
 						</div>
+						{#if $USER_OS == "darwin"}
+							<div class="note">{lang && GetWord("settingsAppearanceThemeNote")}</div>
+						{/if}
 					</div>
 				{:else if activeCategory == SettingCategories.VIEW_SETTINGS}
 					<div class="element">
